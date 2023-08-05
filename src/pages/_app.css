@@ -1,0 +1,145 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #303353;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bg-login {
+	background-color: #3A3D5C;
+	border-radius: 16px;
+}
+.bg-input {
+	background-color: rgba(255, 255, 255, 0.05)!important;
+	color: rgba(255, 255, 255, 0.87)!important;
+	border: 0px!important;
+	font-size: 1em!important;
+	font-weight: bold;
+}
+.bg-button {
+	background-color: #3a3d5c!important;
+	color: rgba(255, 255, 255, 0.87)!important;
+	font-size: 1.2em!important;
+}
+.bg-button-connect {
+	background-color: #FFE790!important;
+	color: #303353!important;
+	font-size: 1.2em!important;
+}
+.bg-button-disconnect {
+	background-color: #fec4c1!important;
+	color: #3a3d5c!important;
+	font-size: 1.2em!important;
+}
+.bg-label {
+	font-weight: bold;
+	color: rgba(255, 255, 255, 0.87)!important;
+}
+.bg-text {
+	color: #FFE790!important;
+	font-size: 0.6em!important;
+}
+.bg-yellow {
+	background-color: #FFFFCC!important;
+}
+.bg-span {
+	background-color: #303353!important;
+	color: rgba(255, 255, 255, 0.87)!important;
+	border: 0px!important;
+	font-weight: bold!important;
+}
+.color-frame  {
+	color: #3a3d5c!important;
+}
+.bg-frame  {
+	background-color: #3a3d5c!important;
+}
+.bg-light-grey {
+	background-color: #dddddd!important;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { 
+	-webkit-appearance: none;
+}
+.bg-semitransparent {
+	background: rgba(255,255,255,.1)!important;
+}
+
+.accordion-button {
+	background-color: #6d9bc3 !important;
+	color: #3a3d5c!important;
+}
+.accordion-button:focus {
+	box-shadow: none;
+}
+.accordion-button:not(.collapsed) {
+	color: #212529;
+}
+.inner-accordion .accordion-button {
+	background-color: #ffffff !important;
+	color: #3a3d5c!important;
+}
+.inner-accordion .accordion-button:focus {
+	box-shadow: none;
+}
+.inner-accordion .accordion-button:not(.collapsed) {
+	color: #212529;
+}
+
+.nav-link {
+	color: rgba(255, 255, 255, 0.87)!important;
+}
+.nav-link.active {
+	color: #495057!important;
+}
+.nav-link.disabled {
+	color: #6c757d!important;
+}
+
+.css-1m25bqz {
+	width: 100%;
+	-webkit-margin-start: auto;
+	margin-inline-start: auto;
+	-webkit-margin-end: auto;
+	margin-inline-end: auto;
+	max-width: 768px;
+	-webkit-padding-start: 1rem;
+	padding-inline-start: 1rem;
+	-webkit-padding-end: 1rem;
+	padding-inline-end: 1rem;
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+}
