@@ -116,3 +116,5 @@ typechain/
 .solhint.json
 .solhintignore
 .vscode
+run-with-server.sh
+run.sh
