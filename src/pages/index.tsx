@@ -580,6 +580,13 @@ const Home: NextPage = () => {
 	const [ICO_PRICE, setICOPrice] = useState<number>(0)
 	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number | undefined>()
 	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string | undefined>()
+	const STAGE: {[key: string]: number} = {
+		NOT_CREATED: 0,
+		NOT_STARTED: 1,
+		ONGOING: 2,
+		ONHOLD: 3,
+		FINISHED: 4,
+	}
 	
 	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
 	const [ICO_INVESTORS_COUNT, setCountInvestors] = useState<number | undefined>()
@@ -1295,6 +1302,7 @@ const Home: NextPage = () => {
 
 							<Tab eventKey="acc_me" title="ME" className="bg-label mb-3 bg-light-grey">
 
+								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
@@ -1511,10 +1519,10 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col><input type="text" className="form-control form-control-lg color-frame text-center border-0" value={ICO_CURRENT_STAGE_TEXT} disabled={true}></input></Col>
-										{ICO_CURRENT_STAGE == 0 ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(1)}> {KEY_ICON()} START </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == 1 || ICO_CURRENT_STAGE == 3 ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(2)}> {KEY_ICON()} HOLD </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == 2 || ICO_CURRENT_STAGE == 3 ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(1)}> {KEY_ICON()} CONTINUE </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == 1 || ICO_CURRENT_STAGE == 2 ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(3)}> {KEY_ICON()} FINISH </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.NOT_STARTED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} START </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONHOLD)}> {KEY_ICON()} HOLD </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONHOLD || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} CONTINUE </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.FINISHED)}> {KEY_ICON()} FINISH </Button></Col> : "" }
 									</Row>
 								</Form.Group>
 
@@ -1712,6 +1720,7 @@ const Home: NextPage = () => {
 
 							<Tab eventKey="ico_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey">
 
+								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallets</div></div></Col>
@@ -1892,6 +1901,7 @@ const Home: NextPage = () => {
 
 							<Tab eventKey="ico_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
 
+								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
