@@ -131,6 +131,9 @@ const Home: NextPage = () => {
 		const ico_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || '';
 		const ico: Contract = new ethers.Contract(ico_address, CFG_ICO_ABI, signer);
 		setICOContract(ico);
+
+		const vesting: Contract = new ethers.Contract(ico_address, CFG_VESTING_ABI, signer);
+		setVestingContract(vesting);
 	}, [METAMASK_CHAIN_ID]);
 
 	const isContract = async (provider: ethers.providers.Web3Provider, address: string)=>{
@@ -474,9 +477,9 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ******************************************* Antiwhale *****************************************
 	// ***********************************************************************************************
-  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(9)
-  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(10_000_000_000)
-	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(100_000_000_000)
+  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
+  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
+	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
 	
 	const [ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number | undefined>()
   const [ICO_WHITELIST_USER_COUNT, setWhitelistUserCount] = useState<number | undefined>()
@@ -578,8 +581,8 @@ const Home: NextPage = () => {
   const [ICO_HARD_CAP, setICOHardCap] = useState<number | undefined>()
   const [ICO_SOFT_CAP, setICOSoftCap] = useState<number | undefined>()
 	const [ICO_PRICE, setICOPrice] = useState<number>(0)
-	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number | undefined>()
-	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string | undefined>()
+	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
+	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
 	const STAGE: {[key: string]: number} = {
 		NOT_CREATED: 0,
 		NOT_STARTED: 1,
@@ -667,10 +670,11 @@ const Home: NextPage = () => {
 		// get stage
 		let currentStage = await ICO_CONTRACT?.getCrowdsaleStage();
 		setCurrentState(currentStage);
-		if(currentStage == 0) setCurrentStateText("NOT STARTED");
-		else if(currentStage == 1) setCurrentStateText("ONGOING");
-		else if(currentStage == 2) setCurrentStateText("ON HOLD");
-		else if(currentStage == 3) setCurrentStateText("FINISHED");
+		if(currentStage == 0) setCurrentStateText("NOT CREATED");
+		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
+		else if(currentStage == 2) setCurrentStateText("ONGOING");
+		else if(currentStage == 3) setCurrentStateText("ON HOLD");
+		else if(currentStage == 4) setCurrentStateText("FINISHED");
 		console.log(currentStage);
 
 		// get read only - investors
@@ -740,15 +744,22 @@ const Home: NextPage = () => {
 
 		let num2 = BigInt((uUSDAllowance * 10**18).toLocaleString('fullwide', {useGrouping:false}));
 		console.log(`cygas to approve num2: ` + num2);
-		let num3  = num2 / BigInt(price);
-		console.log(`cygas to approve num3: ` + num3);
-		setAllowanceRequired(num3);
+		if (price > 0) {
+			let num3  = num2 / BigInt(price);
+			console.log(`cygas to approve num3: ` + num3);
+			setAllowanceRequired(num3);
 		
-		console.log("ICO_OWNER: " + ICO_OWNER);
-		console.log("ICO_CONTRACT?.address: " + ICO_CONTRACT?.address);
-		let allowanceApproved: BigInt = await tokenContract.allowance(icoOwner, ICO_CONTRACT?.address);
-		console.log(`allowanceApproved: ` + allowanceApproved);
-		setAllowanceApproved(allowanceApproved);
+			console.log("ICO_OWNER: " + ICO_OWNER);
+			console.log("ICO_CONTRACT?.address: " + ICO_CONTRACT?.address);
+			let allowanceApproved: BigInt = await tokenContract.allowance(icoOwner, ICO_CONTRACT?.address);
+			console.log(`allowanceApproved: ` + allowanceApproved);
+			setAllowanceApproved(allowanceApproved);
+		}
+
+		// vesting
+		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
+		console.log(`vestingIds: ` + vestingIds);
+		setVestingIds(vestingIds);
 	}
 
 	async function resetICOContractData() {
@@ -758,8 +769,8 @@ const Home: NextPage = () => {
 		setICOSoftCap(undefined);
 		setICOPrice(0);
 
-		setCurrentState(undefined);
-		setCurrentStateText(undefined);
+		setCurrentState(0);
+		setCurrentStateText('NOT CREATED');
 
 		setTotaluUSDInvested(0);
 		setCountInvestors(undefined);
@@ -932,6 +943,44 @@ const Home: NextPage = () => {
 	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
 	async function setDynamicPriceSC(event:any) {
 		await ICO_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
+	}
+
+	// ***********************************************************************************************
+	// ****************************************** Create ICO *********************s*******************
+	// ***********************************************************************************************
+	async function createICO() {
+		// createICO
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
+		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
+		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
+		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
+		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
+		console.log(`VESTING_ID: ` + VESTING_ID);
+		await ICO_CONTRACT?.createCrowdsale(ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_WHITELIST_THRESHOLD, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
+			.then(createCrowdsale).catch(handleError);
+	}
+
+	async function createCrowdsale(receipt: any) {
+		console.log(receipt);
+	
+		ICO_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
+			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
+				position: "bottom-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		});
+
+		handleICOReceipt(receipt);
 	}
 
 	// ***********************************************************************************************
@@ -1165,6 +1214,67 @@ const Home: NextPage = () => {
 	// whitelist user
 	async function setTargetWalletAddress() {
 		await ICO_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
+	// ***********************************************************************************************
+	// ******************************************* Vesting *******************************************
+	// ***********************************************************************************************
+	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
+	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
+
+	const [VESTING_IDS, setVestingIds] = useState([]);
+
+	const [VESTING_ID, setVestingId] = useState<string>('');
+	const [VESTING_START, setVestingStart] = useState<number>(0);
+	const [VESTING_CLIFF, setVestingCliff] = useState<number>(0);
+	const [VESTING_DURATION, setVestingDuration] = useState<number>(0);
+	const [VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
+	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
+	const [VESTING_UPDATE_ID, setVestingUpdateId] = useState<string>('');
+	const [VESTING_UPDATE_START, setVestingUpdateStart] = useState<string>('');
+	const [VESTING_UPDATE_CLIFF, setVestingUpdateCliff] = useState<string>('');
+	const [VESTING_UPDATE_DURATION, setVestingUpdateDuration] = useState<string>('');
+	const [VESTING_UPDATE_NUM_SLIDES, setVestingUpdateNumSlides] = useState<number>(0);
+	const [VESTING_UPDATE_SCHEDULE_PERCENTAGE, setVestingUpdateSchedulePercentage] = useState<number>(0);
+
+
+	async function createVesting() {
+		// createICO
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
+		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
+		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
+		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
+		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
+		console.log(`VESTING_ID: ` + VESTING_ID);
+		await VESTING_CONTRACT?.createVesting(VESTING_START, VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
+			.then(processCreateVesting).catch(handleError);
+	}
+
+	async function processCreateVesting(receipt: any) {
+		console.log(receipt);
+	
+		ICO_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
+			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
+				position: "bottom-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		});
+
+		handleICOReceipt(receipt);
+	}
+
+	const onSelectVestingId = async (vestingId: any)=>{
+		setVestingId(vestingId);
 	}
 
 	// ***********************************************************************************************
@@ -1529,25 +1639,28 @@ const Home: NextPage = () => {
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Main Features</div></div></Col>
+									</Row>
+									<Row>
 										<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_SOFT_CAP} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 									</Row>
 								</Form.Group>
 
@@ -1560,27 +1673,74 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Minimum Transfer (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER / 10**6} onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER / 10**6} onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Maximum Transfer (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER / 10**6} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER / 10**6} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Maximum Investment (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT / 10**6} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT / 10**6} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
 									</Row>
 								</Form.Group>
 
 								<Row className="mb-3"></Row>
-								<Accordion className="mb-3 bg-semitransparent border rounded-3">
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Vested Percentage</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" ></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Vesting Program</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onSelectVestingId}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{VESTING_ID}
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{VESTING_IDS?.map(vestingId => {
+														return (
+															<Dropdown.Item as="button" key={vestingId} eventKey={vestingId} active={VESTING_ID == vestingId + ''}>
+																{vestingId + ''}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+									</Row>
+								</Form.Group>
+
+								<Row className="mb-3" hidden={ ICO_CURRENT_STAGE != STAGE.NOT_CREATED }></Row>
+								<Row hidden={ ICO_CURRENT_STAGE != STAGE.NOT_CREATED }>
+									<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => createICO()} > {KEY_ICON()} Create Funding Round</Button></Col>
+								</Row>
+
+								<Row className="mb-3" hidden={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }></Row>
+								<Accordion className="mb-3 bg-semitransparent border rounded-3" hidden={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED } >
 									<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
 										<Accordion.Header>
 											<Row className="w-100"><Col className="bg-label text-center p-2 h4">Antiwhale</Col></Row>
@@ -1591,14 +1751,6 @@ const Home: NextPage = () => {
 											<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 												<Row>
 													<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
-												</Row>
-												<Row className="mb-3"></Row>
-												<Row>
-													<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
-												</Row>
-												<Row>
-													<Col><input id="whitelistThreshold" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
-													<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT}> {KEY_ICON()} Whitelist Threshold</Button></Col>
 												</Row>
 												<Row className="mb-3"></Row>
 												<Accordion className="inner-accordion">
@@ -1718,87 +1870,7 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ico_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey">
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallets</div></div></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="color-frame">List of Investors</Form.Text></div></Col>
-									</Row>
-									<Row className="mb-3">
-										<table className="table table-dark">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Investor</th>
-													<th scope="col">Amount</th>
-												</tr>
-											</thead>
-											<tbody>
-												{ICO_INVESTORS_LIST?.map((item, index) => (
-													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
-														<td>{item}</td>
-														<td id={"weiContributedByValue" + (index+1) }></td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
-									</Row>
-
-									<Row>
-										<Col><div><Form.Text className="">Address</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setPaymentMethodsSearchAddress(event.target.value) } value={PAYMENT_METHODS_SEARCH_ADDRESS} ></input></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
-									</Row>
-
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
-										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-										<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
-										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
-										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
-										<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
-									</Row>
-									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
-									<Row className="mb-3" key={index} >
-										<Col xs={3}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS && BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
-										<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{item}</Button></Col>
-										<Col xs={2}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET && BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
-										<Col xs={2}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item].toString()) / 10**6 : 0}></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item].toString()) / ICO_PRICE : 0}></input></Col>
-									</Row>
-									))}
-
-									<Row>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_SEARCH_ADDRESS}></input></Col>
-										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
-										<Col xs={2}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
-									</Row>
-
-								</Form.Group>
-
-							</Tab>
-
-							<Tab eventKey="ioc_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="ioc_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
@@ -1899,7 +1971,87 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ico_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="ico_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallets</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">List of Investors</Form.Text></div></Col>
+									</Row>
+									<Row className="mb-3">
+										<table className="table table-dark">
+											<thead>
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col">Investor</th>
+													<th scope="col">Amount</th>
+												</tr>
+											</thead>
+											<tbody>
+												{ICO_INVESTORS_LIST?.map((item, index) => (
+													<tr key={index}>
+														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
+														<td>{item}</td>
+														<td id={"weiContributedByValue" + (index+1) }></td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</Row>
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="">Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setPaymentMethodsSearchAddress(event.target.value) } value={PAYMENT_METHODS_SEARCH_ADDRESS} ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+										<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
+										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
+										<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
+									</Row>
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
+									<Row className="mb-3" key={index} >
+										<Col xs={3}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS && BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+										<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{item}</Button></Col>
+										<Col xs={2}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET && BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+										<Col xs={2}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item].toString()) / 10**6 : 0}></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET[item].toString()) / ICO_PRICE : 0}></input></Col>
+									</Row>
+									))}
+
+									<Row>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_SEARCH_ADDRESS}></input></Col>
+										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
+										<Col xs={2}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET && BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
+									</Row>
+
+								</Form.Group>
+
+							</Tab>
+
+							<Tab eventKey="ico_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
@@ -2106,17 +2258,58 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs defaultActiveKey="ves_ops" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_ops" transition={true}>
 
 
-							<Tab eventKey="ves_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey p-3">
+							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey p-3">
 
 
 							</Tab>
 
 							<Tab eventKey="ves_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey p-3">
 
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Vesting Id</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0" value={VESTING_START + '-' + VESTING_CLIFF + '-' + VESTING_DURATION + '-' + VESTING_NUM_SLIDES} disabled={true}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Vesting Start</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="date" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={(event) => setVestingStart(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF} onChange={(event) => setVestingCliff(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+									</Row>
 
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => createVesting()}> {KEY_ICON()}Create Vesting</Button></Col>
+									</Row>
+
+								</Form.Group>
 
 							</Tab>
 
