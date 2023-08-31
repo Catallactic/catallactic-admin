@@ -1,6 +1,6 @@
 // src/pages/index.tsx
 import type { NextPage } from 'next'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent } from "react";
 import {Contract, ethers} from "ethers"
 
 import Form from 'react-bootstrap/Form';
@@ -1225,7 +1225,7 @@ const Home: NextPage = () => {
 	const [VESTING_IDS, setVestingIds] = useState([]);
 
 	const [VESTING_ID, setVestingId] = useState<string>('');
-	const [VESTING_START, setVestingStart] = useState<number>(0);
+	const [VESTING_START, setVestingStart] = useState("");
 	const [VESTING_CLIFF, setVestingCliff] = useState<number>(0);
 	const [VESTING_DURATION, setVestingDuration] = useState<number>(0);
 	const [VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
@@ -1237,6 +1237,9 @@ const Home: NextPage = () => {
 	const [VESTING_UPDATE_NUM_SLIDES, setVestingUpdateNumSlides] = useState<number>(0);
 	const [VESTING_UPDATE_SCHEDULE_PERCENTAGE, setVestingUpdateSchedulePercentage] = useState<number>(0);
 
+  const handleVestingStartChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setVestingStart(e.target.value);
+  };
 
 	async function createVesting() {
 		// createICO
@@ -1249,7 +1252,7 @@ const Home: NextPage = () => {
 		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
-		await VESTING_CONTRACT?.createVesting(VESTING_START, VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
+		await VESTING_CONTRACT?.createVesting(Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
 			.then(processCreateVesting).catch(handleError);
 	}
 
@@ -2252,7 +2255,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ves_ops" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
 							<Tab eventKey="ves_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey p-3">
 
@@ -2265,13 +2268,13 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="">Vesting Id</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg color-frame border-0" value={VESTING_START + '-' + VESTING_CLIFF + '-' + VESTING_DURATION + '-' + VESTING_NUM_SLIDES} disabled={true}></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" value={VESTING_START ? Date.parse(VESTING_START) + '_' + VESTING_CLIFF + '_' + VESTING_DURATION + '_' + VESTING_NUM_SLIDES : ''} disabled={true}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Start</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="date" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={(event) => setVestingStart(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
