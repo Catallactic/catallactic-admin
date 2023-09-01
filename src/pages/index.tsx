@@ -763,6 +763,15 @@ const Home: NextPage = () => {
 		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
 		console.log(`vestingIds: ` + vestingIds);
 		setVestingIds(vestingIds);
+
+		let percentVested = await ICO_CONTRACT?.getPercentVested();
+		console.log(`percentVested: ` + percentVested);
+		setVestingSchedulePercentage(percentVested);
+
+		let vestingId = await ICO_CONTRACT?.getVestingId();
+		console.log(`vestingId: ` + vestingId);
+		setVestingId(vestingId);
+
 	}
 
 	async function resetICOContractData() {
@@ -1278,6 +1287,10 @@ const Home: NextPage = () => {
 		setVestingId(vestingId);
 	}
 
+	async function setPercentVestedOnSC() {
+		await ICO_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+	}
+
 	// ***********************************************************************************************
 	// ************************************** TX Processing ******************************************
 	// ***********************************************************************************************
@@ -1710,7 +1723,8 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Vested Percentage</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" ></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_SCHEDULE_PERCENTAGE} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Vesting Program</Form.Text></div></Col>
