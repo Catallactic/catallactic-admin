@@ -1474,7 +1474,6 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="me" title="ACCOUNTS" className="bg-label mb-3 bg-light-grey p-3">
 
-
 						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true}>
 
 							<Tab eventKey="acc_me" title="ME" className="bg-label mb-3 bg-light-grey">
@@ -1786,7 +1785,7 @@ const Home: NextPage = () => {
 										<Col>
 											<Dropdown onSelect={onSelectCurrentVestingId}>
 												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-													{VESTING_ID}
+													{VESTING_SCHEDULE_CURRENT_ID}
 												</Dropdown.Toggle>
 
 												<Dropdown.Menu className="w-100">
@@ -2056,81 +2055,6 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ico_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="">ICO Contract Address</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" disabled={true} value={getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || ''}></input></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="">ICO Contract Owner</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" defaultValue={ICO_OWNER} disabled={true}></input></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="">Pending ICO Contract Owner</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={12}><input dir="rtl" type="email" className="form-control form-control-lg bg-yellow color-frame border-0 text-center" defaultValue={ICO_PENDING_OWNER} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setICOPendingOwner(event.target.value)} ></input></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ICO_PENDING_OWNER != undefined} onClick={() => setNewICOOwner()}> {KEY_ICON()} Transfer</Button></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER} onClick={() => acceptNewICOOwner()}> {KEY_ICON()} Accept</Button></Col>
-									</Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
-									</Row>
-
-									<Row>
-										<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
-										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-										<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
-										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
-										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
-										<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
-									</Row>
-									{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
-										<Row className="mb-3" key={index}>
-											<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
-											<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true}> {item}</Button></Col>
-											<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][5] ? Number(ICO_PAYMENT_METHODS[item][5]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0 } disabled={true}></input></Col>
-											<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / 10**6 : 0 } disabled={true}></input></Col>
-											<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / ICO_PRICE : 0 } disabled={true}></input></Col>
-										</Row>
-									))}
-									<Row>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET}></input></Col>
-										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
-										<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / 10**6 } disabled={true}></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									{METAMASK_CURRENT_ACCOUNT ?
-									<Row>
-										<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
-									</Row>
-									: '' }
-								</Form.Group>
-								
-							</Tab>
-
 							<Tab eventKey="ico_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
 
 								<Row className="mb-3"></Row>
@@ -2328,6 +2252,81 @@ const Home: NextPage = () => {
 								
 							</Tab>
 
+							<Tab eventKey="ico_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">ICO Contract Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" disabled={true} value={getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || ''}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">ICO Contract Owner</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" defaultValue={ICO_OWNER} disabled={true}></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Pending ICO Contract Owner</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={12}><input dir="rtl" type="email" className="form-control form-control-lg bg-yellow color-frame border-0 text-center" defaultValue={ICO_PENDING_OWNER} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setICOPendingOwner(event.target.value)} ></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ICO_PENDING_OWNER != undefined} onClick={() => setNewICOOwner()}> {KEY_ICON()} Transfer</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER} onClick={() => acceptNewICOOwner()}> {KEY_ICON()} Accept</Button></Col>
+									</Row>
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+										<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
+										<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
+										<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
+									</Row>
+									{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
+										<Row className="mb-3" key={index}>
+											<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+											<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true}> {item}</Button></Col>
+											<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][5] ? Number(ICO_PAYMENT_METHODS[item][5]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0 } disabled={true}></input></Col>
+											<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / 10**6 : 0 } disabled={true}></input></Col>
+											<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / ICO_PRICE : 0 } disabled={true}></input></Col>
+										</Row>
+									))}
+									<Row>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET}></input></Col>
+										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
+										<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / 10**6 } disabled={true}></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									{METAMASK_CURRENT_ACCOUNT ?
+									<Row>
+										<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
+									</Row>
+									: '' }
+								</Form.Group>
+								
+							</Tab>
+
 						</Tabs>
 
 					</Tab>
@@ -2400,9 +2399,6 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
-							</Tab>
-
 							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey">
 
 
@@ -2411,326 +2407,318 @@ const Home: NextPage = () => {
 							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
 							</Tab>
 
+							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
+							</Tab>
+
 						</Tabs>
 
 					</Tab>
 
 					{/* ******************************************************************************************************************************  */}
-					{/* *********************************************************** ERC-20 Tab ********************************************************  */}
+					{/* ************************************************** Reserve Wallet Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="token" title="ERC-20" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-							<Row>
-								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Token</div></div></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Token Contract Address</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} value={TOKEN_ADDRESS || ''}></input></Col>
-								<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={connectTokenContract}>Connect</Button></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Token Contract Owner</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={TOKEN_OWNER} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-								<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
-							</Row>
-						</Form.Group>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
-						<Row className="mb-3"></Row>
+							<Tab eventKey="res_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
-						<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-							<Row>
-								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Balance</div></div></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Enter Investor Address</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col><input id="balanceInvestor" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-							</Row>
-							<Row className="mb-3"></Row>
-							<Row>
-								<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE}></input></Col>
-								<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
-							</Row>
-						</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Swap and Liquify</div></div></Col>
+									</Row>
+								</Form.Group>
 
-						<Row className="mb-3"></Row>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Swapback</div></div></Col>
+									</Row>
+								</Form.Group>
 
-						<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-							<Row>
-								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Allowance</div></div></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Allowance From Investor Address</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Allowance to Investor Address</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
-							</Row>
-							<Row className="mb-3"></Row>
-							<Row>
-								<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
-								<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={getAllowance}>Allowance</Button></Col>
-							</Row>
-						</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Buyback</div></div></Col>
+									</Row>
+								</Form.Group>
 
-						<Row className="mb-3"></Row>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Rebase</div></div></Col>
+									</Row>
+								</Form.Group>
 
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center h4 p-2">Token</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+							</Tab>
 
+							<Tab eventKey="res_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
 
+hi
 
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+							</Tab>
 
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center p-2 h4">Supplies</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+						</Tabs>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Supply</div></div></Col>
-										</Row>
-										<Row>
-											<Col><div><Form.Text className="">Token Contract Balance</Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col><input type="number" className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_BALANCE}></input></Col>
-										</Row>
-										<Row className="mb-3"></Row>
-									</Form.Group>
+					</Tab>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Mint</div></div></Col>
-										</Row>
-									</Form.Group>
+					{/* ******************************************************************************************************************************  */}
+					{/* *********************************************************** CATOKEN Tab ******************************************************  */}
+					{/* ******************************************************************************************************************************  */}
+					<Tab eventKey="token" title="CATOKEN" className="bg-label mb-3 bg-light-grey p-3">
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Burn</div></div></Col>
-										</Row>
-									</Form.Group>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+							<Tab eventKey="tok_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center p-2 h4">Transfer</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Supply</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Token Contract Balance</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_BALANCE}></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+								</Form.Group>
 
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Mint</div></div></Col>
+									</Row>
+								</Form.Group>
 
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Burn</div></div></Col>
+									</Row>
+								</Form.Group>
 
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center p-2 h4">Liquidity</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+							</Tab>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Swap and Liquify</div></div></Col>
-										</Row>
-									</Form.Group>
+							<Tab eventKey="tok_hol" title="HOLDERS" className="bg-label mb-3 bg-light-grey">
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Swapback</div></div></Col>
-										</Row>
-									</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Balance</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Enter Investor Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input id="balanceInvestor" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE}></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
+									</Row>
+								</Form.Group>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Buyback</div></div></Col>
-										</Row>
-									</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Allowance</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Allowance From Investor Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Allowance to Investor Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={getAllowance}>Allowance</Button></Col>
+									</Row>
+								</Form.Group>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Rebase</div></div></Col>
-										</Row>
-									</Form.Group>
+							</Tab>
 
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+							<Tab eventKey="tok_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
 
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center p-2 h4">Rewards</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Token</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Token Contract Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!METAMASK_CURRENT_ACCOUNT} value={TOKEN_ADDRESS || ''}></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={connectTokenContract}>Connect</Button></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Token Contract Owner</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={TOKEN_OWNER} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+								</Form.Group>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw</div></div></Col>
-										</Row>
-										<Row>
-											<Col><div><Form.Text className="color-frame">Fees</Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-											<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
-										</Row>
-										<Row>
-											<Col><div><Form.Text className="color-frame">Wallets</Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-											<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
-										</Row>
-										<Row>
-											<Col><div><Form.Text className="color-frame">Withdraw</Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-											<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
-										</Row>
-									</Form.Group>
+							</Tab>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Reflections</div></div></Col>
-										</Row>
-									</Form.Group>
-
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Dividends</div></div></Col>
-										</Row>
-									</Form.Group>
-
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+						</Tabs>
 
 					</Tab>
 
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************** Target Wallet Tab *********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="target" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-							<Row>
-								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
-							</Row>
-							<Row>
-								<Col><div><Form.Text className="">Target Contract Address</Form.Text></div></Col>
-							</Row>
-							<Row>
-								<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow text-center border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTargetWallet(event.target.value) } value={ICO_TARGET_WALLET} ></input></Col>
-								<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={populateTargetContract}>Connect</Button></Col>
-							</Row>
-						</Form.Group>
+						<Tabs className="nav nav-fill" defaultActiveKey="rew_fea" transition={true}>
 
-						<Row className="mb-3"></Row>
+							<Tab eventKey="rew_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
-						<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-							<Row>
-								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
-							</Row>
+							</Tab>
 
-							<Row>
-								<Col xs={4}><div className="text-center"><Form.Text className="text-center"></Form.Text></div></Col>
-								<Col xs={4}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
-								<Col xs={4}><div className="text-center"><Form.Text className="text-center">Available USD</Form.Text></div></Col>
-							</Row>
-							{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
-							<Row className="mb-3" key={index} >
-								<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{item}</Button></Col>
-								<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
-								<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item] ? (Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3])) * (Number(ICO_PAYMENT_METHODS[item][2]) / 10**6) : 0}></input></Col>
-							</Row>
-							))}
-							<Row>
-								<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
-								<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL'] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
-								<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL'] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
-							</Row>
+							<Tab eventKey="rew_ope" title="OPERATION" className="bg-label mb-3 bg-light-grey">
 
-						</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
+									</Row>
 
-						<Row className="mb-3"></Row>
-						<Accordion className="mb-3 bg-semitransparent border rounded-3">
-							<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100"><Col className="bg-label text-center h4 p-2">Transfer</Col></Row>
-								</Accordion.Header>
-								<Accordion.Body className="px-0">
+									<Row>
+										<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
+									</Row>
 
-									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-										<Row>
-											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
-										</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+										<Col xs={6}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setToTransferAmount(event.target.value) } value={TO_TRANSFER_AMOUNT}></input></Col>
+										<Col xs={6}>
+											<Dropdown onSelect={onSelectToTransferCurrency}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{TO_TRANSFER_CURRENCY}
+												</Dropdown.Toggle>
 
-										<Row>
-											<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
-										</Row>
+												<Dropdown.Menu className="w-100">
+													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+										<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => transfer()}>Transfer</Button></Col>
+									</Row>
+								</Form.Group>
 
-										<Row className="mb-3"></Row>
-										<Row>
-											<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-											<Col xs={6}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-											<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-										</Row>
-										<Row>
-											<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setToTransferAmount(event.target.value) } value={TO_TRANSFER_AMOUNT}></input></Col>
-											<Col xs={6}>
-												<Dropdown onSelect={onSelectToTransferCurrency}>
-													<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-														{TO_TRANSFER_CURRENCY}
-													</Dropdown.Toggle>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Fees</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Wallets</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Withdraw</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}>ToDo</Button></Col>
+									</Row>
+								</Form.Group>
 
-													<Dropdown.Menu className="w-100">
-														{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-															return (
-																<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
-																	{item}
-																</Dropdown.Item>
-															);
-														})}
-													</Dropdown.Menu>
-												</Dropdown>
-											</Col>
-											<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => transfer()}>Transfer</Button></Col>
-										</Row>
-									</Form.Group>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Reflections</div></div></Col>
+									</Row>
+								</Form.Group>
 
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Dividends</div></div></Col>
+									</Row>
+								</Form.Group>
+
+							</Tab>
+
+							<Tab eventKey="rew_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Target Contract Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input type="email" className="form-control form-control-lg bg-yellow text-center border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTargetWallet(event.target.value) } value={ICO_TARGET_WALLET} ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={populateTargetContract}>Connect</Button></Col>
+									</Row>
+								</Form.Group>
+								
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><div className="text-center"><Form.Text className="text-center"></Form.Text></div></Col>
+										<Col xs={4}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
+										<Col xs={4}><div className="text-center"><Form.Text className="text-center">Available USD</Form.Text></div></Col>
+									</Row>
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
+									<Row className="mb-3" key={index} >
+										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{item}</Button></Col>
+										<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item] ? (Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET[item]) / 10**Number(ICO_PAYMENT_METHODS[item][3])) * (Number(ICO_PAYMENT_METHODS[item][2]) / 10**6) : 0}></input></Col>
+									</Row>
+									))}
+									<Row>
+										<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
+										<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL'] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET && BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL'] ? Number(BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
+									</Row>
+								</Form.Group>
+
+							</Tab>
+
+						</Tabs>
 
 					</Tab>
 
