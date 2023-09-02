@@ -11,6 +11,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Accordion from 'react-bootstrap/Accordion';
 import Dropdown from 'react-bootstrap/Dropdown';
+//import ListGroup from 'react-bootstrap/ListGroup';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -768,9 +769,9 @@ const Home: NextPage = () => {
 		console.log(`percentVested: ` + percentVested);
 		setVestingSchedulePercentage(percentVested);
 
-		let vestingId = await ICO_CONTRACT?.getVestingId();
-		console.log(`vestingId: ` + vestingId);
-		setVestingId(vestingId);
+		let vestingScheduleId = await ICO_CONTRACT?.getVestingId();
+		console.log(`vestingScheduleId: ` + vestingScheduleId);
+		setVestingScheduleCurrentId(vestingScheduleId);
 
 	}
 
@@ -1230,11 +1231,21 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
-	// ******************************************* Vesting *******************************************
+	// ************************************* Vesting Schedules ***************************************
 	// ***********************************************************************************************
 	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
 	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
 
+	const [VESTING_SCHEDULE_ID, setVestingScheduleId] = useState<string>('');
+	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
+	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
+
+
+
+
+	// ***********************************************************************************************
+	// ************************************ Vesting Programs *****************************************
+	// ***********************************************************************************************
 	const [VESTING_IDS, setVestingIds] = useState([]);
 
 	const [VESTING_ID, setVestingId] = useState<string>('');
@@ -1242,27 +1253,68 @@ const Home: NextPage = () => {
 	const [VESTING_CLIFF, setVestingCliff] = useState<number>(0);
 	const [VESTING_DURATION, setVestingDuration] = useState<number>(0);
 	const [VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
-	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 
   const handleVestingStartChange = (e: ChangeEvent<HTMLInputElement>) => {
     setVestingStart(e.target.value);
   };
 
-	async function createVesting() {
-		// createICO
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
-		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
-		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
-		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
-		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
-		console.log(`VESTING_ID: ` + VESTING_ID);
-		await VESTING_CONTRACT?.createVesting( Date.parse(VESTING_START) + '_' + VESTING_CLIFF + '_' + VESTING_DURATION + '_' + VESTING_NUM_SLIDES, Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
-			.then(processCreateVesting).catch(handleError);
+	async function setPercentVestedOnSC() {
+		await ICO_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+	}
+	const onSelectCurrentVestingId = async (vestingId: any)=>{
+		console.log('onSelectCurrentVestingId', vestingId);
+
+		//let vesting = await ICO_CONTRACT?.getVesting(vestingId);
+		//console.log('vesting', vesting);
+		setVestingScheduleCurrentId(vestingId);
+		//setVestingCliff(vesting[0]);
+	}
+	const onSelectVestingId = async (vestingId: any)=>{
+		console.log('onSelectVestingId', vestingId);
+
+
+
+		let vesting = await VESTING_CONTRACT?.getVesting(vestingId);
+		console.log('vesting', vesting);
+		console.log('vesting[0])', vesting[0]);
+		console.log('parseInt', parseInt(vesting[0]));
+		var dateFormat = new Date(parseInt(vesting[0]));
+		console.log('dateFormat: ', dateFormat);
+		console.log(dateFormat.toISOString().slice(0, 16));
+
+		setVestingId(vestingId);
+		setVestingStart(dateFormat.toISOString().slice(0, 16));
+		setVestingCliff(vesting[1]);
+		setVestingDuration(vesting[2]);
+		setVestingNumSlides(vesting[3]);
+	}
+	async function cancelVesting() {
+		console.log('cancelPaymentMethod');
+
+		setVestingId('');
+		setVestingStart('');
+		setVestingCliff(0);
+		setVestingDuration(0);
+		setVestingNumSlides(0);
 	}
 
+	async function saveVesting() {
+		// calculate vestingId
+		let vestingId = Date.parse(VESTING_START) + '_' + VESTING_CLIFF + '_' + VESTING_DURATION + '_' + VESTING_NUM_SLIDES;
+		setVestingId(vestingId);
+
+		// saveVesting
+		console.log(`creating vesting: `);
+		console.log(`\nVESTING_ID: ` + vestingId);
+		console.log(`\nVESTING_START: ` + Date.parse(VESTING_START));
+		console.log(`\nVESTING_CLIFF: ` + VESTING_CLIFF);
+		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION);
+		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
+		await VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
+			.then(processCreateVesting).catch(handleError);
+
+		cancelVesting();
+	}
 	async function processCreateVesting(receipt: any) {
 		console.log(receipt);
 	
@@ -1283,12 +1335,13 @@ const Home: NextPage = () => {
 		handleICOReceipt(receipt);
 	}
 
-	const onSelectVestingId = async (vestingId: any)=>{
-		setVestingId(vestingId);
-	}
+	async function deleteVesting() {
+		console.log('deletVesting', VESTING_ID);
 
-	async function setPercentVestedOnSC() {
-		await ICO_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		//await VESTING_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+
+		populateICOContractData();
+		cancelPaymentMethod();
 	}
 
 	// ***********************************************************************************************
@@ -1393,7 +1446,7 @@ const Home: NextPage = () => {
 				<Row>
 					<Col>
 						<Dropdown onSelect={onSwitchNetwork}>
-							<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 								{METAMASK_CHAIN_NAME}
 							</Dropdown.Toggle>
 
@@ -1494,7 +1547,7 @@ const Home: NextPage = () => {
 												<Row>
 													<Col>
 														<Dropdown onSelect={onSelectToInvestCurrency}>
-															<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+															<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 																{TO_INVEST_CURRENCY}
 															</Dropdown.Toggle>
 
@@ -1529,7 +1582,7 @@ const Home: NextPage = () => {
 												<Row>
 													<Col xs={3}>
 														<Dropdown onSelect={onSelectToRefundCurrency}>
-															<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+															<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 																{TO_REFUND_CURRENCY}
 															</Dropdown.Toggle>
 
@@ -1593,7 +1646,7 @@ const Home: NextPage = () => {
 												<Row>
 													<Col xs={3}>
 														<Dropdown onSelect={onSelectToTransferCurrency}>
-															<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+															<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 																{TO_TRANSFER_CURRENCY}
 															</Dropdown.Toggle>
 
@@ -1731,7 +1784,7 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col>
-											<Dropdown onSelect={onSelectVestingId}>
+											<Dropdown onSelect={onSelectCurrentVestingId}>
 												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 													{VESTING_ID}
 												</Dropdown.Toggle>
@@ -1739,7 +1792,7 @@ const Home: NextPage = () => {
 												<Dropdown.Menu className="w-100">
 													{VESTING_IDS?.map(vestingId => {
 														return (
-															<Dropdown.Item as="button" key={vestingId} eventKey={vestingId} active={VESTING_ID == vestingId + ''}>
+															<Dropdown.Item as="button" key={vestingId} eventKey={vestingId} active={VESTING_SCHEDULE_CURRENT_ID == vestingId + ''}>
 																{vestingId + ''}
 															</Dropdown.Item>
 														);
@@ -1899,7 +1952,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<Dropdown onSelect={onSelectPaymentMethod}>
-												<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 													{ ICO_PAYMENT_SYMBOL_SYMBOL }
 												</Dropdown.Toggle>
 
@@ -1915,6 +1968,22 @@ const Home: NextPage = () => {
 											</Dropdown>
 										</Col>
 									</Row>
+									
+									{/*
+									<Row>
+										<Col>
+											<ListGroup onSelect={onSelectPaymentMethod}>
+													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<ListGroup.Item as="button" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</ListGroup.Item>
+														);
+													})}
+											</ListGroup>
+										</Col>
+									</Row>
+									*/}
 
 									<Row className="mb-3"></Row>
 									<Row>
@@ -2159,7 +2228,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col xs={3}>
 											<Dropdown onSelect={onSelectToRefundAllCurrency}>
-												<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 													{TO_REFUND_ALL_CURRENCY}
 												</Dropdown.Toggle>
 
@@ -2231,7 +2300,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col xs={3}>
 											<Dropdown onSelect={onSelectToWitdrawCurrency}>
-												<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 													{WITHDRAW_CURRENCY}
 												</Dropdown.Toggle>
 
@@ -2270,62 +2339,76 @@ const Home: NextPage = () => {
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
-							<Tab eventKey="ves_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey p-3">
-
+							<Tab eventKey="ves_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 								<Row className="mb-3"></Row>
+
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting</div></div></Col>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Programs</div></div></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onSelectVestingId}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{ VESTING_ID }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{VESTING_IDS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={VESTING_ID == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Id</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg color-frame border-0" value={VESTING_START ? Date.parse(VESTING_START) + '_' + VESTING_CLIFF + '_' + VESTING_DURATION + '_' + VESTING_NUM_SLIDES : ''} disabled={true}></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" value={VESTING_ID} disabled={true}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Start</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-									</Row>
-									<Row>
 										<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
 									</Row>
 									<Row>
+										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF} onChange={(event) => setVestingCliff(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-									</Row>
-									<Row>
 										<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
 									</Row>
 									<Row>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => createVesting()}> {KEY_ICON()}Create Vesting</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => cancelVesting()}> {KEY_ICON()}Cancel</Button></Col>
 									</Row>
 
 								</Form.Group>
 
 							</Tab>
 
-							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey p-3">
+							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
 							</Tab>
 
-							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey p-3">
+							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey">
 
 
 							</Tab>
 
-							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey p-3">
+							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
 							</Tab>
 
 						</Tabs>
@@ -2626,7 +2709,7 @@ const Home: NextPage = () => {
 											<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setToTransferAmount(event.target.value) } value={TO_TRANSFER_AMOUNT}></input></Col>
 											<Col xs={6}>
 												<Dropdown onSelect={onSelectToTransferCurrency}>
-													<Dropdown.Toggle id="dropdown-header" className="btn-lg bg-yellow text-black-50 w-100">
+													<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 														{TO_TRANSFER_CURRENCY}
 													</Dropdown.Toggle>
 
