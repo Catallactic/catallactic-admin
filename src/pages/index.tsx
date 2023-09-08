@@ -609,18 +609,18 @@ const Home: NextPage = () => {
 
 	async function setICOHardCapOnSC() {
 		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await ICO_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP).then(await handleICOReceipt).catch(handleError);
+		await ICO_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setICOSoftCapOnSC() {
 		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await ICO_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP).then(await handleICOReceipt).catch(handleError);
+		await ICO_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setICOSPriceOnSC() {
 		console.log(`ICO_PRICE: ` + ICO_PRICE);
 		await ICO_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
 	}
 
-	// ICO Ownr
+	// ICO Owner
 	async function setNewICOOwner() {
 		await ICO_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await handleICOReceipt).catch(handleError);
 	}
@@ -761,6 +761,10 @@ const Home: NextPage = () => {
 		}*/
 
 		// vesting
+		let vestingAddress = await ICO_CONTRACT?.getVestingAddress();
+		console.log("vestingAddress: " + vestingAddress);
+		setVestingAddress(vestingAddress);
+
 		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
 		console.log(`vestingIds: ` + vestingIds);
 		setVestingIds(vestingIds);
@@ -1146,15 +1150,15 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ********************************************* Claim *******************************************
 	// ***********************************************************************************************
-	const [ICO_ALLOWANCE_REQUIRED, setAllowanceRequired] = useState<BigInt>(BigInt(0))
-	const [ICO_ALLOWANCE_APPROVED, setAllowanceApproved] = useState<BigInt>(BigInt(0))
+	//const [ICO_ALLOWANCE_REQUIRED, setAllowanceRequired] = useState<BigInt>(BigInt(0))
+	//const [ICO_ALLOWANCE_APPROVED, setAllowanceApproved] = useState<BigInt>(BigInt(0))
 
-	async function approveAllowanceToICO() {
+	/*async function approveAllowanceToICO() {
 		// approve ico allowance on token
 	  console.log(`TOKEN_CONTRACT: ` + TOKEN_CONTRACT);
 	  console.log(`allowance being approved: ` + ICO_ALLOWANCE_REQUIRED);
 		await TOKEN_CONTRACT?.approve(ICO_CONTRACT?.address, ICO_ALLOWANCE_REQUIRED)
-	}
+	}*/
 	async function claim() {
 		await ICO_CONTRACT?.claim().then(processClaimSuccess).catch(handleError);
 	}
@@ -1183,7 +1187,7 @@ const Home: NextPage = () => {
 		handleICOReceipt(receipt);
 	}
 
-	async function setGasClickToken() {
+	async function setTokenAddressOnSC() {
 		console.log(`setting token address: ` + TOKEN_ADDRESS);
 		await ICO_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
@@ -1234,13 +1238,17 @@ const Home: NextPage = () => {
 	// ************************************* Vesting Schedules ***************************************
 	// ***********************************************************************************************
 	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
+	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
 	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
 
 	const [VESTING_SCHEDULE_ID, setVestingScheduleId] = useState<string>('');
 	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
 
-
+	async function setVestingTokenOnSC() {
+		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
+		await ICO_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
 
 
 	// ***********************************************************************************************
@@ -1709,11 +1717,11 @@ const Home: NextPage = () => {
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Main Features</div></div></Col>
 									</Row>
 									<Row>
-										<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
@@ -1723,11 +1731,11 @@ const Home: NextPage = () => {
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 									</Row>
 									<Row>
-										<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
 									</Row>
 								</Form.Group>
 
@@ -2175,18 +2183,30 @@ const Home: NextPage = () => {
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20 to Investors</div></div></Col>
 									</Row>
+
 									<Row>
 										<Col><div><Form.Text className="color-frame">Enter Token</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setGasClickToken}> {KEY_ICON()} Update</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 									</Row>
 									<Row className="mb-3"></Row>
 
+									<Row>
+										<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+
+{/*
 									<Row>
 										<Col><div><Form.Text className="color-frame">Allowance to ICO Required</Form.Text></div></Col>
 										<Col><div><Form.Text className="color-frame">Allowance to ICO Approved</Form.Text></div></Col>
@@ -2197,6 +2217,7 @@ const Home: NextPage = () => {
 										<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={Number(ICO_ALLOWANCE_APPROVED.toString()) / 10**18} ></input></Col>
 										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={approveAllowanceToICO}> {KEY_ICON()} Approve</Button></Col>
 									</Row>
+*/}
 
 									<Row className="mb-3"></Row>
 									<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
@@ -2550,6 +2571,7 @@ hi
 
 							<Tab eventKey="tok_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
 
+								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Token</div></div></Col>
