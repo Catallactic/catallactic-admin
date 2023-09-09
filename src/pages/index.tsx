@@ -742,24 +742,6 @@ const Home: NextPage = () => {
 		console.log("dynamicPrice: " + dynamicPrice);
 		setDynamicPrice(dynamicPrice);
 
-		// allowances
-		/*const uUSDAllowance = await ICO_CONTRACT?.getTotaluUSDInvested();
-		console.log(`usd to approve: ` + uUSDAllowance);
-
-		let num2 = BigInt((uUSDAllowance * 10**18).toLocaleString('fullwide', {useGrouping:false}));
-		console.log(`cygas to approve num2: ` + num2);
-		if (price > 0) {
-			let num3  = num2 / BigInt(price);
-			console.log(`cygas to approve num3: ` + num3);
-			setAllowanceRequired(num3);
-		
-			console.log("ICO_OWNER: " + ICO_OWNER);
-			console.log("ICO_CONTRACT?.address: " + ICO_CONTRACT?.address);
-			let allowanceApproved: BigInt = await tokenContract.allowance(icoOwner, ICO_CONTRACT?.address);
-			console.log(`allowanceApproved: ` + allowanceApproved);
-			setAllowanceApproved(allowanceApproved);
-		}*/
-
 		// vesting
 		let vestingAddress = await ICO_CONTRACT?.getVestingAddress();
 		console.log("vestingAddress: " + vestingAddress);
@@ -1150,15 +1132,16 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ********************************************* Claim *******************************************
 	// ***********************************************************************************************
-	//const [ICO_ALLOWANCE_REQUIRED, setAllowanceRequired] = useState<BigInt>(BigInt(0))
-	//const [ICO_ALLOWANCE_APPROVED, setAllowanceApproved] = useState<BigInt>(BigInt(0))
 
-	/*async function approveAllowanceToICO() {
-		// approve ico allowance on token
-	  console.log(`TOKEN_CONTRACT: ` + TOKEN_CONTRACT);
-	  console.log(`allowance being approved: ` + ICO_ALLOWANCE_REQUIRED);
-		await TOKEN_CONTRACT?.approve(ICO_CONTRACT?.address, ICO_ALLOWANCE_REQUIRED)
-	}*/
+	// transferClaimableAmountToICO
+	async function transferClaimableAmountToICO() {
+		console.log(`ICO CATokens Required: ` + ICO_TOTAL_uUSD_INVESTED / ICO_PRICE);
+	  console.log(`ICO CATokens Current: ` + BALANCES_ERC_20_ICO_WALLET);
+		let amountRequiredCATokens = BigInt(ICO_TOTAL_uUSD_INVESTED * 10**18 / ICO_PRICE);
+		let amountCurrentCATokens = BigInt(BALANCES_ERC_20_ICO_WALLET) * BigInt(10**18);
+	  console.log(`amountToTransferCATokensWithDecimals: ` + (amountRequiredCATokens - amountCurrentCATokens));
+		await TOKEN_CONTRACT?.transfer(ICO_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
+	}
 	async function claim() {
 		await ICO_CONTRACT?.claim().then(processClaimSuccess).catch(handleError);
 	}
@@ -1233,23 +1216,6 @@ const Home: NextPage = () => {
 	async function setTargetWalletAddress() {
 		await ICO_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
-
-	// ***********************************************************************************************
-	// ************************************* Vesting Schedules ***************************************
-	// ***********************************************************************************************
-	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
-	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
-	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
-
-	const [VESTING_SCHEDULE_ID, setVestingScheduleId] = useState<string>('');
-	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
-	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
-
-	async function setVestingTokenOnSC() {
-		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
-		await ICO_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
-	}
-
 
 	// ***********************************************************************************************
 	// ************************************ Vesting Programs *****************************************
@@ -1350,6 +1316,65 @@ const Home: NextPage = () => {
 
 		populateICOContractData();
 		cancelPaymentMethod();
+	}
+
+	// ***********************************************************************************************
+	// ************************************* Vesting Schedules ***************************************
+	// ***********************************************************************************************
+	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
+	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
+	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
+
+	const [VESTING_SCHEDULE_LIST, setVestingScheduleList] = useState<[]>()
+	const [VESTING_SCHEDULE_ID, setVestingScheduleId] = useState<string>('');
+	const [VESTING_SCHEDULE_PROGRAM_ID, setVestingScheduleProgramId] = useState<string>('');
+	const [VESTING_SCHEDULE_HOLDER, setVestingScheduleHolder] = useState<string>('');
+	const [VESTING_SCHEDULE_AMOUNT, setVestingScheduleAmount] = useState<number>(0);
+	const [VESTING_SCHEDULE_RELEASED_AMOUNT, setVestingScheduleReleasedAmount] = useState<number>(0);
+
+	async function loadVestingScheduleList() {
+		let vestingScheduleList = await VESTING_CONTRACT?.getVestingSchedulesIds();
+		console.log(`VESTING_SCHEDULE_LIST: ` + vestingScheduleList);
+		setVestingScheduleList(vestingScheduleList);
+	}
+
+	const onSelectVestingSchedule = async (vestingScheduleId: any)=>{
+		console.log('onSelectVestingSchedule', vestingScheduleId);
+
+		let vestingSchedule = await VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
+		console.log('vestingSchedule', vestingSchedule);
+
+		setVestingScheduleId(vestingScheduleId);
+		setVestingScheduleHolder(vestingSchedule[0]);
+		setVestingScheduleAmount(vestingSchedule[1]);
+		setVestingScheduleProgramId(vestingSchedule[2]);
+		setVestingScheduleReleasedAmount(vestingSchedule[3]);
+	}
+
+	async function computeVesting() {
+		console.log('computeVesting', VESTING_SCHEDULE_ID);
+		let releseableAmount = await VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
+		console.log('releseableAmount', releseableAmount);
+		setVestingScheduleReleasedAmount(releseableAmount);
+	}
+
+	async function releaseVesting() {
+		console.log('releaseVesting', VESTING_SCHEDULE_ID);
+		await VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
+	}
+
+	const [VESTING_GRANTOR, setVestinGrantor] = useState<string>('');
+	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
+	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
+
+	async function setVestinGrantorOnSC() {
+		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
+		await VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function setVestingTokenOnSC() {
+		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
+		await ICO_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************
@@ -1615,6 +1640,8 @@ const Home: NextPage = () => {
 												<Row>
 													<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20</div></div></Col>
 												</Row>
+
+												<Row className="mb-3"></Row>
 												<Row>
 													<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => claim()}>Claim</Button></Col>
 												</Row>
@@ -1692,7 +1719,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="ico" title="ICO" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ico_ops" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true}>
 
 							<Tab eventKey="ico_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
@@ -1705,21 +1732,21 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE != 0 ? ICO_PRICE : ''} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_SOFT_CAP} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_SOFT_CAP != 0 ? ICO_SOFT_CAP : ''} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP != 0 ? ICO_HARD_CAP : ''} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
 									</Row>
 								</Form.Group>
@@ -1733,28 +1760,28 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Minimum Transfer (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER / 10**6} onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER != 0 ? ICO_MIN_TRANSFER / 10**6 : ''}  onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Maximum Transfer (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER / 10**6} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER != 0 ? ICO_MAX_TRANSFER / 10**6 : ''} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Maximum Investment (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT / 10**6} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT != 0 ? ICO_MAX_INVESTMENT / 10**6 : ''} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD != 0 ? ICO_WHITELIST_THRESHOLD : ''} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
 									</Row>
 								</Form.Group>
@@ -1768,7 +1795,7 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Vested Percentage</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_SCHEDULE_PERCENTAGE} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_SCHEDULE_PERCENTAGE != 0 ? VESTING_SCHEDULE_PERCENTAGE : ''} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
 										{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
 									</Row>
 									<Row>
@@ -2048,6 +2075,148 @@ const Home: NextPage = () => {
 
 							</Tab>
 
+							<Tab eventKey="ico_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><Form.Text className="">Current ICO Stage</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="text" className="form-control form-control-lg color-frame text-center border-0" value={ICO_CURRENT_STAGE_TEXT} disabled={true}></input></Col>
+										{ICO_CURRENT_STAGE == STAGE.NOT_STARTED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} START </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONHOLD)}> {KEY_ICON()} HOLD </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONHOLD || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} CONTINUE </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.FINISHED)}> {KEY_ICON()} FINISH </Button></Col> : "" }
+										{ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => reset()}> {KEY_ICON()} RESET </Button></Col> : "" }
+									</Row>
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refunds</div></div></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={3}>
+											<Dropdown onSelect={onSelectToRefundAllCurrency}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{TO_REFUND_ALL_CURRENCY}
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={TO_REFUND_ALL_CURRENCY == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT ? Number(TO_REFUND_ALL_AMOUNT) /  10**Number(ICO_PAYMENT_METHODS[TO_REFUND_ALL_CURRENCY!][3]) : 0} ></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT_USD ? Number(TO_REFUND_ALL_AMOUNT_USD) / 10**6 : 0} ></input></Col>
+										<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
+									</Row>
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20 to Investors</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">ICO CATokens Required</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">ICO CATokens Current</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } ></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Enter Token</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw to Wallets</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_TARGET_ADDRESS} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Available</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">% To Withdraw</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">To Withdraw</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={3}>
+											<Dropdown onSelect={onSelectToWitdrawCurrency}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{WITHDRAW_CURRENCY}
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={WITHDRAW_CURRENCY == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3]) : 0} disabled={true}></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
+										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? (Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3])) * Number(WITHDRAW_PERCENTAGE) / 100 : 0} disabled={true}></input></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
+									</Row>
+								</Form.Group>
+								
+							</Tab>
+
 							<Tab eventKey="ico_inv" title="INVESTORS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
 
 								<Row className="mb-3"></Row>
@@ -2126,151 +2295,6 @@ const Home: NextPage = () => {
 
 								</Form.Group>
 
-							</Tab>
-
-							<Tab eventKey="ico_ops" title="OPERATIONS" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><Form.Text className="">Current ICO Stage</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input type="text" className="form-control form-control-lg color-frame text-center border-0" value={ICO_CURRENT_STAGE_TEXT} disabled={true}></input></Col>
-										{ICO_CURRENT_STAGE == STAGE.NOT_STARTED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} START </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONHOLD)}> {KEY_ICON()} HOLD </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == STAGE.ONHOLD || ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.ONGOING)}> {KEY_ICON()} CONTINUE </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setCrowdsaleStage(STAGE.FINISHED)}> {KEY_ICON()} FINISH </Button></Col> : "" }
-										{ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => reset()}> {KEY_ICON()} RESET </Button></Col> : "" }
-									</Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refunds</div></div></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={3}>
-											<Dropdown onSelect={onSelectToRefundAllCurrency}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-													{TO_REFUND_ALL_CURRENCY}
-												</Dropdown.Toggle>
-
-												<Dropdown.Menu className="w-100">
-													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-														return (
-															<Dropdown.Item as="button" key={index} eventKey={item} active={TO_REFUND_ALL_CURRENCY == item}>
-																{item}
-															</Dropdown.Item>
-														);
-													})}
-												</Dropdown.Menu>
-											</Dropdown>
-										</Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT ? Number(TO_REFUND_ALL_AMOUNT) /  10**Number(ICO_PAYMENT_METHODS[TO_REFUND_ALL_CURRENCY!][3]) : 0} ></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT_USD ? Number(TO_REFUND_ALL_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-										<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
-									</Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20 to Investors</div></div></Col>
-									</Row>
-
-									<Row>
-										<Col><div><Form.Text className="color-frame">Enter Token</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-
-									<Row>
-										<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-
-{/*
-									<Row>
-										<Col><div><Form.Text className="color-frame">Allowance to ICO Required</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame">Allowance to ICO Approved</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={Number(ICO_ALLOWANCE_REQUIRED.toString()) / 10**18} ></input></Col>
-										<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={Number(ICO_ALLOWANCE_APPROVED.toString()) / 10**18} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={approveAllowanceToICO}> {KEY_ICON()} Approve</Button></Col>
-									</Row>
-*/}
-
-									<Row className="mb-3"></Row>
-									<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw to Wallets</div></div></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_TARGET_ADDRESS} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Available</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">% To Withdraw</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">To Withdraw</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={3}>
-											<Dropdown onSelect={onSelectToWitdrawCurrency}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-													{WITHDRAW_CURRENCY}
-												</Dropdown.Toggle>
-
-												<Dropdown.Menu className="w-100">
-													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-														return (
-															<Dropdown.Item as="button" key={index} eventKey={item} active={WITHDRAW_CURRENCY == item}>
-																{item}
-															</Dropdown.Item>
-														);
-													})}
-												</Dropdown.Menu>
-											</Dropdown>
-										</Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3]) : 0} disabled={true}></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-										<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? (Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3])) * Number(WITHDRAW_PERCENTAGE) / 100 : 0} disabled={true}></input></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
-									</Row>
-								</Form.Group>
-
-								
 							</Tab>
 
 							<Tab eventKey="ico_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
@@ -2397,16 +2421,16 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF} onChange={(event) => setVestingCliff(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START != '0' ? VESTING_START : ''} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF != 0 ? VESTING_CLIFF : ''} onChange={(event) => setVestingCliff(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
 										<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION != 0 ? VESTING_DURATION : ''} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES != 0 ? VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
@@ -2418,14 +2442,104 @@ const Home: NextPage = () => {
 
 								</Form.Group>
 
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Grantor</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Account</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
+									</Row>
+
+								</Form.Group>
+
+							</Tab>
+
+							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Schedules</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">List of Vesting Schedules</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onSelectVestingSchedule}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{ VESTING_SCHEDULE_ID }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{VESTING_SCHEDULE_LIST?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={VESTING_SCHEDULE_ID == item}>
+																{item + ''}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+										<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={loadVestingScheduleList}>Load</Button></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">Holder</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_HOLDER} ></input></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">Vesting Schedule Id</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Vesting Id</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_ID ? VESTING_SCHEDULE_ID : '' }></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_PROGRAM_ID ? VESTING_SCHEDULE_PROGRAM_ID : '' } dir="rtl" ></input></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">Total Amount</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Released Amount</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_AMOUNT ? VESTING_SCHEDULE_AMOUNT : '' }></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_RELEASED_AMOUNT ? VESTING_SCHEDULE_RELEASED_AMOUNT : '' } dir="rtl" ></input></Col>
+									</Row>
+
+									<Row>
+										<Col xs={6}><div><Form.Text className="color-frame">Releseable Amount</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={6}><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={ VESTING_SCHEDULE_RELEASED_AMOUNT } ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => computeVesting()}>Compute</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => releaseVesting()}>Release</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+
+								</Form.Group>
+
 							</Tab>
 
 							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey">
 
 
-							</Tab>
-
-							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
 							</Tab>
 
 							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
