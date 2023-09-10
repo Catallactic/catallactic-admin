@@ -1,7 +1,8 @@
 // src/pages/index.tsx
-import type { NextPage } from 'next'
-import { useState, useEffect, ChangeEvent } from "react";
 import {Contract, ethers} from "ethers"
+
+import { useState, useEffect, ChangeEvent } from "react";
+import type { NextPage } from 'next'
 
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -76,6 +77,7 @@ const Home: NextPage = () => {
   const [METAMASK_SIGNER, setMetamaskSigner] = useState<any | undefined>()
   const [METAMASK_CHAIN_ID, setChainId] = useState<number | undefined>()
 	const [METAMASK_CHAIN_NAME, setChainName] = useState<string | undefined>()
+	const [METAMASK_CHAIN_TIME_IN_MS, setChainTimeInMs] = useState<number>(0);
 
   // openMetamaskInstall
   const openMetamaskInstall = () => {
@@ -639,8 +641,11 @@ const Home: NextPage = () => {
 	// click purchase
 	async function populateICOContractData() {
 		console.log("populateICOContractData");
-
     const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const blockTimestamp = (await provider.getBlock("latest")).timestamp;
+		console.log('blockTimestamp: ', blockTimestamp);
+		setChainTimeInMs(blockTimestamp * 1000) ;
+
 		let icoBalance = await provider.getBalance(ICO_CONTRACT?.address!);
 		console.log("icoBalance: " + icoBalance);
 		setICOBalance(icoBalance + '');
@@ -1349,6 +1354,14 @@ const Home: NextPage = () => {
 		setVestingScheduleAmount(vestingSchedule[1]);
 		setVestingScheduleProgramId(vestingSchedule[2]);
 		setVestingScheduleReleasedAmount(vestingSchedule[3]);
+	}
+
+	async function increaseTime(ms: number) {
+		const provider = new ethers.providers.JsonRpcProvider();
+		const nowInChainBefore = (await provider.getBlock("latest")).timestamp;
+		console.log('nowInChainBefore: ', nowInChainBefore);
+		await provider.send('evm_mine', [ nowInChainBefore + ms ]);
+		setChainTimeInMs((await provider.getBlock("latest")).timestamp * 1000);
 	}
 
 	async function computeVesting() {
@@ -2465,6 +2478,32 @@ const Home: NextPage = () => {
 							</Tab>
 
 							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
+
+							<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Time</div></div></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Current Chain Time</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame border-0 text-center" disabled={ true } value={new Date(METAMASK_CHAIN_TIME_IN_MS).toLocaleString()} ></input></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60)}>+HOUR</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*1)}>+DAY</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
+									</Row>
+
+								</Form.Group>
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
