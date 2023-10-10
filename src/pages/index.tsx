@@ -139,6 +139,10 @@ const Home: NextPage = () => {
 		const ico: Contract = new ethers.Contract(ico_address, CFG_ICO_ABI, signer);
 		setICOContract(ico);
 
+		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.factory_address || '';
+		const factory: Contract = new ethers.Contract(factory_address, CFG_FACTORY_ABI, signer);
+		setFactoryContract(factory);
+
 		const vesting: Contract = new ethers.Contract(ico_address, CFG_VESTING_ABI, signer);
 		setVestingContract(vesting);
 	}, [METAMASK_CHAIN_ID]);
@@ -191,7 +195,7 @@ const Home: NextPage = () => {
 	const onFactorySelectPaymentMethod = async (symbol: any)=>{
 		console.log('selectPaymentMethod', symbol);
 
-		let paymentMethod = await ICO_CONTRACT?.getPaymentToken(symbol);
+		let paymentMethod = await FACTORY_CONTRACT?.getPaymentToken(symbol);
 		console.log('paymentMethod', paymentMethod);
 		setFactoryPaymentSymbolSymbol(symbol);
 		setFactoryPaymentSymbolAddress(paymentMethod[0]);
@@ -200,7 +204,7 @@ const Home: NextPage = () => {
 		setFactoryPaymentSymbolDecimals(paymentMethod[3]);
 
 		try {
-			let dynPrice = await ICO_CONTRACT?.getUusdPerToken(symbol);
+			let dynPrice = await FACTORY_CONTRACT?.getUusdPerToken(symbol);
 			console.log('dynPrice' + dynPrice);
 			setFactoryPaymentSymbolDynPrice(dynPrice);
 		} catch (error) {
@@ -221,7 +225,7 @@ const Home: NextPage = () => {
 	async function saveFactoryPaymentMethod() {
 		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		await ICO_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
+		await FACTORY_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
 
 		cancelFactoryPaymentMethod();
 	}
@@ -229,7 +233,7 @@ const Home: NextPage = () => {
 	async function deleteFactoryPaymentMethod() {
 		console.log('deleteFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		await ICO_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
+		await FACTORY_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
 
 		populateICOContractData();
 		cancelICOPaymentMethod();
@@ -237,7 +241,7 @@ const Home: NextPage = () => {
 
 	async function loadFactoryPaymentMethod() {
 		// get read only - payment methods
-		let paymentSymbols = await ICO_CONTRACT?.getPaymentSymbols();
+		let paymentSymbols = await FACTORY_CONTRACT?.getPaymentSymbols();
 		setFactoryPaymentSymbols(paymentSymbols);
 		console.log("paymentSymbols: " + paymentSymbols);
 		console.log(paymentSymbols);
@@ -245,14 +249,14 @@ const Home: NextPage = () => {
 		const map: MapType = {};
 		for (var i = 0; i < paymentSymbols.length; i++) {
 			console.log("paymentSymbol: " + paymentSymbols[i]);
-			let method = await ICO_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			let method = await FACTORY_CONTRACT?.getPaymentToken(paymentSymbols[i]);
 			console.log("getPaymentTokenData: " + method);
 			console.log(method);
 			map[paymentSymbols[i]] = method;
 		}
 		console.log(map);
-		console.log("ICO_PAYMENT_METHODS: " + map);
-		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
+		console.log("FACTORY_PAYMENT_METHODS: " + map);
+		//console.log("FACTORY_PAYMENT_METHODS44: " + map['USDT'][4]);
 		setFactoryPaymentMethods(map);
 	}
 
@@ -264,8 +268,8 @@ const Home: NextPage = () => {
 	const [METAMASK_CURRENT_ACCOUNT_BALANCE, setBalance] = useState<string | undefined>()
 
   // click connect
-  const onClickConnect = () => {
-    console.log("onClickConnect")
+  const onConnectToProvider = () => {
+    console.log("onConnectToProvider")
 
     // we can do it using ethers.js
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -298,6 +302,8 @@ const Home: NextPage = () => {
     provider.getBalance(METAMASK_CURRENT_ACCOUNT).then((result)=>{
       setBalance(ethers.utils.formatEther(result))
 		}).catch((e)=>console.log(e))
+
+		loadFactoryPaymentMethod();
 
 		window.ethereum.on('accountsChanged', (accounts: any) => {
 			// Handle the new accounts, or lack thereof "accounts" will always be an array, but it can be empty.
@@ -1584,7 +1590,7 @@ const Home: NextPage = () => {
 				<Row>
 					{METAMASK_INSTALLED ?
 					<Col>
-						{METAMASK_CURRENT_ACCOUNT ? <Button className="w-100 bg-button-disconnect p-2 fw-bold" onClick={onClickDisconnect}>Disconnect From Metamask</Button> : <Button className="w-100 bg-button-connect p-2 fw-bold" onClick={onClickConnect}>Connect to MetaMask</Button>}
+						{METAMASK_CURRENT_ACCOUNT ? <Button className="w-100 bg-button-disconnect p-2 fw-bold" onClick={onClickDisconnect}>Disconnect From Metamask</Button> : <Button className="w-100 bg-button-connect p-2 fw-bold" onClick={onConnectToProvider}>Connect to MetaMask</Button>}
 					</Col>
 					: 
 					<Col>
