@@ -135,7 +135,7 @@ input[type=number]::-webkit-outer-spin-button {
 	margin-inline-start: auto;
 	-webkit-margin-end: auto;
 	margin-inline-end: auto;
-	max-width: 768px;
+	max-width: 1000px;
 	-webkit-padding-start: 1rem;
 	padding-inline-start: 1rem;
 	-webkit-padding-end: 1rem;

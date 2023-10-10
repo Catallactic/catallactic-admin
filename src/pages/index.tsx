@@ -95,14 +95,17 @@ const Home: NextPage = () => {
 	}
 
 	useEffect(() => {
+		console.log('useEffect1');
 		console.log("MetaMask installed " + window.ethereum !== undefined);
 		setMetamaskInstalled(window.ethereum !== undefined);
 	}, [METAMASK_CHAIN_ID]);
 
 	// ***********************************************************************************************
 	// ************************************** Metamask Network ***************************************
+	// ************************************ (On Connect Metamask) ************************************
 	// ***********************************************************************************************
 	useEffect(() => {
+		console.log('useEffect2');
 		console.log('METAMASK_INSTALLED', METAMASK_INSTALLED);
 		console.log('METAMASK_INSTALLED', getMETAMASK_CHAINS());
 		if(!METAMASK_INSTALLED) {
@@ -128,6 +131,7 @@ const Home: NextPage = () => {
 	},[METAMASK_INSTALLED])
 
 	useEffect(() => {
+		console.log('useEffect3');
 		console.log('METAMASK_CHAIN_ID', METAMASK_CHAIN_ID);
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner();
@@ -167,7 +171,94 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
+	// ************************************* CryptocommoditiesFactory ********************************
+	// ***********************************************************************************************
+	const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
+	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
+
+	// ***********************************************************************************************
+	// ********************************* Factory Payments Tokens *************************************
+	// ***********************************************************************************************
+	const [FACTORY_PAYMENT_SYMBOLS, setFactoryPaymentSymbols] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_METHODS, setFactoryPaymentMethods] = useState<MapType>({})
+	const [FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_SYMBOL_PRICE, setFactoryPaymentSymbolPrice] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_SYMBOL_REF, setFactoryPaymentSymbolRef] = useState<any | undefined>()
+	const [FACTORY_PAYMENT_SYMBOL_DYN_PRICE, setFactoryPaymentSymbolDynPrice] = useState<any | undefined>()
+
+	const onFactorySelectPaymentMethod = async (symbol: any)=>{
+		console.log('selectPaymentMethod', symbol);
+
+		let paymentMethod = await ICO_CONTRACT?.getPaymentToken(symbol);
+		console.log('paymentMethod', paymentMethod);
+		setFactoryPaymentSymbolSymbol(symbol);
+		setFactoryPaymentSymbolAddress(paymentMethod[0]);
+		setFactoryPaymentSymbolRef(paymentMethod[1]);
+		setFactoryPaymentSymbolPrice(paymentMethod[2]);
+		setFactoryPaymentSymbolDecimals(paymentMethod[3]);
+
+		try {
+			let dynPrice = await ICO_CONTRACT?.getUusdPerToken(symbol);
+			console.log('dynPrice' + dynPrice);
+			setFactoryPaymentSymbolDynPrice(dynPrice);
+		} catch (error) {
+			console.error(error);
+			setFactoryPaymentSymbolDynPrice(0);
+		}
+
+	}
+	async function cancelFactoryPaymentMethod() {
+		console.log('cancelFactoryPaymentMethod');
+
+		setFactoryPaymentSymbolSymbol(undefined);
+		setFactoryPaymentSymbolAddress(undefined);
+		setFactoryPaymentSymbolRef(undefined);
+		setFactoryPaymentSymbolPrice(undefined);
+		setFactoryPaymentSymbolDecimals(undefined);
+	}
+	async function saveFactoryPaymentMethod() {
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
+
+		await ICO_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
+
+		cancelFactoryPaymentMethod();
+	}
+
+	async function deleteFactoryPaymentMethod() {
+		console.log('deleteFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
+
+		await ICO_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
+
+		populateICOContractData();
+		cancelICOPaymentMethod();
+	}
+
+	async function loadFactoryPaymentMethod() {
+		// get read only - payment methods
+		let paymentSymbols = await ICO_CONTRACT?.getPaymentSymbols();
+		setFactoryPaymentSymbols(paymentSymbols);
+		console.log("paymentSymbols: " + paymentSymbols);
+		console.log(paymentSymbols);
+
+		const map: MapType = {};
+		for (var i = 0; i < paymentSymbols.length; i++) {
+			console.log("paymentSymbol: " + paymentSymbols[i]);
+			let method = await ICO_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			console.log("getPaymentTokenData: " + method);
+			console.log(method);
+			map[paymentSymbols[i]] = method;
+		}
+		console.log(map);
+		console.log("ICO_PAYMENT_METHODS: " + map);
+		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
+		setFactoryPaymentMethods(map);
+	}
+
+	// ***********************************************************************************************
 	// ************************************* Metamask Account ****************************************
+	// ************************************ (On Click Connect) ***************************************
 	// ***********************************************************************************************
   const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 	const [METAMASK_CURRENT_ACCOUNT_BALANCE, setBalance] = useState<string | undefined>()
@@ -198,6 +289,7 @@ const Home: NextPage = () => {
 	}
 
 	useEffect(() => {
+		console.log('useEffect4');
 		console.log('METAMASK_CURRENT_ACCOUNT', METAMASK_CURRENT_ACCOUNT);
 
 		// account balance
@@ -215,70 +307,70 @@ const Home: NextPage = () => {
 	},[METAMASK_CURRENT_ACCOUNT])
 
 	// ***********************************************************************************************
-	// **************************************** Payments Tokens **************************************
+	// ************************************ ICO Payments Tokens **************************************
 	// ***********************************************************************************************
-	const [ICO_PAYMENT_SYMBOLS, setPaymentSymbols] = useState<any | undefined>()
-	const [ICO_PAYMENT_METHODS, setPaymentMethods] = useState<MapType>({})
-	const [ICO_PAYMENT_SYMBOL_SYMBOL, setPaymentSymbolSymbol] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_DECIMALS, setPaymentSymbolDecimals] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_ADDRESS, setPaymentSymbolAddress] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_PRICE, setPaymentSymbolPrice] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_REF, setPaymentSymbolRef] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_DYN_PRICE, setPaymentSymbolDynPrice] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOLS, setICOPaymentSymbols] = useState<any | undefined>()
+	const [ICO_PAYMENT_METHODS, setICOPaymentMethods] = useState<MapType>({})
+	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DECIMALS, setICOPaymentSymbolDecimals] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_ADDRESS, setICOPaymentSymbolAddress] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_PRICE, setICOPaymentSymbolPrice] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_REF, setICOPaymentSymbolRef] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DYN_PRICE, setICOPaymentSymbolDynPrice] = useState<any | undefined>()
 
-	const [ICO_PAYMENT_METHOD_SEARCH_ADDRESS, setPaymentMethodSearchAddress] = useState<string | undefined>()
-	const [ICO_PAYMENT_METHOD_SEARCH_BALANCE, setPaymentMethodSearchBalance] = useState<string | undefined>()
+	const [ICO_PAYMENT_METHOD_SEARCH_ADDRESS, setICOPaymentMethodSearchAddress] = useState<string | undefined>()
+	const [ICO_PAYMENT_METHOD_SEARCH_BALANCE, setICOPaymentMethodSearchBalance] = useState<string | undefined>()
 
-	const onSelectPaymentMethod = async (symbol: any)=>{
+	const onICOSelectPaymentMethod = async (symbol: any)=>{
 		console.log('selectPaymentMethod', symbol);
 
 		let paymentMethod = await ICO_CONTRACT?.getPaymentToken(symbol);
 		console.log('paymentMethod', paymentMethod);
-		setPaymentSymbolSymbol(symbol);
-		setPaymentSymbolAddress(paymentMethod[0]);
-		setPaymentSymbolRef(paymentMethod[1]);
-		setPaymentSymbolPrice(paymentMethod[2]);
-		setPaymentSymbolDecimals(paymentMethod[3]);
+		setICOPaymentSymbolSymbol(symbol);
+		setICOPaymentSymbolAddress(paymentMethod[0]);
+		setICOPaymentSymbolRef(paymentMethod[1]);
+		setICOPaymentSymbolPrice(paymentMethod[2]);
+		setICOPaymentSymbolDecimals(paymentMethod[3]);
 
 		try {
 			let dynPrice = await ICO_CONTRACT?.getUusdPerToken(symbol);
 			console.log('dynPrice' + dynPrice);
-			setPaymentSymbolDynPrice(dynPrice);
+			setICOPaymentSymbolDynPrice(dynPrice);
 		} catch (error) {
 			console.error(error);
-			setPaymentSymbolDynPrice(0);
+			setICOPaymentSymbolDynPrice(0);
 		}
 
 	}
-	async function cancelPaymentMethod() {
-		console.log('cancelPaymentMethod');
+	async function cancelICOPaymentMethod() {
+		console.log('cancelICOPaymentMethod');
 
-		setPaymentSymbolSymbol(undefined);
-		setPaymentSymbolAddress(undefined);
-		setPaymentSymbolRef(undefined);
-		setPaymentSymbolPrice(undefined);
-		setPaymentSymbolDecimals(undefined);
+		setICOPaymentSymbolSymbol(undefined);
+		setICOPaymentSymbolAddress(undefined);
+		setICOPaymentSymbolRef(undefined);
+		setICOPaymentSymbolPrice(undefined);
+		setICOPaymentSymbolDecimals(undefined);
 	}
 
-	async function savePaymentMethod() {
-		console.log('savePaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
+	async function saveICOPaymentMethod() {
+		console.log('saveICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
 
 		await ICO_CONTRACT?.setPaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_DECIMALS);
 
 		populateICOContractData();
-		cancelPaymentMethod();
+		cancelICOPaymentMethod();
 	}
 
-	async function deletePaymentMethod() {
-		console.log('deletePaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
+	async function deleteICOPaymentMethod() {
+		console.log('deleteICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
 
 		await ICO_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
 
 		populateICOContractData();
-		cancelPaymentMethod();
+		cancelICOPaymentMethod();
 	}
 
-	async function getPaymentMethodBalance() {
+	async function getICOPaymentMethodBalance() {
 		console.log('ICO_PAYMENT_METHOD_SEARCH_ADDRESS', ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
 		console.log('ICO_PAYMENT_SYMBOL_ADDRESS', ICO_PAYMENT_SYMBOL_ADDRESS);
 
@@ -290,7 +382,28 @@ const Home: NextPage = () => {
 		console.log('balanceOf4');
 		let balance = await paymentToken.balanceOf(ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
 		console.log(balance);
-		setPaymentMethodSearchBalance(balance);
+		setICOPaymentMethodSearchBalance(balance);
+	}
+
+	async function loadICOPaymentMethod() {
+		// get read only - payment methods
+		let paymentSymbols = await ICO_CONTRACT?.getPaymentSymbols();
+		setICOPaymentSymbols(paymentSymbols);
+		console.log("paymentSymbols: " + paymentSymbols);
+		console.log(paymentSymbols);
+
+		const map: MapType = {};
+		for (var i = 0; i < paymentSymbols.length; i++) {
+			console.log("paymentSymbol: " + paymentSymbols[i]);
+			let method = await ICO_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			console.log("getPaymentTokenData: " + method);
+			console.log(method);
+			map[paymentSymbols[i]] = method;
+		}
+		console.log(map);
+		console.log("ICO_PAYMENT_METHODS: " + map);
+		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
+		setICOPaymentMethods(map);
 	}
 
 	// ***********************************************************************************************
@@ -570,6 +683,30 @@ const Home: NextPage = () => {
 		}
 	}
 
+	async function loadAntiWhale() {
+		// get read only - antiwhale
+		let minTransfer = await ICO_CONTRACT?.getMinUSDTransfer();
+		setMinTransfer(minTransfer * 10**6);
+		let maxTransfer = await ICO_CONTRACT?.getMaxUSDTransfer();
+		setMaxTransfer(maxTransfer * 10**6);
+		let maxInvestment = await ICO_CONTRACT?.getMaxUSDInvestment();
+		setMaxInvestment(maxInvestment * 10**6);
+
+		let whitelistThreshold = await ICO_CONTRACT?.getWhitelistuUSDThreshold();
+		setWhitelistThreshold(whitelistThreshold / 10**6);
+		let whitelisted = await ICO_CONTRACT?.getWhitelisted();
+		setWhitelistUserList(whitelisted);
+		let whitelistUserCount = await ICO_CONTRACT?.getWhitelistUserCount();
+		setWhitelistUserCount(whitelistUserCount);
+
+		let isUseBlackList = await ICO_CONTRACT?.getUseBlacklist();
+		console.log("isUseBlackList: " + isUseBlackList);
+		setIsUseBlacklist(isUseBlackList);
+		let blacklisted = await ICO_CONTRACT?.getBlacklisted();
+		setBlacklistUserList(blacklisted);
+		let blacklistUserCount = await ICO_CONTRACT?.getBlacklistUserCount();
+		setBlacklistUserCount(blacklistUserCount);
+	}
 
 	// ***********************************************************************************************
 	// ******************************************* ICO Contract **************************************
@@ -599,6 +736,7 @@ const Home: NextPage = () => {
 	const [ICO_INVESTORS_LIST, setInvestors] = useState([]);
 
 	useEffect(() => {
+		console.log('useEffect6');
 		console.log('ICO_CONTRACT', ICO_CONTRACT);
 	}, [ICO_CONTRACT]);
 
@@ -695,47 +833,8 @@ const Home: NextPage = () => {
 		setInvestors(investors);
 		console.log("investors: " + investors);
 
-		// get read only - payment methods
-		let paymentSymbols = await ICO_CONTRACT?.getPaymentSymbols();
-		setPaymentSymbols(paymentSymbols);
-		console.log("paymentSymbols: " + paymentSymbols);
-		console.log(paymentSymbols);
-
-		const map: MapType = {};
-		for (var i = 0; i < paymentSymbols.length; i++) {
-			console.log("paymentSymbol: " + paymentSymbols[i]);
-			let method = await ICO_CONTRACT?.getPaymentToken(paymentSymbols[i]);
-			console.log("getPaymentTokenData: " + method);
-			console.log(method);
-			map[paymentSymbols[i]] = method;
-		}
-		console.log(map);
-		console.log("ICO_PAYMENT_METHODS: " + map);
-		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
-		setPaymentMethods(map);
-
-		// get read only - antiwhale
-		let minTransfer = await ICO_CONTRACT?.getMinUSDTransfer();
-		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await ICO_CONTRACT?.getMaxUSDTransfer();
-		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await ICO_CONTRACT?.getMaxUSDInvestment();
-		setMaxInvestment(maxInvestment * 10**6);
-
-		let whitelistThreshold = await ICO_CONTRACT?.getWhitelistuUSDThreshold();
-		setWhitelistThreshold(whitelistThreshold / 10**6);
-		let whitelisted = await ICO_CONTRACT?.getWhitelisted();
-		setWhitelistUserList(whitelisted);
-		let whitelistUserCount = await ICO_CONTRACT?.getWhitelistUserCount();
-		setWhitelistUserCount(whitelistUserCount);
-
-		let isUseBlackList = await ICO_CONTRACT?.getUseBlacklist();
-		console.log("isUseBlackList: " + isUseBlackList);
-		setIsUseBlacklist(isUseBlackList);
-		let blacklisted = await ICO_CONTRACT?.getBlacklisted();
-		setBlacklistUserList(blacklisted);
-		let blacklistUserCount = await ICO_CONTRACT?.getBlacklistUserCount();
-		setBlacklistUserCount(blacklistUserCount);
+		loadICOPaymentMethod();
+		loadAntiWhale();
 
 		// get read only - finalize
 		let withdrawAddress = await ICO_CONTRACT?.getTargetWalletAddress();
@@ -747,22 +846,7 @@ const Home: NextPage = () => {
 		console.log("dynamicPrice: " + dynamicPrice);
 		setDynamicPrice(dynamicPrice);
 
-		// vesting
-		let vestingAddress = await ICO_CONTRACT?.getVestingAddress();
-		console.log("vestingAddress: " + vestingAddress);
-		setVestingAddress(vestingAddress);
-
-		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
-		console.log(`vestingIds: ` + vestingIds);
-		setVestingIds(vestingIds);
-
-		let percentVested = await ICO_CONTRACT?.getPercentVested();
-		console.log(`percentVested: ` + percentVested);
-		setVestingSchedulePercentage(percentVested);
-
-		let vestingScheduleId = await ICO_CONTRACT?.getVestingId();
-		console.log(`vestingScheduleId: ` + vestingScheduleId);
-		setVestingScheduleCurrentId(vestingScheduleId);
+		loadVesting();
 
 	}
 
@@ -792,6 +876,7 @@ const Home: NextPage = () => {
 	}
 
 	useEffect(() => {
+		console.log('useEffect7');
 		console.log("ICO_PAYMENT_SYMBOLS loaded " + ICO_PAYMENT_SYMBOLS);
 		console.log("ICO_PAYMENT_METHODS loaded " + ICO_PAYMENT_METHODS);
 		console.log(ICO_PAYMENT_METHODS);
@@ -934,6 +1019,7 @@ const Home: NextPage = () => {
 	}
 
 	useEffect(() => {
+		console.log('useEffect8');
 		if(!TO_TRANSFER_CURRENCY) return;
 		if(!ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY]) return;
 		console.log('TO_TRANSFER_AMOUNT', TO_TRANSFER_AMOUNT);
@@ -1063,6 +1149,7 @@ const Home: NextPage = () => {
 	}
 
 	useEffect(() => {
+		console.log('useEffect9');
 		if(!TO_INVEST_CURRENCY) return;
 		if(!ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY]) return;
 		console.log('TO_INVEST_AMOUNT', TO_INVEST_AMOUNT);
@@ -1268,7 +1355,7 @@ const Home: NextPage = () => {
 		setVestingNumSlides(vesting[3]);
 	}
 	async function cancelVesting() {
-		console.log('cancelPaymentMethod');
+		console.log('cancelICOPaymentMethod');
 
 		setVestingId('');
 		setVestingStart('');
@@ -1320,7 +1407,7 @@ const Home: NextPage = () => {
 		//await VESTING_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
 
 		populateICOContractData();
-		cancelPaymentMethod();
+		cancelICOPaymentMethod();
 	}
 
 	// ***********************************************************************************************
@@ -1388,6 +1475,25 @@ const Home: NextPage = () => {
 	async function setVestingTokenOnSC() {
 		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
 		await ICO_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function loadVesting() {
+		// vesting
+		let vestingAddress = await ICO_CONTRACT?.getVestingAddress();
+		console.log("vestingAddress: " + vestingAddress);
+		setVestingAddress(vestingAddress);
+
+		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
+		console.log(`vestingIds: ` + vestingIds);
+		setVestingIds(vestingIds);
+
+		let percentVested = await ICO_CONTRACT?.getPercentVested();
+		console.log(`percentVested: ` + percentVested);
+		setVestingSchedulePercentage(percentVested);
+
+		let vestingScheduleId = await ICO_CONTRACT?.getVestingId();
+		console.log(`vestingScheduleId: ` + vestingScheduleId);
+		setVestingScheduleCurrentId(vestingScheduleId);
 	}
 
 	// ***********************************************************************************************
@@ -1487,7 +1593,15 @@ const Home: NextPage = () => {
 					}
 				</Row>
 
-				{METAMASK_CURRENT_ACCOUNT ? <Row><Col><div><Form.Text className="">Choose Chain</Form.Text></div></Col></Row> : "" }
+				<Row className="mb-3"></Row>
+				{METAMASK_CURRENT_ACCOUNT ? 
+				<Row>
+					<Col><div><Form.Text className="bg-label fw-normal">Choose Chain</Form.Text></div></Col>
+					<Col><div><Form.Text className="bg-label fw-normal">Choose Cryptocommodity</Form.Text></div></Col>
+					<Col><div><Form.Text className="bg-label fw-normal"></Form.Text></div></Col>
+				</Row> 
+				: "" }
+
 				{METAMASK_CURRENT_ACCOUNT ?
 				<Row>
 					<Col>
@@ -1507,7 +1621,24 @@ const Home: NextPage = () => {
 							</Dropdown.Menu>
 						</Dropdown>
 					</Col>
-					<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={connectICOContract}>Connect To ICO</Button></Col>
+					<Col>
+					<Dropdown onSelect={onSwitchNetwork}>
+							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+								{METAMASK_CHAIN_NAME}
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu className="w-100">
+								{getMETAMASK_CHAINS().map((item: any, index: any) => {
+									return (
+										<Dropdown.Item as="button" key={index} eventKey={item.id} active={METAMASK_CHAIN_NAME == item.name}>
+											{item.name}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						</Dropdown>
+					</Col>
+					<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={connectICOContract}>Connect</Button></Col>
 				</Row>
 				: "" }
 
@@ -1728,9 +1859,196 @@ const Home: NextPage = () => {
 					</Tab>
 
 					{/* ******************************************************************************************************************************  */}
+					{/* *********************************************************** CONFIG Tab *******************************************************  */}
+					{/* ******************************************************************************************************************************  */}
+					<Tab eventKey="config" title="CONFIG" className="bg-label mb-3 bg-light-grey p-3">
+
+						<Tabs className="nav nav-fill" defaultActiveKey="cfg_crc" transition={true}>
+
+							<Tab eventKey="cfg_env" title="ENVIRONMENT" className="bg-label mb-3 bg-light-grey" >
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">List of Payment Tokens</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onFactorySelectPaymentMethod}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+									</Row>
+									
+									{/*
+									<Row>
+										<Col>
+											<ListGroup onSelect={onICOSelectPaymentMethod}>
+													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<ListGroup.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</ListGroup.Item>
+														);
+													})}
+											</ListGroup>
+										</Col>
+									</Row>
+									*/}
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={4}><div><Form.Text className="color-frame">Symbol</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame" dir="rtl">Address</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_SYMBOL ? FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_DECIMALS ? FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Ref</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Dynamic Price (uUSD)</Form.Text></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_PRICE ? FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+
+									<Row>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+
+								</Form.Group>
+
+							</Tab>
+
+							<Tab eventKey="cfg_crc" title="MY CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
+
+							<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onFactorySelectPaymentMethod}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+									</Row>
+									
+									{/*
+									<Row>
+										<Col>
+											<ListGroup onSelect={onFactorySelectPaymentMethod}>
+													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<ListGroup.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</ListGroup.Item>
+														);
+													})}
+											</ListGroup>
+										</Col>
+									</Row>
+									*/}
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={4}><div><Form.Text className="color-frame">Symbol</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame" dir="rtl">Address</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_SYMBOL ? FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_DECIMALS ? FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Ref</Form.Text></div></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Dynamic Price (uUSD)</Form.Text></div></Col>
+									</Row>
+
+									<Row>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_PRICE ? FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+
+									<Row>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+
+								</Form.Group>
+
+							</Tab>
+
+						</Tabs>
+
+					</Tab>
+
+					{/* ******************************************************************************************************************************  */}
+					{/* ********************************************************** PADDING Tab *******************************************************  */}
+					{/* ******************************************************************************************************************************  */}
+					<Tab eventKey="padding" title="<->" className="bg-label mb-3 bg-light-grey p-3" disabled={true}>
+					</Tab>
+
+					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************* ICO Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="ico" title="ICO" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3">
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true}>
 
@@ -1983,7 +2301,7 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col>
-											<Dropdown onSelect={onSelectPaymentMethod}>
+											<Dropdown onSelect={onICOSelectPaymentMethod}>
 												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
 													{ ICO_PAYMENT_SYMBOL_SYMBOL }
 												</Dropdown.Toggle>
@@ -2004,7 +2322,7 @@ const Home: NextPage = () => {
 									{/*
 									<Row>
 										<Col>
-											<ListGroup onSelect={onSelectPaymentMethod}>
+											<ListGroup onSelect={onICOSelectPaymentMethod}>
 													{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 														return (
 															<ListGroup.Item as="button" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item}>
@@ -2025,9 +2343,9 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setPaymentSymbolSymbol(event.target.value)} value={ICO_PAYMENT_SYMBOL_SYMBOL ? ICO_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setPaymentSymbolAddress(event.target.value)} value={ICO_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(ICO_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setPaymentSymbolDecimals(event.target.value)} value={ICO_PAYMENT_SYMBOL_DECIMALS ? ICO_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setICOPaymentSymbolSymbol(event.target.value)} value={ICO_PAYMENT_SYMBOL_SYMBOL ? ICO_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setICOPaymentSymbolAddress(event.target.value)} value={ICO_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(ICO_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setICOPaymentSymbolDecimals(event.target.value)} value={ICO_PAYMENT_SYMBOL_DECIMALS ? ICO_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
 									</Row>
 
 									<Row>
@@ -2037,17 +2355,17 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setPaymentSymbolPrice(event.target.value)} value={ICO_PAYMENT_SYMBOL_PRICE ? ICO_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setPaymentSymbolRef(event.target.value)} value={ICO_PAYMENT_SYMBOL_REF ? truncateEthAddress(ICO_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setICOPaymentSymbolPrice(event.target.value)} value={ICO_PAYMENT_SYMBOL_PRICE ? ICO_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setICOPaymentSymbolRef(event.target.value)} value={ICO_PAYMENT_SYMBOL_REF ? truncateEthAddress(ICO_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ ICO_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
 
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => deletePaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => savePaymentMethod()}>{KEY_ICON()} Save</Button></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelPaymentMethod()}>Cancel</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteICOPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelICOPaymentMethod()}>Cancel</Button></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
@@ -2075,8 +2393,8 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="">Address</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col xs={9}><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getPaymentMethodBalance(); }} >Balances</Button></Col>
+										<Col xs={9}><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Balance</Form.Text></div></Col>
@@ -2638,9 +2956,9 @@ hi
 					</Tab>
 
 					{/* ******************************************************************************************************************************  */}
-					{/* *********************************************************** CATOKEN Tab ******************************************************  */}
+					{/* *********************************************************** CRYPTOCOMM Tab ******************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="token" title="CATOKEN" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3">
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
