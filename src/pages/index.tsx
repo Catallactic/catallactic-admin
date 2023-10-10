@@ -261,6 +261,14 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
+	// ************************************* Cryptocommodities ***************************************
+	// ***********************************************************************************************
+	const [SELECTED_CRYPTOCOMMODITY, setSelectedCryptocommodity] = useState<string>('');
+
+
+
+
+	// ***********************************************************************************************
 	// ************************************* Metamask Account ****************************************
 	// ************************************ (On Click Connect) ***************************************
 	// ***********************************************************************************************
@@ -2054,7 +2062,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************* ICO Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true}>
 
@@ -2716,7 +2724,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************ VESTING tab *****************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -2915,7 +2923,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************** Reserve Wallet Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -2964,7 +2972,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					{/* *********************************************************** CRYPTOCOMM Tab ******************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -3078,7 +3086,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************** Target Wallet Tab *********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="rew_fea" transition={true}>
 
