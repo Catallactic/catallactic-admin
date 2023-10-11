@@ -111,7 +111,6 @@
           "error",
           { "allowEmptyCatch": true }
         ],
-				"@next/next/no-document-import-in-page": "off",
 				"no-unused-vars": [
           "warn",
           {
@@ -137,5 +136,8 @@
     "WSH": true,
     "WScript": true,
     "DocumentTouch": true
-  }
+  },
+	"rules": {
+		"@next/next/no-document-import-in-page": "off"
+	}
 }
