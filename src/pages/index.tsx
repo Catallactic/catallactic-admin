@@ -115,6 +115,9 @@ const Home: NextPage = () => {
 
 		// get network
     const provider = new ethers.providers.Web3Provider(window.ethereum)
+		if(!provider)
+			return;
+
     provider.getNetwork().then((result)=>{
 			console.log("setChain ", result.chainId);
 			setChainId(result.chainId)
@@ -131,6 +134,11 @@ const Home: NextPage = () => {
 	},[METAMASK_INSTALLED])
 
 	useEffect(() => {
+		if(!METAMASK_INSTALLED) {
+			console.log("please install MetaMask")
+			return
+		}
+
 		console.log('useEffect3');
 		console.log('METAMASK_CHAIN_ID', METAMASK_CHAIN_ID);
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -1653,14 +1661,18 @@ const Home: NextPage = () => {
 				</Row>
 
 				<Row>
-					{METAMASK_INSTALLED ?
-					<Col>
-						{METAMASK_CURRENT_ACCOUNT ? <Button className="w-100 bg-button-disconnect p-2 fw-bold" onClick={onClickDisconnect}>Disconnect From Metamask</Button> : <Button className="w-100 bg-button-connect p-2 fw-bold" onClick={onConnectToProvider}>Connect to MetaMask</Button>}
-					</Col>
-					: 
-					<Col>
-						<Button variant="danger" className="w-100 bg-button-disconnect p-2 fw-bold" onClick={openMetamaskInstall}>You need to Install Metamask Wallet. Click to Open</Button>
-					</Col>
+					{!METAMASK_INSTALLED ?
+						<Col>
+							<Button variant="danger" className="w-100 bg-button-disconnect p-2 fw-bold" onClick={openMetamaskInstall}>You need to Install Metamask Wallet. Click to Open</Button>
+						</Col>
+					: !METAMASK_CURRENT_ACCOUNT ?
+						<Col>
+							<Button className="w-100 bg-button-connect p-2 fw-bold" onClick={onConnectToProvider}>Connect to MetaMask</Button>
+						</Col>
+					:
+						<Col>
+							<Button className="w-100 bg-button-disconnect p-2 fw-bold" onClick={onClickDisconnect}>Disconnect From Metamask</Button>
+						</Col>
 					}
 				</Row>
 
