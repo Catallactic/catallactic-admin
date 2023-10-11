@@ -213,6 +213,20 @@ const Home: NextPage = () => {
 		}
 
 	}
+
+	async function saveFactoryPaymentMethod() {
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_ADDRESS);
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_REF);
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_PRICE);
+		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_DECIMALS);
+		FACTORY_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS)
+			.then(await loadFactoryPaymentMethod)
+			.catch(handleError);
+
+		cancelFactoryPaymentMethod();
+	}
+	
 	async function cancelFactoryPaymentMethod() {
 		console.log('cancelFactoryPaymentMethod');
 
@@ -221,13 +235,6 @@ const Home: NextPage = () => {
 		setFactoryPaymentSymbolRef(undefined);
 		setFactoryPaymentSymbolPrice(undefined);
 		setFactoryPaymentSymbolDecimals(undefined);
-	}
-	async function saveFactoryPaymentMethod() {
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
-
-		await FACTORY_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
-
-		cancelFactoryPaymentMethod();
 	}
 
 	async function deleteFactoryPaymentMethod() {
@@ -263,10 +270,57 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ************************************* Cryptocommodities ***************************************
 	// ***********************************************************************************************
-	const [SELECTED_CRYPTOCOMMODITY, setSelectedCryptocommodity] = useState<string>('');
+	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
+	const [SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
+	const [SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
+	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
+
+	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
+		console.log('onSelectCryptocommodity', cryptocommodityName);
+
+		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
+		setSelectedCryptocommodityName(cryptocommodityName);
+		setSelectedCryptocommodityAddress(cryptocommodityAddress);
+	}
+	async function saveCryptocommodity() {
+		console.log('saveCryptocommodity', ADD_CRYPTOCOMMODITY_NAME);
+
+		const tx = await FACTORY_CONTRACT?.createCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
+		const receipt = await tx.wait();
+
+		loadCryptocommodities();
+	}
+
+	async function loadCryptocommodities() {
+		console.log("fetching cryptocommodities for user");
+
+		let cryptocommodities = await FACTORY_CONTRACT?.getCryptocommodities();
+		console.log("cryptocommodities: " + cryptocommodities);
+		setCryptocommodities(cryptocommodities);
+		
+		unselectCryptocommodity();
+	}
+	async function selectCryptocommodity(cryptocommodityName: string) {
+		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
+		setSelectedCryptocommodityName(cryptocommodityName);
+		setSelectedCryptocommodityAddress(cryptocommodityAddress);
+	}
+	async function unselectCryptocommodity() {
+		console.log("unselectCryptocommodity");
+		setSelectedCryptocommodityName('');
+		setSelectedCryptocommodityAddress('');
+		setAddCryptocommodityName('');
+	}
+
+	// ***********************************************************************************************
+	// ******************************************* Facets ********************************************
+	// ***********************************************************************************************
+	const [FACETS, setFacets] = useState<string>('');
+
+	async function loadFacets() {
 
 
-
+	}
 
 	// ***********************************************************************************************
 	// ************************************* Metamask Account ****************************************
@@ -311,7 +365,10 @@ const Home: NextPage = () => {
       setBalance(ethers.utils.formatEther(result))
 		}).catch((e)=>console.log(e))
 
+		// load environment
 		loadFactoryPaymentMethod();
+		loadCryptocommodities();
+		loadFacets();
 
 		window.ethereum.on('accountsChanged', (accounts: any) => {
 			// Handle the new accounts, or lack thereof "accounts" will always be an array, but it can be empty.
@@ -1636,23 +1693,23 @@ const Home: NextPage = () => {
 						</Dropdown>
 					</Col>
 					<Col>
-					<Dropdown onSelect={onSwitchNetwork}>
+						<Dropdown onSelect={onSelectCryptocommodity}>
 							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-								{METAMASK_CHAIN_NAME}
+								{ SELECTED_CRYPTOCOMMODITY_NAME }
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu className="w-100">
-								{getMETAMASK_CHAINS().map((item: any, index: any) => {
+								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
 									return (
-										<Dropdown.Item as="button" key={index} eventKey={item.id} active={METAMASK_CHAIN_NAME == item.name}>
-											{item.name}
+										<Dropdown.Item as="button" key={index} eventKey={item} active={SELECTED_CRYPTOCOMMODITY_NAME == item}>
+											{item}
 										</Dropdown.Item>
 									);
 								})}
 							</Dropdown.Menu>
 						</Dropdown>
 					</Col>
-					<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={connectICOContract}>Connect</Button></Col>
+					<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME} onClick={connectICOContract}>Connect</Button></Col>
 				</Row>
 				: "" }
 
@@ -1976,15 +2033,15 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col>
-											<Dropdown onSelect={onFactorySelectPaymentMethod}>
+											<Dropdown onSelect={onSelectCryptocommodity}>
 												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-													{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+													{ SELECTED_CRYPTOCOMMODITY_NAME }
 												</Dropdown.Toggle>
 
 												<Dropdown.Menu className="w-100">
-													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+													{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
 														return (
-															<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+															<Dropdown.Item as="button" key={index} eventKey={item} active={SELECTED_CRYPTOCOMMODITY_NAME == item}>
 																{item}
 															</Dropdown.Item>
 														);
@@ -1993,54 +2050,23 @@ const Home: NextPage = () => {
 											</Dropdown>
 										</Col>
 									</Row>
-									
-									{/*
-									<Row>
-										<Col>
-											<ListGroup onSelect={onFactorySelectPaymentMethod}>
-													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-														return (
-															<ListGroup.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
-																{item}
-															</ListGroup.Item>
-														);
-													})}
-											</ListGroup>
-										</Col>
-									</Row>
-									*/}
 
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col xs={4}><div><Form.Text className="color-frame">Symbol</Form.Text></div></Col>
-										<Col xs={4}><div><Form.Text className="color-frame" dir="rtl">Address</Form.Text></div></Col>
-										<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 									</Row>
 
 									<Row>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_SYMBOL ? FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_DECIMALS ? FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
-									</Row>
-
-									<Row>
-										<Col xs={4}><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
-										<Col xs={4}><div><Form.Text className="color-frame">Ref</Form.Text></div></Col>
-										<Col xs={4}><div><Form.Text className="color-frame">Dynamic Price (uUSD)</Form.Text></div></Col>
-									</Row>
-
-									<Row>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_PRICE ? FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !METAMASK_CURRENT_ACCOUNT } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
-										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
+										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME}  onChange={(event) => setAddCryptocommodityName(event.target.value)}  ></input></Col>
+										<Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
-
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
@@ -2062,7 +2088,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************* ICO Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
+					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true}>
 
@@ -2724,7 +2750,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************ VESTING tab *****************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
+					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -2923,7 +2949,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************** Reserve Wallet Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
+					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -2972,7 +2998,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					{/* *********************************************************** CRYPTOCOMM Tab ******************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
+					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
 
@@ -3086,7 +3112,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************** Target Wallet Tab *********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY}>
+					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
 						<Tabs className="nav nav-fill" defaultActiveKey="rew_fea" transition={true}>
 
