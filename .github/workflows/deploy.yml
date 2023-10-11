@@ -50,13 +50,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18.17.0
-          cache: "npm"
-          # The action defaults to search for the dependency file
-          # (package-lock.json or yarn.lock) in the repository root, and uses
-          # its hash as a part of the cache key.
-          # https://github.com/actions/setup-node#caching-packages-dependencies
-          cache-dependency-path: "./package-lock.json"
+          node-version: 20.5.0
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive
       - name: Build
