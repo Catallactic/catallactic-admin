@@ -1,5 +1,8 @@
 {
-		"rules": {
-			"@next/next/no-document-import-in-page": "off"
-		}
+	"rules": {
+		"@next/next/no-document-import-in-page": "off"
+	},
+	"parserOptions": {
+		"sourceType": "module"
+	}
 }
