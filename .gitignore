@@ -118,3 +118,4 @@ typechain/
 .vscode
 run-with-server.sh
 run.sh
+/out
