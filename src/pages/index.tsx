@@ -12,7 +12,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Accordion from 'react-bootstrap/Accordion';
 import Dropdown from 'react-bootstrap/Dropdown';
-//import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -276,6 +276,13 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
+	// ************************************* Factory Behaviors ***************************************
+	// ***********************************************************************************************
+
+
+
+
+	// ***********************************************************************************************
 	// ************************************* Cryptocommodities ***************************************
 	// ***********************************************************************************************
 	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
@@ -323,11 +330,27 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ******************************************* Facets ********************************************
 	// ***********************************************************************************************
-	const [FACETS, setFacets] = useState<string>('');
+	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
+	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
 
 	async function loadFacets() {
+		// get read only - payment methods
+		let facetTypes = await FACTORY_CONTRACT?.getFacetTypes();
+		setFactoryFacetTypes(facetTypes);
+		console.log("facetTypes: " + facetTypes);
+		console.log(facetTypes);
 
-
+		const map: MapType = {};
+		for (var i = 0; i < facetTypes.length; i++) {
+			console.log("facetType: " + facetTypes[i]);
+			let facetType = await FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
+			console.log("facetType: " + facetType);
+			console.log(facetType);
+			map[facetTypes[i]] = facetType[0];
+		}
+		console.log(map);
+		console.log("facetTypes: " + map);
+		setFactoryFacets(map);
 	}
 
 	// ***********************************************************************************************
@@ -1706,7 +1729,7 @@ const Home: NextPage = () => {
 					</Col>
 					<Col>
 						<Dropdown onSelect={onSelectCryptocommodity}>
-							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={CRYPTOCOMMODITIES.length==0}>
 								{ SELECTED_CRYPTOCOMMODITY_NAME }
 							</Dropdown.Toggle>
 
@@ -1727,7 +1750,7 @@ const Home: NextPage = () => {
 
 				<Row className="mb-3"></Row>
 				<Row className="mb-3"></Row>
-				<Tabs defaultActiveKey="me" transition={false} className="nav nav-fill">
+				<Tabs defaultActiveKey="config" transition={false} className="nav nav-fill">
 
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************** ME Tab ********************************************************  */}
@@ -1735,6 +1758,9 @@ const Home: NextPage = () => {
 					<Tab eventKey="me" title="ACCOUNTS" className="bg-label mb-3 bg-light-grey p-3">
 
 						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true}>
+
+							<Tab eventKey="acc_inv" title="OWNER" className="bg-label mb-3 bg-light-grey">
+							</Tab>
 
 							<Tab eventKey="acc_me" title="ME" className="bg-label mb-3 bg-light-grey">
 
@@ -1977,22 +2003,6 @@ const Home: NextPage = () => {
 											</Dropdown>
 										</Col>
 									</Row>
-									
-									{/*
-									<Row>
-										<Col>
-											<ListGroup onSelect={onICOSelectPaymentMethod}>
-													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-														return (
-															<ListGroup.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
-																{item}
-															</ListGroup.Item>
-														);
-													})}
-											</ListGroup>
-										</Col>
-									</Row>
-									*/}
 
 									<Row className="mb-3"></Row>
 									<Row>
@@ -2031,22 +2041,50 @@ const Home: NextPage = () => {
 
 								</Form.Group>
 
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Behaviors</div></div></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
+										<Col xs={3}></Col>
+									</Row>
+									{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
+										return (
+											<Row>
+												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} ></input></Col>
+												<Col xs={3}></Col>
+											</Row>
+										);
+									})}
+
+								</Form.Group>
+
 							</Tab>
 
-							<Tab eventKey="cfg_crc" title="MY CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="cfg_crc" title="CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
 
 							<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
 									</Row>
+
+
 									<Row>
 										<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col>
 											<Dropdown onSelect={onSelectCryptocommodity}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={CRYPTOCOMMODITIES.length==0}>
 													{ SELECTED_CRYPTOCOMMODITY_NAME }
 												</Dropdown.Toggle>
 
@@ -2066,19 +2104,39 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
 									</Row>
 
 									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME}  onChange={(event) => setAddCryptocommodityName(event.target.value)}  ></input></Col>
-										<Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col>
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME}  onChange={(event) => setAddCryptocommodityName(event.target.value)}  ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
 									</Row>
 
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+										<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+										<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
+										<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
+									</Row>
+									{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
+										return (
+											<Row>
+												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} ></input></Col>
+												<Col xs={3}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ true } value={'-'} ></input></Col>
+											</Row>
+										);
+									})}
+
+									<Row className="mb-3"></Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
 									</Row>
 
 									<Row className="mb-3"></Row>
