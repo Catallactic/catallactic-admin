@@ -1,5 +1,5 @@
 // src/pages/index.tsx
-import {Contract, ethers} from "ethers"
+import {Contract, ethers, utils} from "ethers"
 
 import { useState, useEffect, ChangeEvent } from "react";
 import type { NextPage } from 'next'
@@ -25,6 +25,16 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ******************************************** Config *******************************************
 	// ***********************************************************************************************
+	// not elegant but works for the moment - concatenate in one would be one option
+	const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
+	const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../abi/Diamond.json');
+	const CFG_DIAMOND_CUT_ABI = require('../abi/DiamondCutFacet.json');
+	const CFG_DIAMOND_LOUPE_ABI = require('../abi/DiamondLoupeFacet.json');
+	const CFG_COMMON_ABI = require('../abi/CommonFacet.json');
+	const CFG_CROWDSALE_ABI = require('../abi/CrowdsaleFacet.json');
+	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
+	const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
+
 	const KEY_ICON = function() {
 		return (
 			<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="1em" height="1em" viewBox="0 0 300 300" fill="#FFF">
@@ -68,6 +78,28 @@ const Home: NextPage = () => {
 		if (!match) return address;
 		return `${match[1]}…${match[2]}`;
 	};
+
+
+	const FacetCutAction = { Add: 0, Replace: 1, Remove: 2 }
+	let getSelectors = function (signatures: string[] ) {
+		return signatures.reduce((acc: string[], val) => {
+				if (val !== 'init(bytes)') {
+						acc.push(utils.id(val).substring(0, 10));
+				}
+				return acc;
+		}, []);
+	}
+	let removeSelectors = function (selectors: string[], removeSelectors: string[]) {
+		selectors = selectors.filter(v => !removeSelectors.includes(v))
+		return selectors
+	}
+	let logSelectors = function (contract:Contract) {
+		const signatures: string[] = Object.keys(contract.interface.functions);
+		return signatures.reduce((acc: string[], val) => {
+			console.log(val + '->' + contract.interface.getSighash(val));
+			return acc;
+		}, []);
+	}
 
 	// ***********************************************************************************************
 	// ****************************************** Metamask *******************************************
@@ -141,10 +173,11 @@ const Home: NextPage = () => {
 
 		console.log('useEffect3');
 		console.log('METAMASK_CHAIN_ID', METAMASK_CHAIN_ID);
+
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner();
 		const ico_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || '';
-		const ico: Contract = new ethers.Contract(ico_address, CFG_ICO_ABI, signer);
+		const ico: Contract = new ethers.Contract(ico_address, CFG_CROWDSALE_ABI, signer);
 		setICOContract(ico);
 
 		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.factory_address || '';
@@ -185,7 +218,6 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ************************************* CryptocommoditiesFactory ********************************
 	// ***********************************************************************************************
-	const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
 	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
 
 	// ***********************************************************************************************
@@ -276,18 +308,21 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
-	// ************************************* Factory Behaviors ***************************************
-	// ***********************************************************************************************
-
-
-
-
-	// ***********************************************************************************************
 	// ************************************* Cryptocommodities ***************************************
 	// ***********************************************************************************************
 	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
+
+	const [SELECTED_CRYPTOCOMMODITY_CONTRACT, setSelectedCryptocommodityContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT, setSelectedCryptocommodityDiamondCutContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT, setSelectedCryptocommodityDiamondLoupeContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT, setSelectedCryptocommodityCommonContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
+
 	const [SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
 	const [SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
+	const [SELECTED_CRYPTOCOMMODITY_FACETS, setSelectedCryptocommodityFacets] = useState<any>();
 	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
 
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
@@ -296,6 +331,36 @@ const Home: NextPage = () => {
 		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
 		setSelectedCryptocommodityName(cryptocommodityName);
 		setSelectedCryptocommodityAddress(cryptocommodityAddress);
+
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner();
+
+		const cryptocommodityContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
+		setSelectedCryptocommodityContract(cryptocommodityContract);
+
+		const diamondCutContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_CUT_ABI, signer);
+		setSelectedCryptocommodityDiamondCutContract(diamondCutContract);
+
+		const diamondLoupeContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_LOUPE_ABI, signer);
+		setSelectedCryptocommodityDiamondLoupeContract(diamondLoupeContract);
+
+		const commonContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_COMMON_ABI, signer);
+		setSelectedCryptocommodityCommonContract(commonContract);
+
+		const crowdsaleContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_CROWDSALE_ABI, signer);
+		setSelectedCryptocommodityCrowdsaleContract(crowdsaleContract);
+
+		const vestingContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_VESTING_ABI, signer);
+		setSelectedCryptocommodityVestingContract(vestingContract);
+
+		const tokenContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_ERC_20_ABI, signer);
+		setSelectedCryptocommodityTokenContract(tokenContract);
+	}
+	async function unselectCryptocommodity() {
+		console.log("unselectCryptocommodity");
+		setSelectedCryptocommodityName('');
+		setSelectedCryptocommodityAddress('');
+		setAddCryptocommodityName('');
 	}
 	async function saveCryptocommodity() {
 		console.log('saveCryptocommodity', ADD_CRYPTOCOMMODITY_NAME);
@@ -315,16 +380,36 @@ const Home: NextPage = () => {
 		
 		unselectCryptocommodity();
 	}
-	async function selectCryptocommodity(cryptocommodityName: string) {
-		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
-		setSelectedCryptocommodityName(cryptocommodityName);
-		setSelectedCryptocommodityAddress(cryptocommodityAddress);
+
+	async function installFacet(facetName: string) {
+		console.log("installFacet ", facetName);
+
+		let selectors: any = [];
+		let commonSelectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!))
+		if (facetName == 'DiamondCutFacet') selectors = [];
+		else if (facetName == 'DiamondLoupeFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.interface.functions!));
+		else if (facetName == 'CommonFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!));
+		else if (facetName == 'CrowdsaleFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'VestingFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'ERC20Facet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.interface.functions!)), commonSelectors);
+		console.log("selectors ", selectors);
+
+		// would need to merge abi files
+		let tx = await SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
+			facetAddress: FACTORY_FACETS[facetName][1],
+			action: FacetCutAction.Add,
+			functionSelectors: selectors,
+		}]);
+		await tx.wait();
+
+		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
+		console.log("facets: ", facets);
+		setSelectedCryptocommodityFacets(facets);
+
+		console.log("installFacet end", facetName);
 	}
-	async function unselectCryptocommodity() {
-		console.log("unselectCryptocommodity");
-		setSelectedCryptocommodityName('');
-		setSelectedCryptocommodityAddress('');
-		setAddCryptocommodityName('');
+	async function uninstallFacet(facetName: string) {
+		console.log("uninstallFacet ", facetName);
 	}
 
 	// ***********************************************************************************************
@@ -332,6 +417,17 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
 	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
+
+	const onSelectFacet = async (facetName: any, pp: any)=>{
+		console.log('onSelectFacet', facetName);
+		console.log('onSelectFacet', pp);
+		console.log('onSelectFacet', FACTORY_FACETS[facetName][0]);
+		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
+
+		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
+		
+
+	}
 
 	async function loadFacets() {
 		// get read only - payment methods
@@ -813,8 +909,6 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ******************************************* ICO Contract **************************************
 	// ***********************************************************************************************
-	const CFG_ICO_ABI = require('../abi/CrowdsaleFacet.json');
-	const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 	const [ICO_CONTRACT, setICOContract] = useState<Contract>()
 
   const [ICO_OWNER, setICOOwner] = useState<string | undefined>()
@@ -1515,7 +1609,6 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ************************************* Vesting Schedules ***************************************
 	// ***********************************************************************************************
-	const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
 	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
 	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
 
@@ -1680,7 +1773,7 @@ const Home: NextPage = () => {
 				<ToastContainer />
 
 				<Row className="mb-3">
-					<Col className="bg-label h3 d-flex justify-content-center">CATALLACTIC ADMIN v0.9</Col>
+					<Col className="bg-label h3 d-flex justify-content-center">CATALLACTIC ADMIN v0.9 (DEMO)</Col>
 				</Row>
 
 				<Row>
@@ -2059,7 +2152,7 @@ const Home: NextPage = () => {
 											<Row>
 												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} ></input></Col>
+												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
 												<Col xs={3}></Col>
 											</Row>
 										);
@@ -2114,22 +2207,45 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row className="mb-3"></Row>
+									{ SELECTED_CRYPTOCOMMODITY_NAME ? 
 									<Row>
-										<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
-										<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
-									</Row>
-									{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
-										return (
+										<Col>
 											<Row>
-												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
-												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} ></input></Col>
-												<Col xs={3}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ true } value={'-'} ></input></Col>
+												<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+												<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
+												<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
+												<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
 											</Row>
-										);
-									})}
+										</Col>
+									</Row>
+									 : '' }
+									{ SELECTED_CRYPTOCOMMODITY_NAME ? 
+									<Row>
+										<Col>
+											<ListGroup onSelect={onSelectFacet}>
+													{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
+														return (
+															<ListGroup.Item as="button" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item}>
+																<Row>
+																	<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+																	<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+																	<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
+
+																	{ item == 'DiamondCutFacet' ?
+																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+																	: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+																	:
+																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+																	}
+																</Row>
+															</ListGroup.Item>
+														);
+													})}
+											</ListGroup>
+										</Col>
+									</Row>
+									 : '' }
 
 									<Row className="mb-3"></Row>
 									<Row className="mb-3"></Row>
@@ -2138,8 +2254,6 @@ const Home: NextPage = () => {
 										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
 									</Row>
-
-									<Row className="mb-3"></Row>
 
 								</Form.Group>
 
