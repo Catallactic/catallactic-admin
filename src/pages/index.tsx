@@ -274,7 +274,8 @@ const Home: NextPage = () => {
 	async function deleteFactoryPaymentMethod() {
 		console.log('deleteFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		await FACTORY_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
+		let tx = await FACTORY_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
+		await tx.wait();
 
 		populateICOContractData();
 		cancelICOPaymentMethod();
@@ -524,27 +525,6 @@ const Home: NextPage = () => {
 	const [ICO_PAYMENT_METHOD_SEARCH_ADDRESS, setICOPaymentMethodSearchAddress] = useState<string | undefined>()
 	const [ICO_PAYMENT_METHOD_SEARCH_BALANCE, setICOPaymentMethodSearchBalance] = useState<string | undefined>()
 
-	const onICOSelectPaymentMethod = async (symbol: any)=>{
-		console.log('selectPaymentMethod', symbol);
-
-		let paymentMethod = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
-		console.log('paymentMethod', paymentMethod);
-		setICOPaymentSymbolSymbol(symbol);
-		setICOPaymentSymbolAddress(paymentMethod[0]);
-		setICOPaymentSymbolRef(paymentMethod[1]);
-		setICOPaymentSymbolPrice(paymentMethod[2]);
-		setICOPaymentSymbolDecimals(paymentMethod[3]);
-
-		try {
-			let dynPrice = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
-			console.log('dynPrice' + dynPrice);
-			setICOPaymentSymbolDynPrice(dynPrice);
-		} catch (error) {
-			console.error(error);
-			setICOPaymentSymbolDynPrice(0);
-		}
-
-	}
 	async function cancelICOPaymentMethod() {
 		console.log('cancelICOPaymentMethod');
 
@@ -561,16 +541,17 @@ const Home: NextPage = () => {
 		const tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
 		await tx.wait();
 
-		populateICOContractData();
+		loadICOPaymentMethod();
 		cancelICOPaymentMethod();
 	}
 
 	async function deleteICOPaymentMethod() {
 		console.log('deleteICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
 
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+		const tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+		await tx.wait();
 
-		populateICOContractData();
+		loadICOPaymentMethod();
 		cancelICOPaymentMethod();
 	}
 
@@ -603,6 +584,28 @@ const Home: NextPage = () => {
 		console.log("ICO_PAYMENT_METHODS: " + map);
 		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
 		setICOPaymentMethods(map);
+	}
+
+	const onICOSelectPaymentMethod = async (symbol: any)=>{
+		console.log('selectPaymentMethod', symbol);
+
+		let paymentMethod = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
+		console.log('paymentMethod', paymentMethod);
+		setICOPaymentSymbolSymbol(symbol);
+		setICOPaymentSymbolAddress(paymentMethod[0]);
+		setICOPaymentSymbolRef(paymentMethod[1]);
+		setICOPaymentSymbolPrice(paymentMethod[2]);
+		setICOPaymentSymbolDecimals(paymentMethod[3]);
+
+		try {
+			let dynPrice = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
+			console.log('dynPrice' + dynPrice);
+			setICOPaymentSymbolDynPrice(dynPrice);
+		} catch (error) {
+			console.error(error);
+			setICOPaymentSymbolDynPrice(0);
+		}
+
 	}
 
 	// ***********************************************************************************************
