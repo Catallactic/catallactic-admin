@@ -349,6 +349,8 @@ const Home: NextPage = () => {
 
 		const tokenContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_ERC_20_ABI, signer);
 		setSelectedCryptocommodityTokenContract(tokenContract);
+
+		loadCryptocommodityFacets();
 	}
 	async function unselectCryptocommodity() {
 		console.log("unselectCryptocommodity");
@@ -375,6 +377,12 @@ const Home: NextPage = () => {
 		unselectCryptocommodity();
 	}
 
+	async function loadCryptocommodityFacets() {
+		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
+		console.log("facets: ", facets);
+		setSelectedCryptocommodityFacets(facets);
+	}
+
 	async function installFacet(facetName: string) {
 		console.log("installFacet ", facetName);
 
@@ -396,9 +404,7 @@ const Home: NextPage = () => {
 		}]);
 		await tx.wait();
 
-		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
-		console.log("facets: ", facets);
-		setSelectedCryptocommodityFacets(facets);
+		loadCryptocommodityFacets();
 
 		console.log("installFacet end", facetName);
 	}
