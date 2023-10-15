@@ -2252,7 +2252,7 @@ const Home: NextPage = () => {
 					</Tab>
 
 					{/* ******************************************************************************************************************************  */}
-					{/* ************************************************************* ICO Tab ********************************************************  */}
+					{/* ******************************************************* CROWDSALES Tab *******************************************************  */}
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
@@ -2364,134 +2364,126 @@ const Home: NextPage = () => {
 									<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => createICO()} > {KEY_ICON()} Create Funding Round</Button></Col>
 								</Row>
 
-								<Row className="mb-3" hidden={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }></Row>
-								<Accordion className="mb-3 bg-semitransparent border rounded-3" hidden={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED } >
-									<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-										<Accordion.Header>
-											<Row className="w-100"><Col className="bg-label text-center p-2 h4">Antiwhale</Col></Row>
-										</Accordion.Header>
-										<Accordion.Body className="px-0">
+							</Tab>
 
-											<Row className="mb-3"></Row>
-											<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-												<Row>
-													<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
-												</Row>
-												<Row className="mb-3"></Row>
-												<Accordion className="inner-accordion">
-													<Accordion.Item className="border-0" eventKey="0">
-													<Accordion.Header>
-															<Row className="w-100">
-																<Col className="text-center">
-																	{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
-																	{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
-																	{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT > 0) ? "Click to see " + ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
-																</Col>
-															</Row>
-														</Accordion.Header>
-														<Accordion.Body className="bg-frame">
-															<Row className="mb-3">
-																<table className="table table-dark">
-																	<thead>
-																		<tr>
-																			<th scope="col">#</th>
-																			<th scope="col">Investor</th>
-																			<th scope="col">Amount</th>
-																		</tr>
-																	</thead>
-																	<tbody>
-																		{ICO_WHITELIST_USER_LIST?.map((item, index) => (
-																			<tr key={index}>
-																				<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-																				<td>{item}</td>
-																				<td id={"whitelistedValue" + (index+1) }></td>
-																			</tr>
-																		))}
-																	</tbody>
-																</table>
-															</Row>
-														</Accordion.Body>
-													</Accordion.Item>
-												</Accordion>
+							<Tab eventKey="ioc_wha" title="ANTIWHALE" className="bg-label mb-3 bg-light-grey">
 
-												<Row className="mb-3"></Row>
-												<Row>
-													<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-													<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
-												</Row>
-												<Row className="mb-3"></Row>
-												<Row>
-													<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-													<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
-												</Row>
+								<Row className="mb-3"></Row>
+									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+										<Row>
+											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
+										</Row>
+										<Row className="mb-3"></Row>
+										<Accordion className="inner-accordion">
+											<Accordion.Item className="border-0" eventKey="0">
+											<Accordion.Header>
+													<Row className="w-100">
+														<Col className="text-center">
+															{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
+															{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
+															{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT > 0) ? "Click to see " + ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
+														</Col>
+													</Row>
+												</Accordion.Header>
+												<Accordion.Body className="bg-frame">
+													<Row className="mb-3">
+														<table className="table table-dark">
+															<thead>
+																<tr>
+																	<th scope="col">#</th>
+																	<th scope="col">Investor</th>
+																	<th scope="col">Amount</th>
+																</tr>
+															</thead>
+															<tbody>
+																{ICO_WHITELIST_USER_LIST?.map((item, index) => (
+																	<tr key={index}>
+																		<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+																		<td>{item}</td>
+																		<td id={"whitelistedValue" + (index+1) }></td>
+																	</tr>
+																))}
+															</tbody>
+														</table>
+													</Row>
+												</Accordion.Body>
+											</Accordion.Item>
+										</Accordion>
 
-											</Form.Group>
+										<Row className="mb-3"></Row>
+										<Row>
+											<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+											<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
+										</Row>
+										<Row className="mb-3"></Row>
+										<Row>
+											<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+											<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
+										</Row>
 
-											<Row className="mb-3"></Row>
-											<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-												<Row>
-													<Col><div><div className="color-frame fs-4 text-center text-center w-100">Blacklist</div></div></Col>
-												</Row>
-												<Row className="mb-3"></Row>
+									</Form.Group>
 
-												<Row className="mb-3"></Row>
-												<Row>
-													<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame"  onChange={setIsBlacklist} defaultChecked={ICO_IS_USE_BLACKLIST} /></Col>
-												</Row>
+									<Row className="mb-3"></Row>
+									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+										<Row>
+											<Col><div><div className="color-frame fs-4 text-center text-center w-100">Blacklist</div></div></Col>
+										</Row>
+										<Row className="mb-3"></Row>
 
-												<Row className="mb-3"></Row>
-												{ ICO_IS_USE_BLACKLIST ?
-												<Accordion className="inner-accordion">
-													<Accordion.Item className="border-0" eventKey="0">
-													<Accordion.Header>
-															<Row className="w-100">
-																<Col className="text-center">
-																	{ (ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
-																	{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
-																	{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
-																</Col>
-															</Row>
-														</Accordion.Header>
-														<Accordion.Body className="bg-frame">
-															<Row className="mb-3">
-																<table className="table table-dark">
-																	<thead>
-																		<tr>
-																			<th scope="col">#</th>
-																			<th scope="col">Investor</th>
-																			<th scope="col">Amount</th>
-																		</tr>
-																	</thead>
-																	<tbody>
-																		{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
-																			<tr key={index}>
-																				<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-																				<td>{item}</td>
-																				<td id={"blacklistedValue" + (index+1) }></td>
-																			</tr>
-																		))}
-																	</tbody>
-																</table>
-															</Row>
-															<Row>
-																<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-																<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
-															</Row>
-															<Row className="mb-3"></Row>
-															<Row>
-																<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-																<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
-															</Row>
-														</Accordion.Body>
-													</Accordion.Item>
-												</Accordion>
-												: "" }
+										<Row className="mb-3"></Row>
+										<Row>
+											<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame"  onChange={setIsBlacklist} defaultChecked={ICO_IS_USE_BLACKLIST} /></Col>
+										</Row>
 
-											</Form.Group>
+										<Row className="mb-3"></Row>
+										{ ICO_IS_USE_BLACKLIST ?
+										<Accordion className="inner-accordion">
+											<Accordion.Item className="border-0" eventKey="0">
+											<Accordion.Header>
+													<Row className="w-100">
+														<Col className="text-center">
+															{ (ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
+															{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
+															{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
+														</Col>
+													</Row>
+												</Accordion.Header>
+												<Accordion.Body className="bg-frame">
+													<Row className="mb-3">
+														<table className="table table-dark">
+															<thead>
+																<tr>
+																	<th scope="col">#</th>
+																	<th scope="col">Investor</th>
+																	<th scope="col">Amount</th>
+																</tr>
+															</thead>
+															<tbody>
+																{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
+																	<tr key={index}>
+																		<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+																		<td>{item}</td>
+																		<td id={"blacklistedValue" + (index+1) }></td>
+																	</tr>
+																))}
+															</tbody>
+														</table>
+													</Row>
+													<Row>
+														<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+														<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
+													</Row>
+													<Row className="mb-3"></Row>
+													<Row>
+														<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+														<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
+													</Row>
+												</Accordion.Body>
+											</Accordion.Item>
+										</Accordion>
+										: "" }
 
-										</Accordion.Body>
-									</Accordion.Item>
-								</Accordion>
+									</Form.Group>
 
 							</Tab>
 
