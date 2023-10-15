@@ -176,16 +176,10 @@ const Home: NextPage = () => {
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner();
-		const ico_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || '';
-		const ico: Contract = new ethers.Contract(ico_address, CFG_CROWDSALE_ABI, signer);
-		setICOContract(ico);
-
 		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.factory_address || '';
 		const factory: Contract = new ethers.Contract(factory_address, CFG_FACTORY_ABI, signer);
 		setFactoryContract(factory);
 
-		const vesting: Contract = new ethers.Contract(ico_address, CFG_VESTING_ABI, signer);
-		setVestingContract(vesting);
 	}, [METAMASK_CHAIN_ID]);
 
 	const isContract = async (provider: ethers.providers.Web3Provider, address: string)=>{
@@ -522,7 +516,7 @@ const Home: NextPage = () => {
 	const onICOSelectPaymentMethod = async (symbol: any)=>{
 		console.log('selectPaymentMethod', symbol);
 
-		let paymentMethod = await ICO_CONTRACT?.getPaymentToken(symbol);
+		let paymentMethod = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
 		console.log('paymentMethod', paymentMethod);
 		setICOPaymentSymbolSymbol(symbol);
 		setICOPaymentSymbolAddress(paymentMethod[0]);
@@ -531,7 +525,7 @@ const Home: NextPage = () => {
 		setICOPaymentSymbolDecimals(paymentMethod[3]);
 
 		try {
-			let dynPrice = await ICO_CONTRACT?.getUusdPerToken(symbol);
+			let dynPrice = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
 			console.log('dynPrice' + dynPrice);
 			setICOPaymentSymbolDynPrice(dynPrice);
 		} catch (error) {
@@ -553,7 +547,7 @@ const Home: NextPage = () => {
 	async function saveICOPaymentMethod() {
 		console.log('saveICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
 
-		await ICO_CONTRACT?.setPaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_DECIMALS);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_DECIMALS);
 
 		populateICOContractData();
 		cancelICOPaymentMethod();
@@ -562,7 +556,7 @@ const Home: NextPage = () => {
 	async function deleteICOPaymentMethod() {
 		console.log('deleteICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
 
-		await ICO_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
 
 		populateICOContractData();
 		cancelICOPaymentMethod();
@@ -572,20 +566,15 @@ const Home: NextPage = () => {
 		console.log('ICO_PAYMENT_METHOD_SEARCH_ADDRESS', ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
 		console.log('ICO_PAYMENT_SYMBOL_ADDRESS', ICO_PAYMENT_SYMBOL_ADDRESS);
 
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const signer = provider.getSigner();
-		const paymentToken: Contract = new ethers.Contract(ICO_PAYMENT_SYMBOL_ADDRESS, CFG_ERC_20_ABI, signer);
-		console.log(paymentToken);
-
 		console.log('balanceOf4');
-		let balance = await paymentToken.balanceOf(ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
+		let balance = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
 		console.log(balance);
 		setICOPaymentMethodSearchBalance(balance);
 	}
 
 	async function loadICOPaymentMethod() {
 		// get read only - payment methods
-		let paymentSymbols = await ICO_CONTRACT?.getPaymentSymbols();
+		let paymentSymbols = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentSymbols();
 		setICOPaymentSymbols(paymentSymbols);
 		console.log("paymentSymbols: " + paymentSymbols);
 		console.log(paymentSymbols);
@@ -593,7 +582,7 @@ const Home: NextPage = () => {
 		const map: MapType = {};
 		for (var i = 0; i < paymentSymbols.length; i++) {
 			console.log("paymentSymbol: " + paymentSymbols[i]);
-			let method = await ICO_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			let method = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(paymentSymbols[i]);
 			console.log("getPaymentTokenData: " + method);
 			console.log(method);
 			map[paymentSymbols[i]] = method;
@@ -630,7 +619,7 @@ const Home: NextPage = () => {
 		setBalancesPaymentTokensSearchAddress(mapBalances);
 	}
 	async function getBalancesPaymentMethodsICOWallet() {
-		const mapBalances: MapType = await getPaymentTokensBalancesMap(ICO_CONTRACT?.address!);
+		const mapBalances: MapType = await getPaymentTokensBalancesMap(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		console.log('Updating BALANCES_PAYMENT_TOKENS_ICO_WALLET ', mapBalances);
 		setBalancesPaymentTokensICOWallet(mapBalances);
 	}
@@ -650,7 +639,7 @@ const Home: NextPage = () => {
 
 		console.log('balances for address', address);
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {
-			let method = await ICO_CONTRACT?.getPaymentToken(ICO_PAYMENT_SYMBOLS[i]);
+			let method = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(ICO_PAYMENT_SYMBOLS[i]);
 			console.log('ICO_PAYMENT_SYMBOL: ', ICO_PAYMENT_SYMBOLS[i]);
 
 			if(ICO_PAYMENT_SYMBOLS[i] == 'COIN') {
@@ -662,10 +651,7 @@ const Home: NextPage = () => {
 
 			} else {
 				console.log('Token code for ', ICO_PAYMENT_SYMBOLS[i]);
-				const provider = new ethers.providers.Web3Provider(window.ethereum)
-				const signer = provider.getSigner();
-				const paymentToken: Contract = new ethers.Contract(method[0], CFG_ERC_20_ABI, signer);
-				let balance = await paymentToken.balanceOf(address);
+				let balance = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
 				console.log('Token balance ', ICO_PAYMENT_SYMBOLS[i], Number(balance));
 				mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 			}
@@ -705,7 +691,7 @@ const Home: NextPage = () => {
 		}
 
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {	
-			let balance = await ICO_CONTRACT?.getContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
+			let balance = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
 			mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 		}
 
@@ -731,11 +717,11 @@ const Home: NextPage = () => {
 		}
 
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {	
-			let balance = await ICO_CONTRACT?.getuUSDContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
+			let balance = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
 			mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 		}
 
-		let uUSDToClaim = await ICO_CONTRACT?.getuUSDToClaim(address);
+		let uUSDToClaim = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDToClaim(address);
 		console.log('TOTAL2 ', uUSDToClaim);
 		mapBalances['TOTAL'] = uUSDToClaim;
 
@@ -763,7 +749,7 @@ const Home: NextPage = () => {
 	}
 
 	async function getBalancesCygasICOWallet() {
-		const balance: string = await getTokenBalanceOf(ICO_CONTRACT?.address!);
+		const balance: string = await getTokenBalanceOf(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		setBalancesCygasICOWallet(balance);
 	}
 
@@ -775,9 +761,9 @@ const Home: NextPage = () => {
 	async function getTokenBalanceOf(address: string) {
 		console.log('getTokenBalanceOf', address);
 
-		console.log('TOKEN_CONTRACT', TOKEN_CONTRACT);
+		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
 		console.log('balanceOf2');
-		const balanceOf = await TOKEN_CONTRACT?.balanceOf(address);
+		const balanceOf = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
 		console.log('balanceOf22');
 		console.log('ERC-20 balanceOf ', balanceOf);
 		if(!balanceOf)
@@ -806,31 +792,31 @@ const Home: NextPage = () => {
 	const [ICO_BLACKLIST_USER_LIST, setBlacklistUserList] = useState([]);
 
 	async function setMinTransferOnSC() {
-		await ICO_CONTRACT?.setMinuUSDTransfer(ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setMaxTransferOnSC() {
-		await ICO_CONTRACT?.setMaxuUSDTransfer(ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setMaxInvestmentOnSC() {
 		console.log('ICO_MAX_INVESTMENT ' + ICO_MAX_INVESTMENT);
-		await ICO_CONTRACT?.setMaxuUSDInvestment(ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// whitelist user
 	async function setWhitelistThresholdOnSC() {
-		await ICO_CONTRACT?.setWhitelistuUSDThreshold(Number(ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// whitelist user
 	async function setIsBlacklist(event:any) {
 
 		// process transaction
-		await ICO_CONTRACT?.setUseBlacklist(event.target.checked).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setUseBlacklist(event.target.checked).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function isWhitelisted(address: any, index: any) {
 
-		const isWhitelisted = await ICO_CONTRACT?.isWhitelisted(address);
+		const isWhitelisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isWhitelisted(address);
 
 		const element = window.document.getElementById('whitelistedValue'+index);
 		if (element === null) {
@@ -843,18 +829,18 @@ const Home: NextPage = () => {
 
 	// whitelist user
 	async function whitelistUser(flag: boolean) {
-		console.log("ICO_CONTRACT " + ICO_CONTRACT);
+		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT " + SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
 
 		if(flag) {
-			await ICO_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await ICO_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		}
 	}
 
 	async function isBlacklisted(address: any, index: any) {
 
-		const isBlacklisted = await ICO_CONTRACT?.isBlacklisted(address);
+		const isBlacklisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isBlacklisted(address);
 
 		const element = window.document.getElementById('blacklistedValue'+index);
 		if (element === null) {
@@ -875,42 +861,40 @@ const Home: NextPage = () => {
 
 		// process transaction
 		if(flag) {
-			await ICO_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await ICO_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		}
 	}
 
 	async function loadAntiWhale() {
 		// get read only - antiwhale
-		let minTransfer = await ICO_CONTRACT?.getMinUSDTransfer();
+		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
 		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await ICO_CONTRACT?.getMaxUSDTransfer();
+		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
 		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await ICO_CONTRACT?.getMaxUSDInvestment();
+		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
 		setMaxInvestment(maxInvestment * 10**6);
 
-		let whitelistThreshold = await ICO_CONTRACT?.getWhitelistuUSDThreshold();
+		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
 		setWhitelistThreshold(whitelistThreshold / 10**6);
-		let whitelisted = await ICO_CONTRACT?.getWhitelisted();
+		let whitelisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelisted();
 		setWhitelistUserList(whitelisted);
-		let whitelistUserCount = await ICO_CONTRACT?.getWhitelistUserCount();
+		let whitelistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistUserCount();
 		setWhitelistUserCount(whitelistUserCount);
 
-		let isUseBlackList = await ICO_CONTRACT?.getUseBlacklist();
+		let isUseBlackList = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUseBlacklist();
 		console.log("isUseBlackList: " + isUseBlackList);
 		setIsUseBlacklist(isUseBlackList);
-		let blacklisted = await ICO_CONTRACT?.getBlacklisted();
+		let blacklisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklisted();
 		setBlacklistUserList(blacklisted);
-		let blacklistUserCount = await ICO_CONTRACT?.getBlacklistUserCount();
+		let blacklistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklistUserCount();
 		setBlacklistUserCount(blacklistUserCount);
 	}
 
 	// ***********************************************************************************************
 	// ******************************************* ICO Contract **************************************
 	// ***********************************************************************************************
-	const [ICO_CONTRACT, setICOContract] = useState<Contract>()
-
   const [ICO_OWNER, setICOOwner] = useState<string | undefined>()
   const [ICO_PENDING_OWNER, setICOPendingOwner] = useState<string | undefined>()
   const [ICO_BALANCE, setICOBalance] = useState<string | undefined>()
@@ -933,8 +917,8 @@ const Home: NextPage = () => {
 
 	useEffect(() => {
 		console.log('useEffect6');
-		console.log('ICO_CONTRACT', ICO_CONTRACT);
-	}, [ICO_CONTRACT]);
+		console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
+	}, [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT]);
 
 	// populateICOContract
 	async function connectICOContract(event:React.FormEvent) {
@@ -945,31 +929,31 @@ const Home: NextPage = () => {
 
 	async function setICOHardCapOnSC() {
 		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await ICO_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setICOSoftCapOnSC() {
 		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await ICO_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 	async function setICOSPriceOnSC() {
 		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		await ICO_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ICO Owner
 	async function setNewICOOwner() {
-		await ICO_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await handleICOReceipt).catch(handleError);
 	}
 	async function acceptNewICOOwner() {
-		await ICO_CONTRACT?.acceptOwnership().then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.acceptOwnership().then(await handleICOReceipt).catch(handleError);
 	}
 
 	// click purchase
 	async function setCrowdsaleStage(stage: number) {
-		await ICO_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
 	}
 	async function reset() {
-		await ICO_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
 	}
 
 	// click purchase
@@ -980,38 +964,35 @@ const Home: NextPage = () => {
 		console.log('blockTimestamp: ', blockTimestamp);
 		setChainTimeInMs(blockTimestamp * 1000) ;
 
-		let icoBalance = await provider.getBalance(ICO_CONTRACT?.address!);
+		let icoBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		console.log("icoBalance: " + icoBalance);
 		setICOBalance(icoBalance + '');
 
-		console.log("ICO_CONTRACT: " + ICO_CONTRACT?.address);
-		let icoOwner = await ICO_CONTRACT?.owner();
+		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT: " + SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+		let icoOwner = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.owner();
 		console.log("icoOwner: " + icoOwner);
 		setICOOwner(icoOwner + '');
-		let icoPendingOwner = await ICO_CONTRACT?.pendingOwner();
+		let icoPendingOwner = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.pendingOwner();
 		console.log("icoPendingOwner: " + icoPendingOwner);
 		if(icoPendingOwner != '0x0000000000000000000000000000000000000000')
 			setICOPendingOwner(icoPendingOwner + '');
-		let hardCap = await ICO_CONTRACT?.getHardCap();
+		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
 		console.log("hardCap: " + hardCap);
 		setICOHardCap(hardCap);
-		let softCap = await ICO_CONTRACT?.getSoftCap();
+		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
 		console.log("softCap: " + softCap);
 		setICOSoftCap(softCap);
-		let price = await ICO_CONTRACT?.getPriceuUSD();
+		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
 		console.log("price: " + price);
 		setICOPrice(price);
 
 		// token address
-		let tokenAddress = await ICO_CONTRACT?.getTokenAddress();
+		let tokenAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTokenAddress();
 		console.log("tokenAddress: " + tokenAddress);
 		setTokenAddress(tokenAddress);
-		const signer = provider.getSigner()
-		const tokenContract: Contract = new ethers.Contract(tokenAddress, CFG_ERC_20_ABI, signer);
-		setTokenContract(tokenContract);
 
 		// get stage
-		let currentStage = await ICO_CONTRACT?.getCrowdsaleStage();
+		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
 		setCurrentState(currentStage);
 		if(currentStage == 0) setCurrentStateText("NOT CREATED");
 		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
@@ -1021,11 +1002,11 @@ const Home: NextPage = () => {
 		console.log(currentStage);
 
 		// get read only - investors
-		let totalWeiInvested = await ICO_CONTRACT?.getTotaluUSDInvested();
+		let totalWeiInvested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTotaluUSDInvested();
 		setTotaluUSDInvested(totalWeiInvested);
-		let countInvestors = await ICO_CONTRACT?.getInvestorsCount();
+		let countInvestors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestorsCount();
 		setCountInvestors(countInvestors);
-		let investors = await ICO_CONTRACT?.getInvestors();
+		let investors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestors();
 		setInvestors(investors);
 		console.log("investors: " + investors);
 
@@ -1033,12 +1014,12 @@ const Home: NextPage = () => {
 		loadAntiWhale();
 
 		// get read only - finalize
-		let withdrawAddress = await ICO_CONTRACT?.getTargetWalletAddress();
+		let withdrawAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTargetWalletAddress();
 		console.log("withdrawAddress: " + withdrawAddress);
 		setWithdrawTargetAddress(withdrawAddress);
 
 		// dynamic price
-		let dynamicPrice = await ICO_CONTRACT?.gettDynamicPrice();
+		let dynamicPrice = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.gettDynamicPrice();
 		console.log("dynamicPrice: " + dynamicPrice);
 		setDynamicPrice(dynamicPrice);
 
@@ -1091,7 +1072,6 @@ const Home: NextPage = () => {
 	// ******************************************* ERC-20 Token ***************************************
 	// ***********************************************************************************************
 	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
-	const [TOKEN_CONTRACT, setTokenContract] = useState<Contract>()
   const [TOKEN_OWNER, setTokenOwner] = useState<string | undefined>()
 	const [TOKEN_BALANCE, setTokenBalance] = useState<string | undefined>()
 	const [TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, setTokenSearchAllowanceFromAddress] = useState<string | undefined>()
@@ -1116,7 +1096,7 @@ const Home: NextPage = () => {
 		var value = element.value;
 
 		// process transaction
-		await TOKEN_CONTRACT?.transferOwnership(value).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transferOwnership(value).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function getBalanceOf(elementId: any) {
@@ -1128,9 +1108,9 @@ const Home: NextPage = () => {
 		var address = element.value;
 		console.log('address', address);
 
-		console.log('TOKEN_CONTRACT', TOKEN_CONTRACT);
+		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
 		console.log('balanceOf3');
-		const balanceOf = await TOKEN_CONTRACT?.balanceOf(address);
+		const balanceOf = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
 		console.log(balanceOf.toString());
 
 		setInvestorsBalance(balanceOf.toString());
@@ -1139,7 +1119,7 @@ const Home: NextPage = () => {
 	async function getAllowance() {
 		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS);
 		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
-		const allowanceWithDecimals = await TOKEN_CONTRACT?.allowance(TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
+		const allowanceWithDecimals = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.allowance(TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
 		const allowance = allowanceWithDecimals / 10**18;
 		console.log(allowance.toString());
 
@@ -1151,7 +1131,7 @@ const Home: NextPage = () => {
 		console.log("populateTokenContractData");
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-		let tokenBalance = await provider.getBalance(TOKEN_CONTRACT?.address!);
+		let tokenBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.address!);
 		console.log("icoBalance: " + tokenBalance);
 		setTokenBalance(tokenBalance + '');
 	}
@@ -1198,7 +1178,7 @@ const Home: NextPage = () => {
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
 
 		} else {
-			let currencyMap = await ICO_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
+			let currencyMap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner();
 			let currencyAddress = currencyMap[0];
@@ -1229,7 +1209,7 @@ const Home: NextPage = () => {
 
 	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
 	async function setDynamicPriceSC(event:any) {
-		await ICO_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************
@@ -1246,14 +1226,14 @@ const Home: NextPage = () => {
 		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
-		await ICO_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
 			.then(processCreateCrowdsale).catch(handleError);
 	}
 
 	async function processCreateCrowdsale(receipt: any) {
 		console.log(receipt);
 	
-		ICO_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
 			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
 			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
 				position: "bottom-right",
@@ -1288,7 +1268,7 @@ const Home: NextPage = () => {
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
 				from: METAMASK_CURRENT_ACCOUNT,
-				to: ICO_CONTRACT?.address,
+				to: SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
 				value: ethers.utils.parseEther(amountToInvest.toString()),
 				gasLimit: 1000000,
 			})
@@ -1305,12 +1285,8 @@ const Home: NextPage = () => {
 
 		} else {
 			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
-			let paymentTokenAddress: string = amountToken[0];
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			const signer = provider.getSigner();
-			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
-			await paymentToken?.approve(ICO_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await ICO_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(processInvestmentSuccess).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(processInvestmentSuccess).catch(handleError);
 		}
 
 	}
@@ -1318,7 +1294,7 @@ const Home: NextPage = () => {
 		console.log(receipt);
 	
 		// catch events
-		ICO_CONTRACT?.once('FundsReceived', function (_backer, _symbol, _amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsReceived', function (_backer, _symbol, _amount) {
 			console.log(`FundsReceived: ${_amount} ${_symbol} deposited by ${_backer}`);
 			toast.success(`FundsReceived: ${_amount} ${_symbol} deposited by ${_backer}`, {
 				position: "bottom-right",
@@ -1367,16 +1343,16 @@ const Home: NextPage = () => {
 	const onSelectToRefundCurrency = async (symbol: any)=>{
 		setToRefundCurrency(symbol);
 
-		let contribution = await ICO_CONTRACT?.getContribution(METAMASK_CURRENT_ACCOUNT, symbol);
+		let contribution = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(METAMASK_CURRENT_ACCOUNT, symbol);
 	  console.log(`contribution: ` + contribution);
 		setToRefundAmount(contribution);
 
-		let contributionUSD = await ICO_CONTRACT?.getuUSDContribution(METAMASK_CURRENT_ACCOUNT, symbol);
+		let contributionUSD = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(METAMASK_CURRENT_ACCOUNT, symbol);
 	  console.log(`contributionUSD: ` + contributionUSD);
 		setToRefundAmountUSD(contributionUSD);
 	}
 	async function refund() {
-		await ICO_CONTRACT?.refund(TO_REFUND_CURRENCY).then(processRefundSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(processRefundSuccess).catch(handleError);
 	}
 
 	const [TO_REFUND_ALL_AMOUNT, setToRefundAllAmount] = useState<string>()
@@ -1386,7 +1362,7 @@ const Home: NextPage = () => {
 	const onSelectToRefundAllCurrency = async (symbol: any)=>{
 		setToRefundAllCurrency(symbol);
 
-		let invested = await ICO_CONTRACT?.getPaymentToken(symbol);
+		let invested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
 	  console.log(`invested: ` + invested);
 	  console.log(`invested: ` + invested[4]);
 		setToRefundAllAmountUSD(invested[4]);
@@ -1394,13 +1370,13 @@ const Home: NextPage = () => {
 		setToRefundAllAmount(invested[5]);
 	}
 	async function refundAll() {
-		await ICO_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(processRefundSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(processRefundSuccess).catch(handleError);
 	}
 	async function processRefundSuccess(receipt: any) {
 		console.log(receipt);
 	
 		// catch events
-		ICO_CONTRACT?.once('FundsRefunded', function (_backer, amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsRefunded', function (_backer, amount) {
 			console.log(`FundsRefunded: ${amount} refunded to ${_backer}`);
 			toast.success(`FundsRefunded: ${amount} refunded to ${_backer}`, {
 				position: "bottom-right",
@@ -1428,20 +1404,20 @@ const Home: NextPage = () => {
 		let amountRequiredCATokens = BigInt(ICO_TOTAL_uUSD_INVESTED * 10**18 / ICO_PRICE);
 		let amountCurrentCATokens = BigInt(BALANCES_ERC_20_ICO_WALLET) * BigInt(10**18);
 	  console.log(`amountToTransferCATokensWithDecimals: ` + (amountRequiredCATokens - amountCurrentCATokens));
-		await TOKEN_CONTRACT?.transfer(ICO_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
+		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
 	}
 	async function claim() {
-		await ICO_CONTRACT?.claim().then(processClaimSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(processClaimSuccess).catch(handleError);
 	}
 	async function claimAll() {
-		await ICO_CONTRACT?.claimAll().then(processClaimSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(processClaimSuccess).catch(handleError);
 	}
 
 	async function processClaimSuccess(receipt: any) {
 		console.log(receipt);
 	
 		// catch events
-		ICO_CONTRACT?.once('FundsClaimed', function (_backer, amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsClaimed', function (_backer, amount) {
 			console.log(`FundsClaimed: ${amount} claimed by ${_backer}`);
 			toast.success(`FundsClaimed: ${amount} claimed by ${_backer}`, {
 				position: "bottom-right",
@@ -1460,7 +1436,7 @@ const Home: NextPage = () => {
 
 	async function setTokenAddressOnSC() {
 		console.log(`setting token address: ` + TOKEN_ADDRESS);
-		await ICO_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************
@@ -1473,13 +1449,13 @@ const Home: NextPage = () => {
 	async function withdrawICO() {
 		console.log(`WITHDRAW_CURRENCY: ` + WITHDRAW_CURRENCY);
 		console.log(`WITHDRAW_PERCENTAGE: ` + WITHDRAW_PERCENTAGE);
-		await ICO_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(processWithdrawSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(processWithdrawSuccess).catch(handleError);
 	}
 
 	async function processWithdrawSuccess(receipt: any) {
 		console.log(receipt);
 	
-		ICO_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
 			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
 			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
 				position: "bottom-right",
@@ -1502,7 +1478,7 @@ const Home: NextPage = () => {
 
 	// whitelist user
 	async function setTargetWalletAddress() {
-		await ICO_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************
@@ -1521,12 +1497,12 @@ const Home: NextPage = () => {
   };
 
 	async function setPercentVestedOnSC() {
-		await ICO_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
 	}
 	const onSelectCurrentVestingId = async (vestingId: any)=>{
 		console.log('onSelectCurrentVestingId', vestingId);
 
-		//let vesting = await ICO_CONTRACT?.getVesting(vestingId);
+		//let vesting = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVesting(vestingId);
 		//console.log('vesting', vesting);
 		setVestingScheduleCurrentId(vestingId);
 		//setVestingCliff(vesting[0]);
@@ -1536,7 +1512,7 @@ const Home: NextPage = () => {
 
 
 
-		let vesting = await VESTING_CONTRACT?.getVesting(vestingId);
+		let vesting = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVesting(vestingId);
 		console.log('vesting', vesting);
 		console.log('vesting[0])', vesting[0]);
 		console.log('parseInt', parseInt(vesting[0]));
@@ -1572,7 +1548,7 @@ const Home: NextPage = () => {
 		console.log(`\nVESTING_CLIFF: ` + VESTING_CLIFF);
 		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION);
 		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
-		await VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
 			.then(processCreateVesting).catch(handleError);
 
 		cancelVesting();
@@ -1580,7 +1556,7 @@ const Home: NextPage = () => {
 	async function processCreateVesting(receipt: any) {
 		console.log(receipt);
 	
-		ICO_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
 			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
 			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
 				position: "bottom-right",
@@ -1610,7 +1586,6 @@ const Home: NextPage = () => {
 	// ************************************* Vesting Schedules ***************************************
 	// ***********************************************************************************************
 	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
-	const [VESTING_CONTRACT, setVestingContract] = useState<Contract>()
 
 	const [VESTING_SCHEDULE_LIST, setVestingScheduleList] = useState<[]>()
 	const [VESTING_SCHEDULE_ID, setVestingScheduleId] = useState<string>('');
@@ -1620,7 +1595,7 @@ const Home: NextPage = () => {
 	const [VESTING_SCHEDULE_RELEASED_AMOUNT, setVestingScheduleReleasedAmount] = useState<number>(0);
 
 	async function loadVestingScheduleList() {
-		let vestingScheduleList = await VESTING_CONTRACT?.getVestingSchedulesIds();
+		let vestingScheduleList = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedulesIds();
 		console.log(`VESTING_SCHEDULE_LIST: ` + vestingScheduleList);
 		setVestingScheduleList(vestingScheduleList);
 	}
@@ -1628,7 +1603,7 @@ const Home: NextPage = () => {
 	const onSelectVestingSchedule = async (vestingScheduleId: any)=>{
 		console.log('onSelectVestingSchedule', vestingScheduleId);
 
-		let vestingSchedule = await VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
+		let vestingSchedule = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
 		console.log('vestingSchedule', vestingSchedule);
 
 		setVestingScheduleId(vestingScheduleId);
@@ -1648,14 +1623,14 @@ const Home: NextPage = () => {
 
 	async function computeVesting() {
 		console.log('computeVesting', VESTING_SCHEDULE_ID);
-		let releseableAmount = await VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
+		let releseableAmount = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
 		console.log('releseableAmount', releseableAmount);
 		setVestingScheduleReleasedAmount(releseableAmount);
 	}
 
 	async function releaseVesting() {
 		console.log('releaseVesting', VESTING_SCHEDULE_ID);
-		await VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
 	}
 
 	const [VESTING_GRANTOR, setVestinGrantor] = useState<string>('');
@@ -1664,29 +1639,29 @@ const Home: NextPage = () => {
 
 	async function setVestinGrantorOnSC() {
 		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
-		await VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function setVestingTokenOnSC() {
 		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
-		await ICO_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function loadVesting() {
 		// vesting
-		let vestingAddress = await ICO_CONTRACT?.getVestingAddress();
+		let vestingAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingAddress();
 		console.log("vestingAddress: " + vestingAddress);
 		setVestingAddress(vestingAddress);
 
-		let vestingIds = await VESTING_CONTRACT?.getVestingIds();
+		let vestingIds = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingIds();
 		console.log(`vestingIds: ` + vestingIds);
 		setVestingIds(vestingIds);
 
-		let percentVested = await ICO_CONTRACT?.getPercentVested();
+		let percentVested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPercentVested();
 		console.log(`percentVested: ` + percentVested);
 		setVestingSchedulePercentage(percentVested);
 
-		let vestingScheduleId = await ICO_CONTRACT?.getVestingId();
+		let vestingScheduleId = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingId();
 		console.log(`vestingScheduleId: ` + vestingScheduleId);
 		setVestingScheduleCurrentId(vestingScheduleId);
 	}
@@ -2075,7 +2050,7 @@ const Home: NextPage = () => {
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
 									</Row>
 									<Row>
-										<Col><div><Form.Text className="color-frame">List of Payment Tokens</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Available Payment Tokens</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col>
@@ -2125,7 +2100,7 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
 										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
 									</Row>
@@ -2513,20 +2488,47 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ioc_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey" disabled={ ICO_CURRENT_STAGE == STAGE.NOT_CREATED }>
+							<Tab eventKey="ioc_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey">
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
 									</Row>
+
+									<Row className="mb-3"></Row>
 									<Row>
-										<Col><div><Form.Text className="color-frame">List of Payment Tokens</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Available Payment Tokens</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={8}>
+											<Dropdown onSelect={onFactorySelectPaymentMethod}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+													{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+										<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Install</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Installed Payment Tokens</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col>
 											<Dropdown onSelect={onICOSelectPaymentMethod}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!ICO_PAYMENT_SYMBOL_SYMBOL}>
 													{ ICO_PAYMENT_SYMBOL_SYMBOL }
 												</Dropdown.Toggle>
 
@@ -2587,8 +2589,8 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 
 									<Row>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteICOPaymentMethod()}>{KEY_ICON()} Delete</Button></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteICOPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
+										{/*<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>{KEY_ICON()} Save</Button></Col>*/}
 										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelICOPaymentMethod()}>Cancel</Button></Col>
 									</Row>
 
