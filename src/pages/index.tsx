@@ -551,9 +551,10 @@ const Home: NextPage = () => {
 	}
 
 	async function saveICOPaymentMethod() {
-		console.log('saveICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
+		console.log('FACTORY_PAYMENT_SYMBOL_SYMBOL', FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_DECIMALS);
+		const tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
+		await tx.wait();
 
 		populateICOContractData();
 		cancelICOPaymentMethod();
@@ -2524,7 +2525,7 @@ const Home: NextPage = () => {
 												</Dropdown.Menu>
 											</Dropdown>
 										</Col>
-										<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Install</Button></Col>
+										<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>Install</Button></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
@@ -2534,7 +2535,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<Dropdown onSelect={onICOSelectPaymentMethod}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!ICO_PAYMENT_SYMBOL_SYMBOL}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!ICO_PAYMENT_SYMBOLS}>
 													{ ICO_PAYMENT_SYMBOL_SYMBOL }
 												</Dropdown.Toggle>
 
