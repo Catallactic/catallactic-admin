@@ -302,117 +302,6 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
-	// ************************************* Cryptocommodities ***************************************
-	// ***********************************************************************************************
-	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
-
-	const [SELECTED_CRYPTOCOMMODITY_CONTRACT, setSelectedCryptocommodityContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT, setSelectedCryptocommodityDiamondCutContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT, setSelectedCryptocommodityDiamondLoupeContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT, setSelectedCryptocommodityCommonContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
-
-	const [SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
-	const [SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
-	const [SELECTED_CRYPTOCOMMODITY_FACETS, setSelectedCryptocommodityFacets] = useState<any>();
-	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
-
-	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
-		console.log('onSelectCryptocommodity', cryptocommodityName);
-
-		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
-		setSelectedCryptocommodityName(cryptocommodityName);
-		setSelectedCryptocommodityAddress(cryptocommodityAddress);
-
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const signer = provider.getSigner();
-
-		const cryptocommodityContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
-		setSelectedCryptocommodityContract(cryptocommodityContract);
-
-		const diamondCutContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_CUT_ABI, signer);
-		setSelectedCryptocommodityDiamondCutContract(diamondCutContract);
-
-		const diamondLoupeContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_LOUPE_ABI, signer);
-		setSelectedCryptocommodityDiamondLoupeContract(diamondLoupeContract);
-
-		const commonContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_COMMON_ABI, signer);
-		setSelectedCryptocommodityCommonContract(commonContract);
-
-		const crowdsaleContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_CROWDSALE_ABI, signer);
-		setSelectedCryptocommodityCrowdsaleContract(crowdsaleContract);
-
-		const vestingContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_VESTING_ABI, signer);
-		setSelectedCryptocommodityVestingContract(vestingContract);
-
-		const tokenContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_ERC_20_ABI, signer);
-		setSelectedCryptocommodityTokenContract(tokenContract);
-
-		loadCryptocommodityFacets();
-	}
-	async function unselectCryptocommodity() {
-		console.log("unselectCryptocommodity");
-		setSelectedCryptocommodityName('');
-		setSelectedCryptocommodityAddress('');
-		setAddCryptocommodityName('');
-	}
-	async function saveCryptocommodity() {
-		console.log('saveCryptocommodity', ADD_CRYPTOCOMMODITY_NAME);
-
-		const tx = await FACTORY_CONTRACT?.createCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
-		const receipt = await tx.wait();
-
-		loadCryptocommodities();
-	}
-
-	async function loadCryptocommodities() {
-		console.log("fetching cryptocommodities for user");
-
-		let cryptocommodities = await FACTORY_CONTRACT?.getCryptocommodities();
-		console.log("cryptocommodities: " + cryptocommodities);
-		setCryptocommodities(cryptocommodities);
-		
-		unselectCryptocommodity();
-	}
-
-	async function loadCryptocommodityFacets() {
-		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
-		console.log("facets: ", facets);
-		setSelectedCryptocommodityFacets(facets);
-	}
-
-	async function installFacet(facetName: string) {
-		console.log("installFacet ", facetName);
-
-		let selectors: any = [];
-		let commonSelectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!))
-		if (facetName == 'DiamondCutFacet') selectors = [];
-		else if (facetName == 'DiamondLoupeFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.interface.functions!));
-		else if (facetName == 'CommonFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!));
-		else if (facetName == 'CrowdsaleFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.interface.functions!)), commonSelectors);
-		else if (facetName == 'VestingFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.interface.functions!)), commonSelectors);
-		else if (facetName == 'ERC20Facet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.interface.functions!)), commonSelectors);
-		console.log("selectors ", selectors);
-
-		// would need to merge abi files
-		let tx = await SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
-			facetAddress: FACTORY_FACETS[facetName][1],
-			action: FacetCutAction.Add,
-			functionSelectors: selectors,
-		}]);
-		await tx.wait();
-
-		loadCryptocommodityFacets();
-
-		console.log("installFacet end", facetName);
-	}
-	async function uninstallFacet(facetName: string) {
-		console.log("uninstallFacet ", facetName);
-	}
-
-	// ***********************************************************************************************
 	// ******************************************* Facets ********************************************
 	// ***********************************************************************************************
 	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
@@ -447,6 +336,122 @@ const Home: NextPage = () => {
 		console.log(map);
 		console.log("facetTypes: " + map);
 		setFactoryFacets(map);
+	}
+
+	// ***********************************************************************************************
+	// ************************************* Cryptocommodities ***************************************
+	// ***********************************************************************************************
+	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
+
+	const [SELECTED_CRYPTOCOMMODITY_CONTRACT, setSelectedCryptocommodityContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT, setSelectedCryptocommodityDiamondCutContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT, setSelectedCryptocommodityDiamondLoupeContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT, setSelectedCryptocommodityCommonContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
+	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
+
+	const [SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
+	const [SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
+	const [SELECTED_CRYPTOCOMMODITY_FACETS, setSelectedCryptocommodityFacets] = useState<any>();
+	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
+
+	async function unselectCryptocommodity() {
+		console.log("unselectCryptocommodity");
+		setSelectedCryptocommodityName('');
+		setSelectedCryptocommodityAddress('');
+		setAddCryptocommodityName('');
+	}
+	async function saveCryptocommodity() {
+		console.log('saveCryptocommodity', ADD_CRYPTOCOMMODITY_NAME);
+
+		const tx = await FACTORY_CONTRACT?.createCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
+		const receipt = await tx.wait();
+
+		loadCryptocommodities();
+	}
+
+	async function loadCryptocommodities() {
+		console.log("fetching cryptocommodities for user");
+
+		let cryptocommodities = await FACTORY_CONTRACT?.getCryptocommodities();
+		console.log("cryptocommodities: " + cryptocommodities);
+		setCryptocommodities(cryptocommodities);
+		
+		unselectCryptocommodity();
+	}
+
+	async function loadCryptocommodityFacets() {
+		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
+		console.log("loadCryptocommodityFacets: ", facets);
+		setSelectedCryptocommodityFacets(facets);
+	}
+
+	async function installFacet(facetName: string) {
+		console.log("installFacet ", facetName);
+
+		let selectors: any = [];
+		let commonSelectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!))
+		if (facetName == 'DiamondCutFacet') selectors = [];
+		else if (facetName == 'DiamondLoupeFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.interface.functions!));
+		else if (facetName == 'CommonFacet') selectors = getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!));
+		else if (facetName == 'CrowdsaleFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'VestingFacet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'ERC20Facet') selectors = removeSelectors(getSelectors(Object.keys(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.interface.functions!)), commonSelectors);
+		console.log("selectors ", selectors);
+
+		// would need to merge abi files
+		let tx = await SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
+			facetAddress: FACTORY_FACETS[facetName][1],
+			action: FacetCutAction.Add,
+			functionSelectors: selectors,
+		}]);
+		await tx.wait();
+
+		loadCryptocommodityFacets();
+
+		console.log("installFacet end", facetName);
+	}
+	async function uninstallFacet(facetName: string) {
+		console.log("uninstallFacet ", facetName);
+	}
+	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
+		console.log('onSelectCryptocommodity', cryptocommodityName);
+
+		let cryptocommodityAddress = await FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
+		setSelectedCryptocommodityName(cryptocommodityName);
+		setSelectedCryptocommodityAddress(cryptocommodityAddress);
+
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner();
+
+		const cryptocommodityContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
+		setSelectedCryptocommodityContract(cryptocommodityContract);
+
+		const diamondCutContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_CUT_ABI, signer);
+		setSelectedCryptocommodityDiamondCutContract(diamondCutContract);
+
+		const diamondLoupeContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_LOUPE_ABI, signer);
+		setSelectedCryptocommodityDiamondLoupeContract(diamondLoupeContract);
+
+		const commonContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_COMMON_ABI, signer);
+		setSelectedCryptocommodityCommonContract(commonContract);
+
+		const crowdsaleContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_CROWDSALE_ABI, signer);
+		setSelectedCryptocommodityCrowdsaleContract(crowdsaleContract);
+
+		const vestingContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_VESTING_ABI, signer);
+		setSelectedCryptocommodityVestingContract(vestingContract);
+
+		const tokenContract: Contract = new ethers.Contract(cryptocommodityAddress, CFG_ERC_20_ABI, signer);
+		setSelectedCryptocommodityTokenContract(tokenContract);
+
+		loadFacets();
+
+		// loadCryptocommodityFacets();
+		let facets = await diamondLoupeContract.facets();
+		console.log("loadCryptocommodityFacets: ", facets);
+		setSelectedCryptocommodityFacets(facets);
 	}
 
 	// ***********************************************************************************************
@@ -784,10 +789,6 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ******************************************* Antiwhale *****************************************
 	// ***********************************************************************************************
-  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
-  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
-	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
-	
 	const [ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
   const [ICO_WHITELIST_USER_COUNT, setWhitelistUserCount] = useState<number>(0);
 	const [ICO_WHITELIST_USER_LIST, setWhitelistUserList] = useState([])
@@ -875,16 +876,7 @@ const Home: NextPage = () => {
 	}
 
 	async function loadAntiWhale() {
-		// get read only - antiwhale
-		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
-		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
-		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
-		setMaxInvestment(maxInvestment * 10**6);
 
-		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
-		setWhitelistThreshold(whitelistThreshold / 10**6);
 		let whitelisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelisted();
 		setWhitelistUserList(whitelisted);
 		let whitelistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistUserCount();
@@ -900,14 +892,95 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
+	// ******************************************** Features *****************************************
+	// ***********************************************************************************************
+  const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
+  const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
+	const [ICO_PRICE, setICOPrice] = useState<number>(0)
+
+  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
+  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
+	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
+
+	async function loadICOFeatures() {
+
+		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
+		console.log("hardCap: " + hardCap);
+		setICOHardCap(hardCap);
+		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
+		console.log("softCap: " + softCap);
+		setICOSoftCap(softCap);
+		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
+		console.log("price: " + price);
+		setICOPrice(price);
+
+		// get read only - antiwhale
+		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
+		setMinTransfer(minTransfer * 10**6);
+		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
+		setMaxTransfer(maxTransfer * 10**6);
+		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
+		setMaxInvestment(maxInvestment * 10**6);
+		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
+		setWhitelistThreshold(whitelistThreshold / 10**6);
+
+	}
+
+	async function setICOHardCapOnSC() {
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+	}
+	async function setICOSoftCapOnSC() {
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+	}
+	async function setICOSPriceOnSC() {
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function createICO() {
+		// createICO
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
+		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
+		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
+		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
+		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
+		console.log(`VESTING_ID: ` + VESTING_ID);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
+			.then(processCreateCrowdsale).catch(handleError);
+	}
+
+	async function processCreateCrowdsale(receipt: any) {
+		console.log(receipt);
+	
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
+			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
+				position: "bottom-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		});
+
+		handleICOReceipt(receipt);
+	}
+
+	// ***********************************************************************************************
 	// ******************************************* ICO Contract **************************************
 	// ***********************************************************************************************
   const [ICO_OWNER, setICOOwner] = useState<string | undefined>()
   const [ICO_PENDING_OWNER, setICOPendingOwner] = useState<string | undefined>()
   const [ICO_BALANCE, setICOBalance] = useState<string | undefined>()
-  const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
-  const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
-	const [ICO_PRICE, setICOPrice] = useState<number>(0)
+
 	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
 	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
 	const STAGE: {[key: string]: number} = {
@@ -934,18 +1007,7 @@ const Home: NextPage = () => {
 		populateICOContractData();
 	}
 
-	async function setICOHardCapOnSC() {
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
-	}
-	async function setICOSoftCapOnSC() {
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
-	}
-	async function setICOSPriceOnSC() {
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
-	}
+
 
 	// ICO Owner
 	async function setNewICOOwner() {
@@ -963,6 +1025,8 @@ const Home: NextPage = () => {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
 	}
 
+
+
 	// click purchase
 	async function populateICOContractData() {
 		console.log("populateICOContractData");
@@ -971,6 +1035,7 @@ const Home: NextPage = () => {
 		console.log('blockTimestamp: ', blockTimestamp);
 		setChainTimeInMs(blockTimestamp * 1000) ;
 
+		console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!: ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		let icoBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		console.log("icoBalance: " + icoBalance);
 		setICOBalance(icoBalance + '');
@@ -983,15 +1048,7 @@ const Home: NextPage = () => {
 		console.log("icoPendingOwner: " + icoPendingOwner);
 		if(icoPendingOwner != '0x0000000000000000000000000000000000000000')
 			setICOPendingOwner(icoPendingOwner + '');
-		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
-		console.log("hardCap: " + hardCap);
-		setICOHardCap(hardCap);
-		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
-		console.log("softCap: " + softCap);
-		setICOSoftCap(softCap);
-		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
-		console.log("price: " + price);
-		setICOPrice(price);
+
 
 		// token address
 		let tokenAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTokenAddress();
@@ -1016,9 +1073,6 @@ const Home: NextPage = () => {
 		let investors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestors();
 		setInvestors(investors);
 		console.log("investors: " + investors);
-
-		loadICOPaymentMethod();
-		loadAntiWhale();
 
 		// get read only - finalize
 		let withdrawAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTargetWalletAddress();
@@ -1217,44 +1271,6 @@ const Home: NextPage = () => {
 	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
 	async function setDynamicPriceSC(event:any) {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
-	}
-
-	// ***********************************************************************************************
-	// ****************************************** Create ICO *********************s*******************
-	// ***********************************************************************************************
-	async function createICO() {
-		// createICO
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
-		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
-		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
-		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
-		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
-		console.log(`VESTING_ID: ` + VESTING_ID);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-			.then(processCreateCrowdsale).catch(handleError);
-	}
-
-	async function processCreateCrowdsale(receipt: any) {
-		console.log(receipt);
-	
-		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
-			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
-			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
-				position: "bottom-right",
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		});
-
-		handleICOReceipt(receipt);
 	}
 
 	// ***********************************************************************************************
@@ -1673,6 +1689,147 @@ const Home: NextPage = () => {
 		setVestingScheduleCurrentId(vestingScheduleId);
 	}
 
+
+	// ***********************************************************************************************
+	// ************************************** Tab Navigation *****************************************
+	// ***********************************************************************************************
+	function handleMainSelect(key: any) {
+		console.log(`handleMainSelect: ` + key);
+
+		if (key === 'me') {
+			loadICOFeatures();
+			loadVesting();
+
+		} else if (key === 'config') {
+			loadFactoryPaymentMethod();
+
+		} else if (key === 'ico') {
+			loadICOFeatures();
+			loadVesting();
+
+		} else if (key === 'vesting') {
+			loadVesting();
+
+		} else if (key === 'reserve') {
+
+		} else if (key === 'token') {
+
+
+		} else if (key === 'rewards') {
+
+
+		} else {
+
+		}
+			
+	}
+
+	function handleAccountsSelect(key: any) {
+		console.log(`handleAccountsSelect: ` + key);
+
+		if (key === 'ico_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		}
+			
+	}
+
+	function handleConfigSelect(key: any) {
+		console.log(`handleConfigSelect: ` + key);
+
+		if (key === 'cfg_env') {
+
+
+		} else if (key === 'cfg_crc') {
+			loadCryptocommodityFacets();
+			loadCryptocommodities();
+
+		}
+			
+	}
+
+	function handleFundingSelect(key: any) {
+		console.log(`handleFundingSelect: ` + key);
+
+		if (key === 'ico_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		} else if (key === 'ico_wha') {
+			loadAntiWhale();
+
+		} else if (key === 'ico_pay') {
+			loadICOPaymentMethod();
+
+		} else if (key === 'ico_ops') {
+
+		} else if (key === 'ico_fea') {
+
+		} else if (key === 'ico_inv') {
+
+		} else if (key === 'ico_con') {
+
+		}
+			
+	}
+
+	function handleVestingSelect(key: any) {
+		console.log(`handleConfigSelect: ` + key);
+
+		if (key === 'ves_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		} else if (key === 'ves_ope') {
+
+		} else if (key === 'ves_inv') {
+
+		} else if (key === 'ves_con') {
+
+
+		}
+			
+	}
+
+	function handleReserveSelect(key: any) {
+		console.log(`handleReserveSelect: ` + key);
+
+		if (key === 'ico_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		}
+			
+	}
+
+	function handleTokenSelect(key: any) {
+		console.log(`handleTokenSelect: ` + key);
+
+		if (key === 'tok_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		} else if (key === 'tok_hol') {
+
+		} else if (key === 'tok_con') {
+
+
+		}
+			
+	}
+
+	function handleRewardsSelect(key: any) {
+		console.log(`handleRewardsSelect: ` + key);
+
+		if (key === 'ico_fea') {
+			loadICOFeatures();
+			loadVesting();
+
+		}
+			
+	}
+
 	// ***********************************************************************************************
 	// ************************************** TX Processing ******************************************
 	// ***********************************************************************************************
@@ -1825,14 +1982,14 @@ const Home: NextPage = () => {
 
 				<Row className="mb-3"></Row>
 				<Row className="mb-3"></Row>
-				<Tabs defaultActiveKey="config" transition={false} className="nav nav-fill">
+				<Tabs defaultActiveKey="config" transition={false} className="nav nav-fill" onSelect={handleMainSelect}>
 
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************** ME Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="me" title="ACCOUNTS" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true} onSelect={handleAccountsSelect}>
 
 							<Tab eventKey="acc_inv" title="OWNER" className="bg-label mb-3 bg-light-grey">
 							</Tab>
@@ -2047,7 +2204,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="config" title="CONFIG" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs className="nav nav-fill" defaultActiveKey="cfg_crc" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="cfg_crc" transition={true} onSelect={handleConfigSelect}>
 
 							<Tab eventKey="cfg_env" title="ENVIRONMENT" className="bg-label mb-3 bg-light-grey" >
 
@@ -2256,7 +2413,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="ico" title="FUNDING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ico_fea" transition={true} onSelect={handleFundingSelect}>
 
 							<Tab eventKey="ico_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
@@ -2366,7 +2523,7 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ioc_wha" title="ANTIWHALE" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="ico_wha" title="ANTIWHALE" className="bg-label mb-3 bg-light-grey">
 
 								<Row className="mb-3"></Row>
 									<Form.Group className="p-3 border border-dark rounded bg-light-grey">
@@ -2487,7 +2644,7 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="ioc_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="ico_pay" title="PAYMENT" className="bg-label mb-3 bg-light-grey">
 
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
@@ -2935,9 +3092,9 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************ VESTING tab *****************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="VESTING" title="VESTING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
+					<Tab eventKey="vesting" title="VESTING" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true} onSelect={handleVestingSelect}>
 
 							<Tab eventKey="ves_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 								<Row className="mb-3"></Row>
@@ -3136,7 +3293,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="reserve" title="RESERVE" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true} onSelect={handleReserveSelect}>
 
 							<Tab eventKey="res_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
@@ -3185,7 +3342,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="token" title="CRYPTOCOMM" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
-						<Tabs className="nav nav-fill" defaultActiveKey="ves_fea" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="tok_fea" transition={true} onSelect={handleTokenSelect}>
 
 							<Tab eventKey="tok_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
@@ -3299,7 +3456,7 @@ hi
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="rewards" title="REWARDS" className="bg-label mb-3 bg-light-grey p-3" disabled={!SELECTED_CRYPTOCOMMODITY_NAME}>
 
-						<Tabs className="nav nav-fill" defaultActiveKey="rew_fea" transition={true}>
+						<Tabs className="nav nav-fill" defaultActiveKey="rew_fea" transition={true} onSelect={handleRewardsSelect}>
 
 							<Tab eventKey="rew_fea" title="FEATURES" className="bg-label mb-3 bg-light-grey">
 
