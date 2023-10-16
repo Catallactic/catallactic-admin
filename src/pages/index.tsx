@@ -1151,6 +1151,7 @@ const Home: NextPage = () => {
 
 		let amountToInvest: number = Number(TO_INVEST_AMOUNT)
 		console.log('investing amountToInvest ', amountToInvest, TO_INVEST_CURRENCY);
+		console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
 
 		if(TO_INVEST_CURRENCY == 'COIN') {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -1181,7 +1182,7 @@ const Home: NextPage = () => {
 			const signer = provider.getSigner();
 			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
 			await paymentToken?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(processInvestmentSuccess).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await processInvestmentSuccess).catch(handleError);
 		}
 
 	}
@@ -1204,6 +1205,8 @@ const Home: NextPage = () => {
 		});
 
 		handleICOReceipt(receipt);
+		getBalancesRawICOMeWallet();
+		getBalancesUSDICOMeWallet();
 
 		// reset form
 		setToInvestAmount('0');
