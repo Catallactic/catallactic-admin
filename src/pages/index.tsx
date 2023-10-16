@@ -421,7 +421,7 @@ const Home: NextPage = () => {
 		console.log("ADD_CRYPTOCOMMODITY_NAME: ", ADD_CRYPTOCOMMODITY_NAME);
 		onSelectCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
 	}
-	
+
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 
@@ -902,7 +902,7 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
-	// ******************************************** Features *****************************************
+	// **************************************** ICO Features *****************************************
 	// ***********************************************************************************************
   const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
   const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
@@ -1138,150 +1138,6 @@ const Home: NextPage = () => {
 		getBalancesCygasICOWallet();
 
 	}, [ICO_PAYMENT_SYMBOLS]);
-
-	// ***********************************************************************************************
-	// ******************************************* ERC-20 Token ***************************************
-	// ***********************************************************************************************
-	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
-  const [TOKEN_OWNER, setTokenOwner] = useState<string | undefined>()
-	const [TOKEN_BALANCE, setTokenBalance] = useState<string | undefined>()
-	const [TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, setTokenSearchAllowanceFromAddress] = useState<string | undefined>()
-	const [TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS, setTokenSearchAllowanceToAddress] = useState<string | undefined>()
-	const [TOKEN_SEARCH_ALLOWANCE, setTokenSearchAllowance] = useState<string | undefined>()
-
-	const [INVESTOR_BALANCE, setInvestorsBalance] = useState<string | undefined>()
-	
-	// populateICOContract
-	async function connectTokenContract(event:React.FormEvent) {
-		event.preventDefault();
-
-		populateTokenContractData();
-	}
-
-	async function setNewTokenOwner(elementId: string) {
-
-		const element = window.document.getElementById(elementId);
-		if (element === null) {
-    	return;
-		}
-		var value = element.value;
-
-		// process transaction
-		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transferOwnership(value).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function getBalanceOf(elementId: any) {
-
-		const element = window.document.getElementById(elementId);
-		if (element === null) {
-    	return;
-		}
-		var address = element.value;
-		console.log('address', address);
-
-		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
-		console.log('balanceOf3');
-		const balanceOf = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
-		console.log(balanceOf.toString());
-
-		setInvestorsBalance(balanceOf.toString());
-	}
-
-	async function getAllowance() {
-		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS);
-		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
-		const allowanceWithDecimals = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.allowance(TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
-		const allowance = allowanceWithDecimals / 10**18;
-		console.log(allowance.toString());
-
-		setTokenSearchAllowance(allowance.toString());
-	}
-
-	// click purchase
-	async function populateTokenContractData() {
-		console.log("populateTokenContractData");
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-		let tokenBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.address!);
-		console.log("icoBalance: " + tokenBalance);
-		setTokenBalance(tokenBalance + '');
-	}
-
-	// ***********************************************************************************************
-	// ************************************** Target Wallet Contract *********************************
-	// ***********************************************************************************************
-	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
-	const [TARGET_WALLET_CONTRACT, setTargetWalletContract] = useState<Contract>()
-	
-	// click purchase
-	async function populateTargetContract() {
-
-		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const signer = provider.getSigner()
-		const liquidity: Contract = new ethers.Contract(ICO_TARGET_WALLET!, CFG_ERC_20_ABI, signer)
-		setTargetWalletContract(liquidity);
-
-		getBalancesTargetWallet();
-		getBalancesCygasTargetWallet();
-	}
-
-	// ***********************************************************************************************
-	// ****************************************** Transfer *******************************************
-	// ***********************************************************************************************
-  const [TO_TRANSFER_ADDRESS, setToTransferAddress] = useState<string>('')
-  const [TO_TRANSFER_AMOUNT, setToTransferAmount] = useState<string>('0')
-  const [TO_TRANSFER_AMOUNT_USD, setToTransferAmountUSD] = useState<string>('0')
-	const [TO_TRANSFER_CURRENCY, setToTransferCurrency] = useState<string>('USDT')
-	
-	async function transfer() {
-		console.log('transferring ', TO_TRANSFER_ADDRESS, TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY);
-
-		if(TO_TRANSFER_CURRENCY == 'COIN') {
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			const signer = provider.getSigner()
-			await signer.sendTransaction({
-				from: METAMASK_CURRENT_ACCOUNT,
-				to: TO_TRANSFER_ADDRESS,
-				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
-				gasLimit: 200000,
-			}).then(await handleICOReceipt).catch(handleError);
-
-		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
-
-		} else {
-			let currencyMap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			const signer = provider.getSigner();
-			let currencyAddress = currencyMap[0];
-			let currencyDecimals = currencyMap[3];
-			const currencyToken: Contract = new ethers.Contract(currencyAddress, CFG_ERC_20_ABI, signer);
-			console.log('currencyToken ', currencyToken);
-			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString()).then(await handleICOReceipt).catch(handleError);
-		}
-
-	}
-
-	const onSelectToTransferCurrency = async (symbol: any)=>{
-		setToTransferCurrency(symbol);
-	}
-
-	useEffect(() => {
-		console.log('useEffect8');
-		if(!TO_TRANSFER_CURRENCY) return;
-		if(!ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY]) return;
-		console.log('TO_TRANSFER_AMOUNT', TO_TRANSFER_AMOUNT);
-
-		let amountToken: string = ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY];
-		let amountTokenPrice: number = Number(amountToken[2])
-		let amountToTransferUSD: number = Number(TO_TRANSFER_AMOUNT) * amountTokenPrice / 10**6;
-		setToTransferAmountUSD(amountToTransferUSD.toString());
-
-	}, [TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY]);
-
-	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
-	async function setDynamicPriceSC(event:any) {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
-	}
 
 	// ***********************************************************************************************
 	// ******************************************* Invest ********************************************
@@ -1699,6 +1555,175 @@ const Home: NextPage = () => {
 		setVestingScheduleCurrentId(vestingScheduleId);
 	}
 
+	// ***********************************************************************************************
+	// ********************************* ERC-20 Token Initialization *********************************
+	// ***********************************************************************************************
+	const [TOKEN_NAME, setTokenName] = useState<string>()
+	const [TOKEN_SYMBOL, setTokenSymbol] = useState<string>()
+	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>()
+
+	async function saveERC20Features() {
+		let tx = SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.initialize(TOKEN_NAME, TOKEN_SYMBOL, BigInt(TOKEN_SUPPLY!) * BigInt(10**18));
+		await tx.wait();
+	}
+
+	async function loadERC20Features() {
+		let name = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.name();
+		console.log('name: ' + name);
+		setTokenName(name);
+
+		let symbol = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.symbol();
+		console.log('symbol: ' + symbol);
+		setTokenSymbol(symbol);
+
+		let supply = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.totalSupply();
+		console.log('supply: ' + supply);
+		setTokenSupply(supply);
+	}
+
+	// ***********************************************************************************************
+	// ******************************************* ERC-20 Token **************************************
+	// ***********************************************************************************************
+	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
+  const [TOKEN_OWNER, setTokenOwner] = useState<string | undefined>()
+	const [TOKEN_BALANCE, setTokenBalance] = useState<string | undefined>()
+	const [TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, setTokenSearchAllowanceFromAddress] = useState<string | undefined>()
+	const [TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS, setTokenSearchAllowanceToAddress] = useState<string | undefined>()
+	const [TOKEN_SEARCH_ALLOWANCE, setTokenSearchAllowance] = useState<string | undefined>()
+
+	const [INVESTOR_BALANCE, setInvestorsBalance] = useState<string | undefined>()
+	
+	// populateICOContract
+	async function connectTokenContract(event:React.FormEvent) {
+		event.preventDefault();
+
+		populateTokenContractData();
+	}
+
+	async function setNewTokenOwner(elementId: string) {
+
+		const element = window.document.getElementById(elementId);
+		if (element === null) {
+    	return;
+		}
+		var value = element.value;
+
+		// process transaction
+		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transferOwnership(value).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function getBalanceOf(elementId: any) {
+
+		const element = window.document.getElementById(elementId);
+		if (element === null) {
+    	return;
+		}
+		var address = element.value;
+		console.log('address', address);
+
+		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
+		console.log('balanceOf3');
+		const balanceOf = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
+		console.log(balanceOf.toString());
+
+		setInvestorsBalance(balanceOf.toString());
+	}
+
+	async function getAllowance() {
+		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS);
+		console.log('TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS', TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
+		const allowanceWithDecimals = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.allowance(TOKEN_SEARCH_ALLOWANCE_FROM_ADDRESS, TOKEN_SEARCH_ALLOWANCE_TO_ADDRESS);
+		const allowance = allowanceWithDecimals / 10**18;
+		console.log(allowance.toString());
+
+		setTokenSearchAllowance(allowance.toString());
+	}
+
+	// click purchase
+	async function populateTokenContractData() {
+		console.log("populateTokenContractData");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+		let tokenBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.address!);
+		console.log("icoBalance: " + tokenBalance);
+		setTokenBalance(tokenBalance + '');
+	}
+
+	// ***********************************************************************************************
+	// ************************************** Target Wallet Contract *********************************
+	// ***********************************************************************************************
+	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
+	const [TARGET_WALLET_CONTRACT, setTargetWalletContract] = useState<Contract>()
+	
+	// click purchase
+	async function populateTargetContract() {
+
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const signer = provider.getSigner()
+		const liquidity: Contract = new ethers.Contract(ICO_TARGET_WALLET!, CFG_ERC_20_ABI, signer)
+		setTargetWalletContract(liquidity);
+
+		getBalancesTargetWallet();
+		getBalancesCygasTargetWallet();
+	}
+
+	// ***********************************************************************************************
+	// ****************************************** Transfer *******************************************
+	// ***********************************************************************************************
+  const [TO_TRANSFER_ADDRESS, setToTransferAddress] = useState<string>('')
+  const [TO_TRANSFER_AMOUNT, setToTransferAmount] = useState<string>('0')
+  const [TO_TRANSFER_AMOUNT_USD, setToTransferAmountUSD] = useState<string>('0')
+	const [TO_TRANSFER_CURRENCY, setToTransferCurrency] = useState<string>('USDT')
+	
+	async function transfer() {
+		console.log('transferring ', TO_TRANSFER_ADDRESS, TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY);
+
+		if(TO_TRANSFER_CURRENCY == 'COIN') {
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			const signer = provider.getSigner()
+			await signer.sendTransaction({
+				from: METAMASK_CURRENT_ACCOUNT,
+				to: TO_TRANSFER_ADDRESS,
+				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
+				gasLimit: 200000,
+			}).then(await handleICOReceipt).catch(handleError);
+
+		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
+
+		} else {
+			let currencyMap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			const signer = provider.getSigner();
+			let currencyAddress = currencyMap[0];
+			let currencyDecimals = currencyMap[3];
+			const currencyToken: Contract = new ethers.Contract(currencyAddress, CFG_ERC_20_ABI, signer);
+			console.log('currencyToken ', currencyToken);
+			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString()).then(await handleICOReceipt).catch(handleError);
+		}
+
+	}
+
+	const onSelectToTransferCurrency = async (symbol: any)=>{
+		setToTransferCurrency(symbol);
+	}
+
+	useEffect(() => {
+		console.log('useEffect8');
+		if(!TO_TRANSFER_CURRENCY) return;
+		if(!ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY]) return;
+		console.log('TO_TRANSFER_AMOUNT', TO_TRANSFER_AMOUNT);
+
+		let amountToken: string = ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY];
+		let amountTokenPrice: number = Number(amountToken[2])
+		let amountToTransferUSD: number = Number(TO_TRANSFER_AMOUNT) * amountTokenPrice / 10**6;
+		setToTransferAmountUSD(amountToTransferUSD.toString());
+
+	}, [TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY]);
+
+	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
+	async function setDynamicPriceSC(event:any) {
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
+	}
 
 	// ***********************************************************************************************
 	// ************************************** Tab Navigation *****************************************
@@ -1723,7 +1748,7 @@ const Home: NextPage = () => {
 		} else if (key === 'reserve') {
 
 		} else if (key === 'token') {
-
+			loadERC20Features();
 
 		} else if (key === 'rewards') {
 
@@ -1738,8 +1763,7 @@ const Home: NextPage = () => {
 		console.log(`handleAccountsSelect: ` + key);
 
 		if (key === 'ico_fea') {
-			loadICOFeatures();
-			loadVesting();
+
 
 		}
 			
@@ -1788,8 +1812,6 @@ const Home: NextPage = () => {
 		console.log(`handleConfigSelect: ` + key);
 
 		if (key === 'ves_fea') {
-			loadICOFeatures();
-			loadVesting();
 
 		} else if (key === 'ves_ope') {
 
@@ -1806,8 +1828,6 @@ const Home: NextPage = () => {
 		console.log(`handleReserveSelect: ` + key);
 
 		if (key === 'ico_fea') {
-			loadICOFeatures();
-			loadVesting();
 
 		}
 			
@@ -1817,8 +1837,7 @@ const Home: NextPage = () => {
 		console.log(`handleTokenSelect: ` + key);
 
 		if (key === 'tok_fea') {
-			loadICOFeatures();
-			loadVesting();
+			loadERC20Features();
 
 		} else if (key === 'tok_hol') {
 
@@ -1833,8 +1852,6 @@ const Home: NextPage = () => {
 		console.log(`handleRewardsSelect: ` + key);
 
 		if (key === 'ico_fea') {
-			loadICOFeatures();
-			loadVesting();
 
 		}
 			
@@ -2350,7 +2367,7 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME}  onChange={(event) => setAddCryptocommodityName(event.target.value)}  ></input></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME} onChange={(event) => setAddCryptocommodityName(event.target.value)} ></input></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
 									</Row>
@@ -3288,8 +3305,6 @@ const Home: NextPage = () => {
 							</Tab>
 
 							<Tab eventKey="ves_inv" title="HOLDERS" className="bg-label mb-3 bg-light-grey">
-
-
 							</Tab>
 
 							<Tab eventKey="ves_con" title="CONTRACT" className="bg-label mb-3 bg-light-grey">
@@ -3360,28 +3375,29 @@ hi
 								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Supply</div></div></Col>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Features</div></div></Col>
 									</Row>
 									<Row>
-										<Col><div><Form.Text className="">Token Contract Balance</Form.Text></div></Col>
+										<Col><div><Form.Text className="">Token Name</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_BALANCE}></input></Col>
+										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} ></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Token Symbol</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} ></input></Col>
+									</Row>
+									<Row>
+										<Col><div><Form.Text className="">Token Supply</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col><input type="number" className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SUPPLY} onChange={(event) => setTokenSupply(Number(event.target.value))} ></input></Col>
 									</Row>
 									<Row className="mb-3"></Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Mint</div></div></Col>
-									</Row>
-								</Form.Group>
-
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Burn</div></div></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => saveERC20Features()}>Initialize</Button></Col>
 									</Row>
 								</Form.Group>
 
