@@ -1174,8 +1174,14 @@ const Home: NextPage = () => {
 
 		} else {
 			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
-			await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await processInvestmentSuccess).catch(handleError);
+			console.log('amountToken: ', amountToken);
+			let paymentTokenAddress: string = amountToken[0];
+			console.log('paymentTokenAddress: ', paymentTokenAddress);
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			const signer = provider.getSigner();
+			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
+			await paymentToken?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(processInvestmentSuccess).catch(handleError);
 		}
 
 	}
@@ -1734,6 +1740,7 @@ const Home: NextPage = () => {
 		if (key === 'me') {
 			loadICOFeatures();
 			loadVesting();
+			loadICOPaymentMethod();
 
 		} else if (key === 'config') {
 			loadFactoryPaymentMethod();
@@ -1762,8 +1769,12 @@ const Home: NextPage = () => {
 	function handleAccountsSelect(key: any) {
 		console.log(`handleAccountsSelect: ` + key);
 
-		if (key === 'ico_fea') {
+		if (key === 'acc_own') {
 
+		} else if (key === 'acc_me') {
+			loadICOPaymentMethod();
+
+		} else if (key === 'cfg_inv') {
 
 		}
 			
@@ -2018,7 +2029,7 @@ const Home: NextPage = () => {
 
 						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true} onSelect={handleAccountsSelect}>
 
-							<Tab eventKey="acc_inv" title="OWNER" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="acc_own" title="OWNER" className="bg-label mb-3 bg-light-grey">
 							</Tab>
 
 							<Tab eventKey="acc_me" title="ME" className="bg-label mb-3 bg-light-grey">
