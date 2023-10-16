@@ -461,6 +461,13 @@ const Home: NextPage = () => {
 		setSelectedCryptocommodityFacets(facets);
 	}
 
+	const [SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS, setSelectedCryptocommodityReceiveAddress] = useState<any>();
+
+	async function setReceiveAddress() {
+		console.log("setReceiveAddress", SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
+		
+		await SELECTED_CRYPTOCOMMODITY_CONTRACT?.setReceiveFacet(SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
+	}
 
 	// ***********************************************************************************************
 	// ************************************* Metamask Account ****************************************
@@ -2428,7 +2435,6 @@ const Home: NextPage = () => {
 									 : '' }
 
 									<Row className="mb-3"></Row>
-									<Row className="mb-3"></Row>
 									<Row>
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
@@ -2794,6 +2800,18 @@ const Home: NextPage = () => {
 
 									<Row className="mb-3"></Row>
 
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Receive Address</div></div></Col>
+									</Row>
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><input className="form-control form-control-lg border-0 bg-yellow" onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={setReceiveAddress}>Update</Button></Col>
+									</Row>
 								</Form.Group>
 
 								<Row className="mb-3"></Row>
