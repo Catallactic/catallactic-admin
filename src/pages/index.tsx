@@ -416,6 +416,12 @@ const Home: NextPage = () => {
 	async function uninstallFacet(facetName: string) {
 		console.log("uninstallFacet ", facetName);
 	}
+
+	async function findCryptocommodity() {
+		console.log("ADD_CRYPTOCOMMODITY_NAME: ", ADD_CRYPTOCOMMODITY_NAME);
+		onSelectCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
+	}
+	
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 
@@ -454,6 +460,7 @@ const Home: NextPage = () => {
 		console.log("loadCryptocommodityFacets: ", facets);
 		setSelectedCryptocommodityFacets(facets);
 	}
+
 
 	// ***********************************************************************************************
 	// ************************************* Metamask Account ****************************************
@@ -954,7 +961,7 @@ const Home: NextPage = () => {
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-			.then(processCreateCrowdsale).catch(handleError);
+			.then(await processCreateCrowdsale).catch(handleError);
 	}
 
 	async function processCreateCrowdsale(receipt: any) {
@@ -1304,7 +1311,7 @@ const Home: NextPage = () => {
 				//.once('receipt', function(receipt){ ... })
 				//.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
 				//.on('error', function(error){ ... })
-				.then(processInvestmentSuccess).catch(handleError);
+				.then(await processInvestmentSuccess).catch(handleError);
 
 		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
 			// N/A
@@ -1312,7 +1319,7 @@ const Home: NextPage = () => {
 		} else {
 			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
 			await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(processInvestmentSuccess).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await processInvestmentSuccess).catch(handleError);
 		}
 
 	}
@@ -1378,7 +1385,7 @@ const Home: NextPage = () => {
 		setToRefundAmountUSD(contributionUSD);
 	}
 	async function refund() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(processRefundSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(await processRefundSuccess).catch(handleError);
 	}
 
 	const [TO_REFUND_ALL_AMOUNT, setToRefundAllAmount] = useState<string>()
@@ -1396,7 +1403,7 @@ const Home: NextPage = () => {
 		setToRefundAllAmount(invested[5]);
 	}
 	async function refundAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(processRefundSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await processRefundSuccess).catch(handleError);
 	}
 	async function processRefundSuccess(receipt: any) {
 		console.log(receipt);
@@ -1433,10 +1440,10 @@ const Home: NextPage = () => {
 		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
 	}
 	async function claim() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(processClaimSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(await processClaimSuccess).catch(handleError);
 	}
 	async function claimAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(processClaimSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await processClaimSuccess).catch(handleError);
 	}
 
 	async function processClaimSuccess(receipt: any) {
@@ -1475,7 +1482,7 @@ const Home: NextPage = () => {
 	async function withdrawICO() {
 		console.log(`WITHDRAW_CURRENCY: ` + WITHDRAW_CURRENCY);
 		console.log(`WITHDRAW_PERCENTAGE: ` + WITHDRAW_PERCENTAGE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(processWithdrawSuccess).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await processWithdrawSuccess).catch(handleError);
 	}
 
 	async function processWithdrawSuccess(receipt: any) {
@@ -1575,7 +1582,7 @@ const Home: NextPage = () => {
 		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION);
 		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
 		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
-			.then(processCreateVesting).catch(handleError);
+			.then(await processCreateVesting).catch(handleError);
 
 		cancelVesting();
 	}
@@ -2393,8 +2400,9 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 									<Row>
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col> : '' }
-										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
 									</Row>
 
 								</Form.Group>
