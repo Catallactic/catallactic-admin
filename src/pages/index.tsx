@@ -237,14 +237,14 @@ const Home: NextPage = () => {
 		setFactoryPaymentSymbolPrice(paymentMethod[2]);
 		setFactoryPaymentSymbolDecimals(paymentMethod[3]);
 
-		try {
+		/*try {
 			let dynPrice = await FACTORY_CONTRACT?.getUusdPerToken(symbol);
 			console.log('dynPrice' + dynPrice);
 			setFactoryPaymentSymbolDynPrice(dynPrice);
 		} catch (error) {
 			console.error(error);
 			setFactoryPaymentSymbolDynPrice(0);
-		}
+		}*/
 
 	}
 
@@ -680,7 +680,10 @@ const Home: NextPage = () => {
 
 			} else {
 				console.log('Token code for ', ICO_PAYMENT_SYMBOLS[i]);
-				let balance = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
+				const provider = new ethers.providers.Web3Provider(window.ethereum)
+				const signer = provider.getSigner();
+				const paymentToken: Contract = new ethers.Contract(method[0], CFG_ERC_20_ABI, signer);
+				let balance = await paymentToken.balanceOf(address);
 				console.log('Token balance ', ICO_PAYMENT_SYMBOLS[i], Number(balance));
 				mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 			}
@@ -1747,10 +1750,13 @@ const Home: NextPage = () => {
 	function handleMainSelect(key: any) {
 		console.log(`handleMainSelect: ` + key);
 
-		if (key === 'me') {
+		if (key === 'accounts') {
 			loadICOFeatures();
 			loadVesting();
 			loadICOPaymentMethod();
+			getBalancesPaymentTokensMeWallet();
+			getBalancesRawICOMeWallet();
+			getBalancesUSDICOMeWallet();
 
 		} else if (key === 'config') {
 			loadFactoryPaymentMethod();
@@ -1783,8 +1789,11 @@ const Home: NextPage = () => {
 
 		} else if (key === 'acc_me') {
 			loadICOPaymentMethod();
+			getBalancesPaymentTokensMeWallet();
+			getBalancesRawICOMeWallet();
+			getBalancesUSDICOMeWallet();
 
-		} else if (key === 'cfg_inv') {
+		} else if (key === 'acc_inv') {
 
 		}
 			
@@ -2035,7 +2044,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					{/* ************************************************************** ME Tab ********************************************************  */}
 					{/* ******************************************************************************************************************************  */}
-					<Tab eventKey="me" title="ACCOUNTS" className="bg-label mb-3 bg-light-grey p-3">
+					<Tab eventKey="accounts" title="ACCOUNTS" className="bg-label mb-3 bg-light-grey p-3">
 
 						<Tabs className="nav nav-fill" defaultActiveKey="acc_me" transition={true} onSelect={handleAccountsSelect}>
 
@@ -2389,8 +2398,8 @@ const Home: NextPage = () => {
 
 									<Row>
 										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME} onChange={(event) => setAddCryptocommodityName(event.target.value)} ></input></Col> : '' }
-										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
-										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={4} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
 									</Row>
 
 									<Row className="mb-3"></Row>
@@ -2809,8 +2818,8 @@ const Home: NextPage = () => {
 									</Row>
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><input className="form-control form-control-lg border-0 bg-yellow" onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={setReceiveAddress}>Update</Button></Col>
+										<Col xs={8}><input className="form-control form-control-lg border-0 bg-yellow" onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
+										<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={setReceiveAddress}>Update</Button></Col>
 									</Row>
 								</Form.Group>
 
@@ -2835,8 +2844,8 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="">Address</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col xs={9}><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
+										<Col xs={8}><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
+										<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Balance</Form.Text></div></Col>
