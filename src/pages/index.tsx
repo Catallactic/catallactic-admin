@@ -514,7 +514,7 @@ const Home: NextPage = () => {
 		}).catch((e)=>console.log(e))
 
 		// load environment
-		loadFactoryPaymentMethod();
+		loadYourCryptocommodities();
 		loadCryptocommodityFacets();
 		loadFacets();
 
@@ -945,6 +945,14 @@ const Home: NextPage = () => {
 		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
 		setWhitelistThreshold(whitelistThreshold / 10**6);
 
+		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
+		setCurrentState(currentStage);
+		if(currentStage == 0) setCurrentStateText("NOT CREATED");
+		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
+		else if(currentStage == 2) setCurrentStateText("ONGOING");
+		else if(currentStage == 3) setCurrentStateText("ON HOLD");
+		else if(currentStage == 4) setCurrentStateText("FINISHED");
+		console.log(currentStage);
 	}
 
 	async function setICOHardCapOnSC() {
@@ -1807,6 +1815,7 @@ const Home: NextPage = () => {
 		console.log(`handleConfigSelect: ` + key);
 
 		if (key === 'cfg_env') {
+			loadFactoryPaymentMethod();
 
 
 		} else if (key === 'cfg_ecr') {
@@ -2661,10 +2670,14 @@ const Home: NextPage = () => {
 									</Row>
 								</Form.Group>
 
-								<Row className="mb-3" hidden={ ICO_CURRENT_STAGE != STAGE.NOT_CREATED }></Row>
-								<Row hidden={ ICO_CURRENT_STAGE != STAGE.NOT_CREATED }>
+								{ ICO_CURRENT_STAGE == STAGE.NOT_CREATED ?
+								<Row className="mb-3"></Row>
+								: ''}
+								{ ICO_CURRENT_STAGE == STAGE.NOT_CREATED ?
+								 <Row>
 									<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => createICO()} > {KEY_ICON()} Create Funding Round</Button></Col>
 								</Row>
+								: ''}
 
 							</Tab>
 
