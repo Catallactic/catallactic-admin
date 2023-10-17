@@ -1808,7 +1808,9 @@ const Home: NextPage = () => {
 		if (key === 'cfg_env') {
 
 
-		} else if (key === 'cfg_crc') {
+		} else if (key === 'cfg_ecr') {
+
+		} else if (key === 'cfg_ycr') {
 			loadCryptocommodityFacets();
 			loadCryptocommodities();
 
@@ -2264,7 +2266,7 @@ const Home: NextPage = () => {
 					{/* ******************************************************************************************************************************  */}
 					<Tab eventKey="config" title="CONFIG" className="bg-label mb-3 bg-light-grey p-3">
 
-						<Tabs className="nav nav-fill" defaultActiveKey="cfg_crc" transition={true} onSelect={handleConfigSelect}>
+						<Tabs className="nav nav-fill" defaultActiveKey="cfg_ycr" transition={true} onSelect={handleConfigSelect}>
 
 							<Tab eventKey="cfg_env" title="ENVIRONMENT" className="bg-label mb-3 bg-light-grey" >
 
@@ -2273,6 +2275,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
 									</Row>
+
 									<Row>
 										<Col><div><Form.Text className="color-frame">Available Payment Tokens</Form.Text></div></Col>
 									</Row>
@@ -2322,7 +2325,6 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row className="mb-3"></Row>
-
 									<Row>
 										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
 										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
@@ -2343,16 +2345,14 @@ const Home: NextPage = () => {
 									<Row>
 										<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
 										<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
-										<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
-										<Col xs={3}></Col>
+										<Col xs={6}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 									</Row>
 									{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 										return (
-											<Row>
+											<Row className="mt-2" >
 												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-												<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
-												<Col xs={3}></Col>
+												<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
 											</Row>
 										);
 									})}
@@ -2361,9 +2361,9 @@ const Home: NextPage = () => {
 
 							</Tab>
 
-							<Tab eventKey="cfg_crc" title="CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
+							<Tab eventKey="cfg_ecr" title="CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
 
-							<Row className="mb-3"></Row>
+								<Row className="mb-3"></Row>
 								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 									<Row>
 										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
@@ -2444,10 +2444,99 @@ const Home: NextPage = () => {
 
 									<Row className="mb-3"></Row>
 									<Row>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+									</Row>
+
+								</Form.Group>
+
+							</Tab>
+
+							<Tab eventKey="cfg_ycr" title="YOUR CRYPTOCOMMODITIES" className="bg-label mb-3 bg-light-grey">
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col>
+											<Dropdown onSelect={onSelectCryptocommodity}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={CRYPTOCOMMODITIES.length==0}>
+													{ SELECTED_CRYPTOCOMMODITY_NAME }
+												</Dropdown.Toggle>
+
+												<Dropdown.Menu className="w-100">
+													{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+														return (
+															<Dropdown.Item as="button" key={index} eventKey={item} active={SELECTED_CRYPTOCOMMODITY_NAME == item}>
+																{item}
+															</Dropdown.Item>
+														);
+													})}
+												</Dropdown.Menu>
+											</Dropdown>
+										</Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
+									</Row>
+
+									<Row>
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME} onChange={(event) => setAddCryptocommodityName(event.target.value)} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={4} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
+									</Row>
+
+									<Row className="mb-3"></Row>
+									{ SELECTED_CRYPTOCOMMODITY_NAME ? 
+									<Row>
+										<Col>
+											<Row>
+												<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+												<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
+												<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
+											</Row>
+										</Col>
+									</Row>
+									 : '' }
+									{ SELECTED_CRYPTOCOMMODITY_NAME ? 
+									<Row>
+										<Col>
+											<ListGroup onSelect={onSelectFacet}>
+												{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
+													return (
+														<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
+															<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+															<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+
+															{ item == 'DiamondCutFacet' ?
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+															: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+															:
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+															}
+														</Row>
+													);
+												})}
+											</ListGroup>
+										</Col>
+									</Row>
+									 : '' }
+
+									<Row className="mb-3"></Row>
+									<Row>
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
 										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
-										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
 									</Row>
 
 								</Form.Group>
