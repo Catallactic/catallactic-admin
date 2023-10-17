@@ -2352,7 +2352,7 @@ const Home: NextPage = () => {
 											<Row className="mt-2" >
 												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-												<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
+												<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} dir="rtl" ></input></Col>
 											</Row>
 										);
 									})}
@@ -2427,12 +2427,10 @@ const Home: NextPage = () => {
 															<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 															<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
 
-															{ item == 'DiamondCutFacet' ?
-																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-															: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+															{ SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ true }>Installed</Button></Col>
 															:
-																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ true }>Not Installed</Button></Col>
 															}
 														</Row>
 													);
