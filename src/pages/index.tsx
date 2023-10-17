@@ -1161,9 +1161,10 @@ const Home: NextPage = () => {
 
 		let amountToInvest: number = Number(TO_INVEST_AMOUNT)
 		console.log('investing amountToInvest ', amountToInvest, TO_INVEST_CURRENCY);
-		console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
 
 		if(TO_INVEST_CURRENCY == 'COIN') {
+			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
@@ -1184,6 +1185,8 @@ const Home: NextPage = () => {
 			// N/A
 
 		} else {
+			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+
 			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
 			console.log('amountToken: ', amountToken);
 			let paymentTokenAddress: string = amountToken[0];
@@ -2419,25 +2422,29 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<ListGroup onSelect={onSelectFacet}>
-													{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
-														return (
-															<ListGroup.Item as="button" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item}>
-																<Row>
-																	<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
-																	<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-																	<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
+												<Row className="mt-1" >
+													<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={'Cryptocommodity'} ></input></Col>
+													<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+													<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_CONTRACT?.address ? truncateEthAddress(SELECTED_CRYPTOCOMMODITY_CONTRACT?.address) : ''} ></input></Col>
+													<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+												</Row>
+												{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
+													return (
+														<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
+															<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+															<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+															<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
 
-																	{ item == 'DiamondCutFacet' ?
-																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-																	: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
-																	:
-																		<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
-																	}
-																</Row>
-															</ListGroup.Item>
-														);
-													})}
+															{ item == 'DiamondCutFacet' ?
+																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+															: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+															:
+																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+															}
+														</Row>
+													);
+												})}
 											</ListGroup>
 										</Col>
 									</Row>
