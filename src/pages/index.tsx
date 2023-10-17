@@ -356,6 +356,7 @@ const Home: NextPage = () => {
 	const [SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
 	const [SELECTED_CRYPTOCOMMODITY_FACETS, setSelectedCryptocommodityFacets] = useState<any>();
 	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
+	const [FIND_CRYPTOCOMMODITY_NAME, setFindCryptocommodityName] = useState<string>('');
 
 	async function unselectCryptocommodity() {
 		console.log("unselectCryptocommodity");
@@ -369,10 +370,10 @@ const Home: NextPage = () => {
 		const tx = await FACTORY_CONTRACT?.createCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
 		const receipt = await tx.wait();
 
-		loadCryptocommodities();
+		loadCryptocommodityFacets();
 	}
 
-	async function loadCryptocommodities() {
+	async function loadYourCryptocommodities() {
 		console.log("fetching cryptocommodities for user");
 
 		let cryptocommodities = await FACTORY_CONTRACT?.getCryptocommodities();
@@ -418,8 +419,8 @@ const Home: NextPage = () => {
 	}
 
 	async function findCryptocommodity() {
-		console.log("ADD_CRYPTOCOMMODITY_NAME: ", ADD_CRYPTOCOMMODITY_NAME);
-		onSelectCryptocommodity(ADD_CRYPTOCOMMODITY_NAME);
+		console.log("FIND_CRYPTOCOMMODITY_NAME: ", FIND_CRYPTOCOMMODITY_NAME);
+		onSelectCryptocommodity(FIND_CRYPTOCOMMODITY_NAME);
 	}
 
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
@@ -514,7 +515,7 @@ const Home: NextPage = () => {
 
 		// load environment
 		loadFactoryPaymentMethod();
-		loadCryptocommodities();
+		loadCryptocommodityFacets();
 		loadFacets();
 
 		window.ethereum.on('accountsChanged', (accounts: any) => {
@@ -1809,10 +1810,11 @@ const Home: NextPage = () => {
 
 
 		} else if (key === 'cfg_ecr') {
+			loadCryptocommodityFacets();
 
 		} else if (key === 'cfg_ycr') {
 			loadCryptocommodityFacets();
-			loadCryptocommodities();
+			loadYourCryptocommodities();
 
 		}
 			
@@ -2376,7 +2378,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<Dropdown onSelect={onSelectCryptocommodity}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={CRYPTOCOMMODITIES.length==0}>
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={true}>
 													{ SELECTED_CRYPTOCOMMODITY_NAME }
 												</Dropdown.Toggle>
 
@@ -2400,7 +2402,7 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={ADD_CRYPTOCOMMODITY_NAME} onChange={(event) => setAddCryptocommodityName(event.target.value)} ></input></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={FIND_CRYPTOCOMMODITY_NAME} onChange={(event) => setFindCryptocommodityName(event.target.value)} ></input></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={4} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
 									</Row>
@@ -2443,7 +2445,7 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 									<Row>
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
-										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FIND_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
 									</Row>
 
 								</Form.Group>
@@ -2459,7 +2461,7 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">List of Your Cryptocommodities</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col>
