@@ -2396,7 +2396,7 @@ const Home: NextPage = () => {
 									<Row className="mb-3"></Row>
 									<Row>
 										<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
-										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
 									</Row>
 
 									<Row>
@@ -2412,7 +2412,6 @@ const Home: NextPage = () => {
 											<Row>
 												<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
 												<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
-												<Col xs={3}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 												<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
 											</Row>
 										</Col>
@@ -2422,25 +2421,18 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<ListGroup onSelect={onSelectFacet}>
-												<Row className="mt-1" >
-													<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={'Cryptocommodity'} ></input></Col>
-													<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
-													<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_CONTRACT?.address ? truncateEthAddress(SELECTED_CRYPTOCOMMODITY_CONTRACT?.address) : ''} ></input></Col>
-													<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-												</Row>
 												{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 													return (
 														<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
 															<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 															<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-															<Col xs={3}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? truncateEthAddress(FACTORY_FACETS[item][1]) : ''} ></input></Col>
 
 															{ item == 'DiamondCutFacet' ?
-																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
 															: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
 															:
-																<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+																<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
 															}
 														</Row>
 													);
