@@ -13,6 +13,7 @@ import Tab from 'react-bootstrap/Tab';
 import Accordion from 'react-bootstrap/Accordion';
 import Dropdown from 'react-bootstrap/Dropdown';
 import ListGroup from 'react-bootstrap/ListGroup';
+import Modal from 'react-bootstrap/Modal';
 import { ToastContainer, toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -1976,6 +1977,31 @@ const Home: NextPage = () => {
 	
 		return err;
 	}
+
+	// ***********************************************************************************************
+	// ****************************************** Functions ******************************************
+	// ***********************************************************************************************
+	const [SHOW_FUNCTIONS, showFunctionsModal] = useState(false);
+	const [INTERFACE_MODAL, setInterfaceModal] = useState<ethers.utils.Interface>();
+
+	async function handleShowFunctions(facet: string) {
+		console.log(facet);
+
+		let facetInterface: ethers.utils.Interface = new ethers.utils.Interface(CFG_SELECTED_CRYPTOCOMMODITIY_ABI);
+		if(facet == 'DiamondCutFacet') facetInterface = new ethers.utils.Interface(CFG_DIAMOND_CUT_ABI)!;
+		else if(facet == 'DiamondLoupeFacet') facetInterface = new ethers.utils.Interface(CFG_DIAMOND_LOUPE_ABI)!;
+		else if(facet == 'CommonFacet') facetInterface = new ethers.utils.Interface(CFG_COMMON_ABI)!;
+		else if(facet == 'CrowdsaleFacet') facetInterface = new ethers.utils.Interface(CFG_CROWDSALE_ABI)!;
+		else if(facet == 'VestingFacet') facetInterface = new ethers.utils.Interface(CFG_VESTING_ABI)!;
+		else if(facet == 'ERC20Facet') facetInterface = new ethers.utils.Interface(CFG_ERC_20_ABI)!;
+		console.log(facetInterface);
+		console.log(facetInterface.functions);
+
+		setInterfaceModal(facetInterface);
+
+		showFunctionsModal(true);
+
+	}
 	
   return (
     <>
@@ -2358,17 +2384,63 @@ const Home: NextPage = () => {
 										<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
 										<Col xs={6}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 									</Row>
+									<Row className="mt-2" >
+												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={'Diamond'} ></input></Col>
+												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+												<Col xs={5}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+												<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => handleShowFunctions('Diamond')}>...</Button></Col>
+											</Row>
 									{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 										return (
 											<Row className="mt-2" >
 												<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 												<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-												<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} dir="rtl" ></input></Col>
+												<Col xs={5}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} dir="rtl" ></input></Col>
+												<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => handleShowFunctions(item)}>...</Button></Col>
 											</Row>
 										);
 									})}
 
 								</Form.Group>
+
+								<Modal show={SHOW_FUNCTIONS} onHide={() => showFunctionsModal(false)}>
+									<Modal.Header closeButton>
+										<Modal.Title>Modal heading</Modal.Title>
+									</Modal.Header>
+									<Modal.Body>
+
+
+										
+
+										{/*
+										{Object.keys(INTERFACE_MODAL?.functions!).map((item: string, index: any) => (
+											<Row className="mb-3" key={index}>
+												<Col>{item}</Col>
+											</Row>
+										))}
+										*/}
+
+
+										<Form>
+											<Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+												<Form.Label> { INTERFACE_MODAL && INTERFACE_MODAL.functions && INTERFACE_MODAL.functions[0] ? INTERFACE_MODAL.functions[0].name : '' } </Form.Label>
+												<Form.Control type="email" placeholder="name@example.com" autoFocus />
+											</Form.Group>
+											<Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+												<Form.Label>Example textarea</Form.Label>
+												<Form.Control as="textarea" rows={3} />
+											</Form.Group>
+										</Form>
+									</Modal.Body>
+									<Modal.Footer>
+										<Button variant="secondary" onClick={() => showFunctionsModal(false)}>
+											Close
+										</Button>
+										<Button variant="primary" onClick={() => showFunctionsModal(false)}>
+											Save Changes
+										</Button>
+									</Modal.Footer>
+								</Modal>
 
 							</Tab>
 
