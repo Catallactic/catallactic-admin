@@ -1055,8 +1055,6 @@ const Home: NextPage = () => {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
 	}
 
-
-
 	// click purchase
 	async function populateICOContractData() {
 		console.log("populateICOContractData");
@@ -1078,12 +1076,6 @@ const Home: NextPage = () => {
 		console.log("icoPendingOwner: " + icoPendingOwner);
 		if(icoPendingOwner != '0x0000000000000000000000000000000000000000')
 			setICOPendingOwner(icoPendingOwner + '');
-
-
-		// token address
-		let tokenAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTokenAddress();
-		console.log("tokenAddress: " + tokenAddress);
-		setTokenAddress(tokenAddress);
 
 		// get stage
 		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
@@ -1514,6 +1506,7 @@ const Home: NextPage = () => {
 	const [VESTING_SCHEDULE_HOLDER, setVestingScheduleHolder] = useState<string>('');
 	const [VESTING_SCHEDULE_AMOUNT, setVestingScheduleAmount] = useState<number>(0);
 	const [VESTING_SCHEDULE_RELEASED_AMOUNT, setVestingScheduleReleasedAmount] = useState<number>(0);
+	const [VESTING_SCHEDULE_TOKEN_ADDRESS, setVestingScheduleTokenAddress] = useState<string>()
 
 	async function loadVestingScheduleList() {
 		let vestingScheduleList = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedulesIds();
@@ -1568,6 +1561,11 @@ const Home: NextPage = () => {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
+	async function setTokenAddressOnVestingSC() {
+		console.log(`setting VESTING_SCHEDULE_TOKEN_ADDRESS: ` + VESTING_SCHEDULE_TOKEN_ADDRESS);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
 	async function loadVesting() {
 		// vesting
 		let vestingAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingAddress();
@@ -1585,6 +1583,10 @@ const Home: NextPage = () => {
 		let vestingScheduleId = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingId();
 		console.log(`vestingScheduleId: ` + vestingScheduleId);
 		setVestingScheduleCurrentId(vestingScheduleId);
+
+		let tokenAddressInVestingContract = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
+		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
+		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
 	}
 
 	// ***********************************************************************************************
@@ -1595,7 +1597,7 @@ const Home: NextPage = () => {
 	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>()
 
 	async function saveERC20Features() {
-		let tx = SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.initialize(TOKEN_NAME, TOKEN_SYMBOL, BigInt(TOKEN_SUPPLY!) * BigInt(10**18));
+		let tx = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.initialize(TOKEN_NAME, TOKEN_SYMBOL, BigInt(TOKEN_SUPPLY!) * BigInt(10**18));
 		await tx.wait();
 	}
 
@@ -1679,6 +1681,13 @@ const Home: NextPage = () => {
 		let tokenBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.address!);
 		console.log("icoBalance: " + tokenBalance);
 		setTokenBalance(tokenBalance + '');
+	}
+
+	async function loadTokenAddressOnCrowdsaleContract() {
+		// token address
+		let tokenAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTokenAddress();
+		console.log("tokenAddress: " + tokenAddress);
+		setTokenAddress(tokenAddress);
 	}
 
 	// ***********************************************************************************************
@@ -1844,6 +1853,7 @@ const Home: NextPage = () => {
 			loadICOPaymentMethod();
 
 		} else if (key === 'ico_ops') {
+			loadTokenAddressOnCrowdsaleContract();
 
 		} else if (key === 'ico_fea') {
 
@@ -1861,6 +1871,7 @@ const Home: NextPage = () => {
 		if (key === 'ves_fea') {
 
 		} else if (key === 'ves_ope') {
+			loadVesting();
 
 		} else if (key === 'ves_inv') {
 
@@ -3397,26 +3408,6 @@ const Home: NextPage = () => {
 
 								</Form.Group>
 
-								<Row className="mb-3"></Row>
-								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-
-									<Row>
-										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Grantor</div></div></Col>
-									</Row>
-									<Row>
-										<Col><div><Form.Text className="">Account</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
-									</Row>
-
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
-									</Row>
-
-								</Form.Group>
-
 							</Tab>
 
 							<Tab eventKey="ves_ope" title="OPERATIONS" className="bg-label mb-3 bg-light-grey">
@@ -3443,6 +3434,31 @@ const Home: NextPage = () => {
 										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
+									</Row>
+
+								</Form.Group>
+
+								<Row className="mb-3"></Row>
+								<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+
+									<Row>
+										<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Config</div></div></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={VESTING_GRANTOR} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
+									</Row>
+
+									<Row>
+										<Col><div><Form.Text className="">Enter Token Address</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={VESTING_SCHEDULE_TOKEN_ADDRESS} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
+										<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
 									</Row>
 
 								</Form.Group>
