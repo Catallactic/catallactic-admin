@@ -1876,6 +1876,7 @@ const Home: NextPage = () => {
 
 		} else if (key === 'ves_ope') {
 			loadVesting();
+			loadVestingScheduleList();
 
 		} else if (key === 'ves_inv') {
 
@@ -3495,7 +3496,6 @@ const Home: NextPage = () => {
 												</Dropdown.Menu>
 											</Dropdown>
 										</Col>
-										<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={loadVestingScheduleList}>Load</Button></Col>
 									</Row>
 
 									<Row>
@@ -3507,7 +3507,7 @@ const Home: NextPage = () => {
 
 									<Row>
 										<Col><div><Form.Text className="color-frame">Vesting Schedule Id</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame">Vesting Id</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">Vesting Program Id</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_ID ? VESTING_SCHEDULE_ID : '' }></input></Col>
@@ -3519,7 +3519,7 @@ const Home: NextPage = () => {
 										<Col><div><Form.Text className="color-frame">Released Amount</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_AMOUNT ? VESTING_SCHEDULE_AMOUNT : '' }></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_AMOUNT ? VESTING_SCHEDULE_AMOUNT / 10**18 : '' }></input></Col>
 										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_RELEASED_AMOUNT ? VESTING_SCHEDULE_RELEASED_AMOUNT : '' } dir="rtl" ></input></Col>
 									</Row>
 
@@ -3654,7 +3654,7 @@ hi
 									</Row>
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE}></input></Col>
+										<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE ? Number(INVESTOR_BALANCE) / 10**18 : 0}></input></Col>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
 									</Row>
 								</Form.Group>
