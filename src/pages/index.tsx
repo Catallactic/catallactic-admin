@@ -1037,7 +1037,16 @@ const Home: NextPage = () => {
 		populateICOContractData();
 	}
 
-
+	async function loadInvested() {
+			// get read only - investors
+			let totalWeiInvested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTotaluUSDInvested();
+			setTotaluUSDInvested(totalWeiInvested);
+			let countInvestors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestorsCount();
+			setCountInvestors(countInvestors);
+			let investors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestors();
+			setInvestors(investors);
+			console.log("investors: " + investors);
+	}
 
 	// ICO Owner
 	async function setNewICOOwner() {
@@ -1088,13 +1097,7 @@ const Home: NextPage = () => {
 		console.log(currentStage);
 
 		// get read only - investors
-		let totalWeiInvested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTotaluUSDInvested();
-		setTotaluUSDInvested(totalWeiInvested);
-		let countInvestors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestorsCount();
-		setCountInvestors(countInvestors);
-		let investors = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestors();
-		setInvestors(investors);
-		console.log("investors: " + investors);
+		loadInvested();
 
 		// get read only - finalize
 		let withdrawAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTargetWalletAddress();
@@ -1854,6 +1857,7 @@ const Home: NextPage = () => {
 
 		} else if (key === 'ico_ops') {
 			loadTokenAddressOnCrowdsaleContract();
+			loadInvested();
 
 		} else if (key === 'ico_fea') {
 
@@ -3102,8 +3106,8 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										<Col><div><Form.Text className="color-frame">ICO CATokens Required</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame">ICO CATokens Current</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">ICO Cryotocommodities Required</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">ICO Cryotocommodities Current</Form.Text></div></Col>
 										<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
 									</Row>
 									<Row>
