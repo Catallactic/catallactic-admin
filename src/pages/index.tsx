@@ -133,6 +133,14 @@ const Home: NextPage = () => {
 		setMetamaskInstalled(window.ethereum !== undefined);
 	}, [METAMASK_CHAIN_ID]);
 
+
+	async function loadBlockchainDatetime() {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const blockTimestamp = (await provider.getBlock("latest")).timestamp;
+		console.log('blockTimestamp: ', blockTimestamp);
+		setChainTimeInMs(blockTimestamp * 1000) ;
+	}
+
 	// ***********************************************************************************************
 	// ************************************** Metamask Network ***************************************
 	// ************************************ (On Connect Metamask) ************************************
@@ -1068,9 +1076,8 @@ const Home: NextPage = () => {
 	async function populateICOContractData() {
 		console.log("populateICOContractData");
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const blockTimestamp = (await provider.getBlock("latest")).timestamp;
-		console.log('blockTimestamp: ', blockTimestamp);
-		setChainTimeInMs(blockTimestamp * 1000) ;
+
+		loadBlockchainDatetime();
 
 		console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!: ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		let icoBalance = await provider.getBalance(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
@@ -1875,6 +1882,7 @@ const Home: NextPage = () => {
 		if (key === 'ves_fea') {
 
 		} else if (key === 'ves_ope') {
+			loadBlockchainDatetime();
 			loadVesting();
 			loadVestingScheduleList();
 
