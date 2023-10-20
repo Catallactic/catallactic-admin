@@ -1592,9 +1592,9 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ********************************* ERC-20 Token Initialization *********************************
 	// ***********************************************************************************************
-	const [TOKEN_NAME, setTokenName] = useState<string>()
-	const [TOKEN_SYMBOL, setTokenSymbol] = useState<string>()
-	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>()
+	const [TOKEN_NAME, setTokenName] = useState<string>('')
+	const [TOKEN_SYMBOL, setTokenSymbol] = useState<string>('')
+	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>(0)
 
 	async function saveERC20Features() {
 		let tx = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.initialize(TOKEN_NAME, TOKEN_SYMBOL, BigInt(TOKEN_SUPPLY!) * BigInt(10**18));
@@ -3623,12 +3623,14 @@ hi
 										<Col><div><Form.Text className="">Token Supply</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SUPPLY} onChange={(event) => setTokenSupply(Number(event.target.value))} ></input></Col>
+										<Col><input type="number" className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SUPPLY ? TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} ></input></Col>
 									</Row>
-									<Row className="mb-3"></Row>
+									{ !TOKEN_SUPPLY ? <Row className="mb-3"></Row> : ''}
+									{ !TOKEN_SUPPLY ? 
 									<Row>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => saveERC20Features()}>Initialize</Button></Col>
 									</Row>
+									: ''}
 								</Form.Group>
 
 							</Tab>
