@@ -1,5 +1,7 @@
 // src/pages/index.tsx
 import {Contract, ethers, utils} from "ethers"
+import { keccak256 } from "@ethersproject/keccak256";
+import { toUtf8Bytes } from "@ethersproject/strings";
 
 import { useState, useEffect, ChangeEvent } from "react";
 import type { NextPage } from 'next'
@@ -224,6 +226,43 @@ const Home: NextPage = () => {
 	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
 
 	// ***********************************************************************************************
+	// ****************************************** Factory Facets *************************************
+	// ***********************************************************************************************
+	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
+	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
+
+	const onSelectFacet = async (facetName: any, pp: any)=>{
+		console.log('onSelectFacet', facetName);
+		console.log('onSelectFacet', pp);
+		console.log('onSelectFacet', FACTORY_FACETS[facetName][0]);
+		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
+
+		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
+		
+
+	}
+
+	async function loadFacets() {
+		// get read only - payment methods
+		let facetTypes = await FACTORY_CONTRACT?.getFacetTypes();
+		setFactoryFacetTypes(facetTypes);
+		console.log("facetTypes: " + facetTypes);
+		console.log(facetTypes);
+
+		const map: MapType = {};
+		for (var i = 0; i < facetTypes.length; i++) {
+			console.log("facetType: " + facetTypes[i]);
+			let facetType = await FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
+			console.log("facetType: " + facetType);
+			console.log(facetType);
+			map[facetTypes[i]] = facetType[0];
+		}
+		console.log(map);
+		console.log("facetTypes: " + map);
+		setFactoryFacets(map);
+	}
+
+	// ***********************************************************************************************
 	// ********************************* Factory Payments Tokens *************************************
 	// ***********************************************************************************************
 	const [FACTORY_PAYMENT_SYMBOLS, setFactoryPaymentSymbols] = useState<any | undefined>()
@@ -312,46 +351,11 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
-	// ******************************************* Facets ********************************************
-	// ***********************************************************************************************
-	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
-	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
-
-	const onSelectFacet = async (facetName: any, pp: any)=>{
-		console.log('onSelectFacet', facetName);
-		console.log('onSelectFacet', pp);
-		console.log('onSelectFacet', FACTORY_FACETS[facetName][0]);
-		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
-
-		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
-		
-
-	}
-
-	async function loadFacets() {
-		// get read only - payment methods
-		let facetTypes = await FACTORY_CONTRACT?.getFacetTypes();
-		setFactoryFacetTypes(facetTypes);
-		console.log("facetTypes: " + facetTypes);
-		console.log(facetTypes);
-
-		const map: MapType = {};
-		for (var i = 0; i < facetTypes.length; i++) {
-			console.log("facetType: " + facetTypes[i]);
-			let facetType = await FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
-			console.log("facetType: " + facetType);
-			console.log(facetType);
-			map[facetTypes[i]] = facetType[0];
-		}
-		console.log(map);
-		console.log("facetTypes: " + map);
-		setFactoryFacets(map);
-	}
-
-	// ***********************************************************************************************
-	// ************************************* Cryptocommodities ***************************************
+	// ************************************* Cryptocommodity *****************************************
 	// ***********************************************************************************************
 	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
+
+	const [SELECTED_CRYPTOCOMMODITY_STORAGE, setCryptocommodityStorage] = useState<string>('');
 
 	const [SELECTED_CRYPTOCOMMODITY_CONTRACT, setSelectedCryptocommodityContract] = useState<Contract>()
 	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT, setSelectedCryptocommodityDiamondCutContract] = useState<Contract>()
@@ -367,6 +371,13 @@ const Home: NextPage = () => {
 	const [ADD_CRYPTOCOMMODITY_NAME, setAddCryptocommodityName] = useState<string>('');
 	const [FIND_CRYPTOCOMMODITY_NAME, setFindCryptocommodityName] = useState<string>('');
 
+	async function setStorage() {
+		//let storage = keccak256(toUtf8Bytes("diamond.standard.app.storage"));
+		let storage = keccak256(toUtf8Bytes(SELECTED_CRYPTOCOMMODITY_STORAGE));
+		console.log("storage", storage);
+		await SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage);
+	}
+
 	async function unselectCryptocommodity() {
 		console.log("unselectCryptocommodity");
 		setSelectedCryptocommodityName('');
@@ -380,6 +391,7 @@ const Home: NextPage = () => {
 		const receipt = await tx.wait();
 
 		loadCryptocommodityFacets();
+		loadYourCryptocommodities();
 	}
 
 	async function loadYourCryptocommodities() {
@@ -817,6 +829,97 @@ const Home: NextPage = () => {
 	}
 
 	// ***********************************************************************************************
+	// **************************************** ICO Features *****************************************
+	// ***********************************************************************************************
+  const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
+  const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
+	const [ICO_PRICE, setICOPrice] = useState<number>(0)
+
+  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
+  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
+	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
+
+	async function loadICOFeatures() {
+
+		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
+		console.log("hardCap: " + hardCap);
+		setICOHardCap(hardCap);
+		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
+		console.log("softCap: " + softCap);
+		setICOSoftCap(softCap);
+		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
+		console.log("price: " + price);
+		setICOPrice(price);
+
+		// get read only - antiwhale
+		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
+		setMinTransfer(minTransfer * 10**6);
+		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
+		setMaxTransfer(maxTransfer * 10**6);
+		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
+		setMaxInvestment(maxInvestment * 10**6);
+		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
+		setWhitelistThreshold(whitelistThreshold / 10**6);
+
+		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
+		setCurrentState(currentStage);
+		if(currentStage == 0) setCurrentStateText("NOT CREATED");
+		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
+		else if(currentStage == 2) setCurrentStateText("ONGOING");
+		else if(currentStage == 3) setCurrentStateText("ON HOLD");
+		else if(currentStage == 4) setCurrentStateText("FINISHED");
+		console.log(currentStage);
+	}
+
+	async function setICOHardCapOnSC() {
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+	}
+	async function setICOSoftCapOnSC() {
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+	}
+	async function setICOSPriceOnSC() {
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function createICO() {
+		// createICO
+		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
+		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
+		console.log(`ICO_PRICE: ` + ICO_PRICE);
+		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
+		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
+		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
+		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
+		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
+		console.log(`VESTING_ID: ` + VESTING_ID);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
+			.then(await processCreateCrowdsale).catch(handleError);
+	}
+
+	async function processCreateCrowdsale(receipt: any) {
+		console.log(receipt);
+	
+		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
+			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
+			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
+				position: "bottom-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		});
+
+		handleICOReceipt(receipt);
+	}
+
+	// ***********************************************************************************************
 	// ******************************************* Antiwhale *****************************************
 	// ***********************************************************************************************
 	const [ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
@@ -919,97 +1022,6 @@ const Home: NextPage = () => {
 		setBlacklistUserList(blacklisted);
 		let blacklistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklistUserCount();
 		setBlacklistUserCount(blacklistUserCount);
-	}
-
-	// ***********************************************************************************************
-	// **************************************** ICO Features *****************************************
-	// ***********************************************************************************************
-  const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
-  const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
-	const [ICO_PRICE, setICOPrice] = useState<number>(0)
-
-  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
-  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
-	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
-
-	async function loadICOFeatures() {
-
-		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
-		console.log("hardCap: " + hardCap);
-		setICOHardCap(hardCap);
-		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
-		console.log("softCap: " + softCap);
-		setICOSoftCap(softCap);
-		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
-		console.log("price: " + price);
-		setICOPrice(price);
-
-		// get read only - antiwhale
-		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
-		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
-		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
-		setMaxInvestment(maxInvestment * 10**6);
-		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
-		setWhitelistThreshold(whitelistThreshold / 10**6);
-
-		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
-		setCurrentState(currentStage);
-		if(currentStage == 0) setCurrentStateText("NOT CREATED");
-		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
-		else if(currentStage == 2) setCurrentStateText("ONGOING");
-		else if(currentStage == 3) setCurrentStateText("ON HOLD");
-		else if(currentStage == 4) setCurrentStateText("FINISHED");
-		console.log(currentStage);
-	}
-
-	async function setICOHardCapOnSC() {
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
-	}
-	async function setICOSoftCapOnSC() {
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
-	}
-	async function setICOSPriceOnSC() {
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function createICO() {
-		// createICO
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		console.log(`ICO_WHITELIST_THRESHOLD: ` + ICO_WHITELIST_THRESHOLD);
-		console.log(`ICO_MAX_INVESTMENT: ` + ICO_MAX_INVESTMENT);
-		console.log(`ICO_MAX_TRANSFER: ` + ICO_MAX_TRANSFER);
-		console.log(`ICO_MIN_TRANSFER: ` + ICO_MIN_TRANSFER);
-		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
-		console.log(`VESTING_ID: ` + VESTING_ID);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-			.then(await processCreateCrowdsale).catch(handleError);
-	}
-
-	async function processCreateCrowdsale(receipt: any) {
-		console.log(receipt);
-	
-		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
-			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
-			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
-				position: "bottom-right",
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		});
-
-		handleICOReceipt(receipt);
 	}
 
 	// ***********************************************************************************************
@@ -1116,7 +1128,7 @@ const Home: NextPage = () => {
 		console.log("dynamicPrice: " + dynamicPrice);
 		setDynamicPrice(dynamicPrice);
 
-		loadVesting();
+		loadVestingPrograms();
 
 	}
 
@@ -1433,8 +1445,6 @@ const Home: NextPage = () => {
 	const onSelectVestingId = async (vestingId: any)=>{
 		console.log('onSelectVestingId', vestingId);
 
-
-
 		let vesting = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVesting(vestingId);
 		console.log('vesting', vesting);
 		console.log('vesting[0])', vesting[0]);
@@ -1450,7 +1460,7 @@ const Home: NextPage = () => {
 		setVestingNumSlides(vesting[3]);
 	}
 	async function cancelVesting() {
-		console.log('cancelICOPaymentMethod');
+		console.log('cancelVesting');
 
 		setVestingId('');
 		setVestingStart('');
@@ -1469,16 +1479,21 @@ const Home: NextPage = () => {
 		console.log(`\nVESTING_ID: ` + vestingId);
 		console.log(`\nVESTING_START: ` + Date.parse(VESTING_START));
 		console.log(`\nVESTING_CLIFF: ` + VESTING_CLIFF);
-		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION);
+		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION + ' days');
+		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION * 1000 * 60 * 60 * 24 + ' seconds');
 		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION, VESTING_NUM_SLIDES)
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION * 1000 * 60 * 60 * 24, VESTING_NUM_SLIDES)
 			.then(await processCreateVesting).catch(handleError);
 
 		cancelVesting();
 	}
-	async function processCreateVesting(receipt: any) {
-		console.log(receipt);
-	
+	async function processCreateVesting(tx: any) {
+		console.log('processCreateVesting1');
+		console.log(tx);
+
+		tx.wait();
+		console.log('processCreateVesting2');
+
 		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol, _amount) {
 			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
 			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
@@ -1493,7 +1508,7 @@ const Home: NextPage = () => {
 			});
 		});
 
-		handleICOReceipt(receipt);
+		loadVestingPrograms();
 	}
 
 	async function deleteVesting() {
@@ -1576,7 +1591,7 @@ const Home: NextPage = () => {
 		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
-	async function loadVesting() {
+	async function loadVestingPrograms() {
 		// vesting
 		let vestingAddress = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingAddress();
 		console.log("vestingAddress: " + vestingAddress);
@@ -1784,7 +1799,7 @@ const Home: NextPage = () => {
 
 		if (key === 'accounts') {
 			loadICOFeatures();
-			loadVesting();
+			loadVestingPrograms();
 			loadICOPaymentMethod();
 			getBalancesPaymentTokensMeWallet();
 			getBalancesRawICOMeWallet();
@@ -1795,10 +1810,10 @@ const Home: NextPage = () => {
 
 		} else if (key === 'ico') {
 			loadICOFeatures();
-			loadVesting();
+			loadVestingPrograms();
 
 		} else if (key === 'vesting') {
-			loadVesting();
+			loadVestingPrograms();
 
 		} else if (key === 'reserve') {
 
@@ -1854,7 +1869,7 @@ const Home: NextPage = () => {
 
 		if (key === 'ico_fea') {
 			loadICOFeatures();
-			loadVesting();
+			loadVestingPrograms();
 
 		} else if (key === 'ico_wha') {
 			loadAntiWhale();
@@ -1880,10 +1895,11 @@ const Home: NextPage = () => {
 		console.log(`handleConfigSelect: ` + key);
 
 		if (key === 'ves_fea') {
+			loadVestingPrograms();
 
 		} else if (key === 'ves_ope') {
 			loadBlockchainDatetime();
-			loadVesting();
+			loadVestingPrograms();
 			loadVestingScheduleList();
 
 		} else if (key === 'ves_inv') {
@@ -2639,6 +2655,16 @@ const Home: NextPage = () => {
 
 									<Row className="mb-3"></Row>
 									<Row>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><div><Form.Text className="color-frame">Storage</Form.Text></div></Col> : '' }
+									</Row>
+									<Row>
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
+										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row className="mb-3"></Row>
+									<Row>
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Delete</Button></Col> : '' }
 										{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
 										{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !ADD_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
@@ -3373,7 +3399,7 @@ const Home: NextPage = () => {
 									<Row>
 										<Col>
 											<Dropdown onSelect={onSelectVestingId}>
-												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+												<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!VESTING_IDS || VESTING_IDS.length == 0}>
 													{ VESTING_ID }
 												</Dropdown.Toggle>
 
