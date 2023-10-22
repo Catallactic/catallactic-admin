@@ -602,6 +602,10 @@ const Home: NextPage = () => {
 	}
 
 	async function loadICOPaymentMethod() {
+
+		if(!SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT)
+			return;
+
 		// get read only - payment methods
 		let paymentSymbols = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentSymbols();
 		setICOPaymentSymbols(paymentSymbols);
@@ -1884,6 +1888,7 @@ const Home: NextPage = () => {
 		} else if (key === 'ico_ops') {
 			loadTokenAddressOnCrowdsaleContract();
 			loadInvested();
+			getBalancesCygasICOWallet();
 
 		} else if (key === 'ico_fea') {
 
@@ -3145,8 +3150,8 @@ const Home: NextPage = () => {
 									</Row>
 
 									<Row>
-										<Col><div><Form.Text className="color-frame">ICO Cryotocommodities Required</Form.Text></div></Col>
-										<Col><div><Form.Text className="color-frame">ICO Cryotocommodities Current</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">ICO Cryptocommodities Required</Form.Text></div></Col>
+										<Col><div><Form.Text className="color-frame">ICO Cryptocommodities Current</Form.Text></div></Col>
 										<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
 									</Row>
 									<Row>
@@ -3157,20 +3162,20 @@ const Home: NextPage = () => {
 
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><div><Form.Text className="color-frame">Enter Token</Form.Text></div></Col>
-									</Row>
-									<Row>
-										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
-									</Row>
-
-									<Row className="mb-3"></Row>
-									<Row>
 										<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
 									</Row>
 									<Row>
 										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
 										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
+									</Row>
+
+									<Row className="mb-3"></Row>
+									<Row>
+										<Col><div><Form.Text className="color-frame">Enter ERC-20 Token</Form.Text></div></Col>
+									</Row>
+									<Row>
+										<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 									</Row>
 
 									<Row className="mb-3"></Row>
