@@ -1617,6 +1617,7 @@ const Home: NextPage = () => {
 	// ***********************************************************************************************
 	// ********************************* ERC-20 Token Initialization *********************************
 	// ***********************************************************************************************
+	const [TOKEN_INITIALIZED, setInitialized] = useState<Boolean>(false)
 	const [TOKEN_NAME, setTokenName] = useState<string>('')
 	const [TOKEN_SYMBOL, setTokenSymbol] = useState<string>('')
 	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>(0)
@@ -1638,6 +1639,8 @@ const Home: NextPage = () => {
 		let supply = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.totalSupply();
 		console.log('supply: ' + supply);
 		setTokenSupply(supply);
+
+		setInitialized(supply > 0);
 	}
 
 	// ***********************************************************************************************
@@ -1875,6 +1878,7 @@ const Home: NextPage = () => {
 			loadAntiWhale();
 
 		} else if (key === 'ico_pay') {
+			loadFactoryPaymentMethod();
 			loadICOPaymentMethod();
 
 		} else if (key === 'ico_ops') {
@@ -3649,26 +3653,28 @@ hi
 										<Col><div><Form.Text className="">Token Name</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} ></input></Col>
+										<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={TOKEN_INITIALIZED ? true : false} ></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Token Symbol</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} ></input></Col>
+										<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={TOKEN_INITIALIZED ? true : false} ></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Token Supply</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg color-frame bg-yellow text-left border-0" defaultValue={TOKEN_SUPPLY ? TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} ></input></Col>
+										<Col><input type="number" className={ 'form-control form-control-lg color-frame text-left border-0 ' + (TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={TOKEN_SUPPLY ? TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={TOKEN_INITIALIZED ? true : false} ></input></Col>
 									</Row>
-									{ !TOKEN_SUPPLY ? <Row className="mb-3"></Row> : ''}
-									{ !TOKEN_SUPPLY ? 
+
+									{ !TOKEN_INITIALIZED ? <Row className="mb-3"></Row> : '' }
+									{ !TOKEN_INITIALIZED ? 
 									<Row>
 										<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => saveERC20Features()}>Initialize</Button></Col>
 									</Row>
-									: ''}
+									: '' }
+
 								</Form.Group>
 
 							</Tab>
