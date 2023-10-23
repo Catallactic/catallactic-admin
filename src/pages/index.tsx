@@ -1427,8 +1427,8 @@ const Home: NextPage = () => {
 
 	const [VESTING_ID, setVestingId] = useState<string>('');
 	const [VESTING_START, setVestingStart] = useState("");
-	const [VESTING_CLIFF, setVestingCliff] = useState<number>(0);
-	const [VESTING_DURATION, setVestingDuration] = useState<number>(0);
+	const [VESTING_CLIFF_DAYS, setVestingCliffInDays] = useState<number>(0);
+	const [VESTING_DURATION_DAYS, setVestingDurationInDays] = useState<number>(0);
 	const [VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
 
   const handleVestingStartChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -1444,7 +1444,7 @@ const Home: NextPage = () => {
 		//let vesting = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVesting(vestingId);
 		//console.log('vesting', vesting);
 		setVestingScheduleCurrentId(vestingId);
-		//setVestingCliff(vesting[0]);
+		//setVestingCliffInDays(vesting[0]);
 	}
 	const onSelectVestingId = async (vestingId: any)=>{
 		console.log('onSelectVestingId', vestingId);
@@ -1459,8 +1459,8 @@ const Home: NextPage = () => {
 
 		setVestingId(vestingId);
 		setVestingStart(dateFormat.toISOString().slice(0, 16));
-		setVestingCliff(vesting[1]);
-		setVestingDuration(vesting[2]);
+		setVestingCliffInDays(vesting[1] ? vesting[1] / (60 * 60 * 24) : 0);
+		setVestingDurationInDays(vesting[2] ? vesting[2] / (60 * 60 * 24) : 0);
 		setVestingNumSlides(vesting[3]);
 	}
 	async function cancelVesting() {
@@ -1468,25 +1468,29 @@ const Home: NextPage = () => {
 
 		setVestingId('');
 		setVestingStart('');
-		setVestingCliff(0);
-		setVestingDuration(0);
+		setVestingCliffInDays(0);
+		setVestingDurationInDays(0);
 		setVestingNumSlides(0);
 	}
 
 	async function saveVesting() {
 		// calculate vestingId
-		let vestingId = Date.parse(VESTING_START) + '_' + VESTING_CLIFF + '_' + VESTING_DURATION + '_' + VESTING_NUM_SLIDES;
+		let vestingId = Date.parse(VESTING_START) + '_' + VESTING_CLIFF_DAYS + '_' + VESTING_DURATION_DAYS + '_' + VESTING_NUM_SLIDES;
 		setVestingId(vestingId);
 
 		// saveVesting
 		console.log(`creating vesting: `);
 		console.log(`\nVESTING_ID: ` + vestingId);
 		console.log(`\nVESTING_START: ` + Date.parse(VESTING_START));
-		console.log(`\nVESTING_CLIFF: ` + VESTING_CLIFF);
-		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION + ' days');
-		console.log(`\nVESTING_DURATION: ` + VESTING_DURATION * 1000 * 60 * 60 * 24 + ' seconds');
+		console.log(`\nVESTING_CLIFF_DAYS: ` + VESTING_CLIFF_DAYS + ' days');
+		console.log(`\nVESTING_CLIFF_SECS: ` + VESTING_CLIFF_DAYS * 1000 * 60 * 60 * 24 + ' seconds' );
+		console.log(`\nVESTING_DURATION_DAYS: ` + VESTING_DURATION_DAYS + ' days');
+		console.log(`\nVESTING_DURATION_SECS: ` + VESTING_DURATION_DAYS * 1000 * 60 * 60 * 24 + ' seconds');
 		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), VESTING_CLIFF, VESTING_DURATION * 1000 * 60 * 60 * 24, VESTING_NUM_SLIDES)
+
+		const cliffInSecs = VESTING_CLIFF_DAYS * 60 * 60 * 24;
+		const durationInSecs = VESTING_DURATION_DAYS * 60 * 60 * 24;
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , Date.parse(VESTING_START), cliffInSecs, durationInSecs, VESTING_NUM_SLIDES)
 			.then(await processCreateVesting).catch(handleError);
 
 		cancelVesting();
@@ -1889,6 +1893,7 @@ const Home: NextPage = () => {
 			loadTokenAddressOnCrowdsaleContract();
 			loadInvested();
 			getBalancesCygasICOWallet();
+			loadICOPaymentMethod();
 
 		} else if (key === 'ico_fea') {
 
@@ -3436,14 +3441,14 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START != '0' ? VESTING_START : ''} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF != 0 ? VESTING_CLIFF : ''} onChange={(event) => setVestingCliff(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF_DAYS != 0 ? VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 									<Row>
 										<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
 										<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
 									</Row>
 									<Row>
-										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION != 0 ? VESTING_DURATION : ''} onChange={(event) => setVestingDuration(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION_DAYS != 0 ? VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 										<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES != 0 ? VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
 									</Row>
 
