@@ -1478,7 +1478,7 @@ const Home: NextPage = () => {
 
 	async function saveVesting() {
 		// calculate vestingId
-		let vestingId = Date.parse(VESTING_START_MILLIS) + '_' + VESTING_CLIFF_DAYS + '_' + VESTING_DURATION_DAYS + '_' + VESTING_NUM_SLIDES;
+		let vestingId = (Date.parse(VESTING_START_MILLIS) / 1000) + '_' + VESTING_CLIFF_DAYS + '_' + VESTING_DURATION_DAYS + '_' + VESTING_NUM_SLIDES;
 		setVestingId(vestingId);
 
 		// saveVesting
@@ -3564,7 +3564,7 @@ const Home: NextPage = () => {
 									</Row>
 									<Row>
 										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_ID ? VESTING_SCHEDULE_ID : '' }></input></Col>
-										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_PROGRAM_ID ? VESTING_SCHEDULE_PROGRAM_ID : '' } dir="rtl" ></input></Col>
+										<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={VESTING_SCHEDULE_PROGRAM_ID ? VESTING_SCHEDULE_PROGRAM_ID : '' } ></input></Col>
 									</Row>
 
 									<Row>
