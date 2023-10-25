@@ -977,10 +977,11 @@ const Home: NextPage = () => {
 		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT " + SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
 
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleAntiWhaleReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleAntiWhaleReceipt).catch(handleError);
 		}
+
 	}
 
 	async function isBlacklisted(address: any, index: any) {
@@ -1006,10 +1007,19 @@ const Home: NextPage = () => {
 
 		// process transaction
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleAntiWhaleReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleAntiWhaleReceipt).catch(handleError);
 		}
+	}
+
+	async function handleAntiWhaleReceipt(tx:any) {
+		console.log('handle tx');
+		console.log(tx);
+		tx.wait();
+
+		loadAntiWhale();
+		handleICOReceipt(tx);
 	}
 
 	async function loadAntiWhale() {
