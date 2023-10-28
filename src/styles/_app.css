@@ -119,13 +119,13 @@ input[type=number]::-webkit-outer-spin-button {
 	color: #212529;
 }
 
-.nav-link {
+.bg-login .nav-link {
 	color: rgba(255, 255, 255, 0.87)!important;
 }
-.nav-link.active {
+.bg-login .nav-link.active {
 	color: #495057!important;
 }
-.nav-link.disabled {
+.bg-login .nav-link.disabled {
 	color: #6c757d!important;
 }
 

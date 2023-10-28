@@ -5,7 +5,7 @@ type Props = {
   children: ReactNode
 }
 
-export function Layout(props: Props) {
+export function SimpleLayout(props: Props) {
   return (
     <div className="css-1m25bqz">
       {props.children}
