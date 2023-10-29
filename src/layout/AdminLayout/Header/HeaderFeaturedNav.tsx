@@ -6,17 +6,17 @@ export default function HeaderFeaturedNav() {
     <Nav>
       <Nav.Item>
         <Link href="/" passHref legacyBehavior>
-          <Nav.Link className="p-2">Dashboard</Nav.Link>
+          <Nav.Link className="p-2">Environment</Nav.Link>
         </Link>
       </Nav.Item>
       <Nav.Item>
         <Link href="#" passHref legacyBehavior>
-          <Nav.Link className="p-2">Users</Nav.Link>
+          <Nav.Link className="p-2">Cryptocommodities</Nav.Link>
         </Link>
       </Nav.Item>
       <Nav.Item>
         <Link href="#" passHref legacyBehavior>
-          <Nav.Link className="p-2">Settings</Nav.Link>
+          <Nav.Link className="p-2">Accounts</Nav.Link>
         </Link>
       </Nav.Item>
     </Nav>

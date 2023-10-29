@@ -133,34 +133,80 @@ export default function SidebarNav() {
         Dashboard
         <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small>
       </SidebarNavItem>
+      <SidebarNavItem icon={faDroplet} href="legacy">Legacy</SidebarNavItem>
 
-      <SidebarNavTitle>Configuration</SidebarNavTitle>
-      <SidebarNavItem icon={faDroplet} href="#">Environment</SidebarNavItem>
-      <SidebarNavItem icon={faPencil} href="#">Cryptocommodities</SidebarNavItem>
+      <SidebarNavTitle>Funding</SidebarNavTitle>
 
-      <SidebarNavTitle>Value Chain</SidebarNavTitle>
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding">
-        <SidebarNavItem href="#">Accordion</SidebarNavItem>
-        <SidebarNavItem href="#">Breadcrumb</SidebarNavItem>
-        <SidebarNavItem href="#">Cards</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds">
+        <SidebarNavItem href="#">Features</SidebarNavItem>
+        <SidebarNavItem href="#">AntiWhale</SidebarNavItem>
+        <SidebarNavItem href="#">Payments</SidebarNavItem>
+        <SidebarNavItem href="#">Operations</SidebarNavItem>
+        <SidebarNavItem href="#">Investors</SidebarNavItem>
+        <SidebarNavItem href="#">Contract</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Negotiation">
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting">
+				<SidebarNavItem href="#">Features</SidebarNavItem>
+				<SidebarNavItem href="#">Operations</SidebarNavItem>
+        <SidebarNavItem href="#">Holders</SidebarNavItem>
+        <SidebarNavItem href="#">Contract</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>Negotiation</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity">
+				<SidebarNavItem href="#">Features</SidebarNavItem>
+        <SidebarNavItem href="#">Holders</SidebarNavItem>
+        <SidebarNavItem href="#">Contract</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve">
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Distribution">
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Rewards">
+        <SidebarNavItem href="#">Buttons</SidebarNavItem>
+        <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
+        <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>Distribution</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations">
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>Accounts</SidebarNavTitle>
-      <SidebarNavItem icon={faFileLines} href="#">Me</SidebarNavItem>
-      <SidebarNavItem icon={faFileLines} href="#">Owner</SidebarNavItem>
-      <SidebarNavItem icon={faFileLines} href="#">Investors</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops">
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>DeFi Services</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending">
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Staking">
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers">
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
     </ul>
   )
 }
