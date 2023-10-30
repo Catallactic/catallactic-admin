@@ -7,6 +7,8 @@ import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
 import HeaderNotificationNav from '../Header/HeaderNotificationNav'
 import HeaderProfileNav from '../Header/HeaderProfileNav'
 
+import { useWeb3Modal } from '@web3modal/wagmi/react'
+
 type HeaderProps = {
   toggleSidebar: () => void;
   toggleSidebarMd: () => void;
@@ -14,6 +16,9 @@ type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
   const { toggleSidebar, toggleSidebarMd } = props
+
+	// 4. Use modal hook
+	const { open } = useWeb3Modal()
 
   return (
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom">
@@ -36,19 +41,27 @@ export default function Header(props: HeaderProps) {
         </Button>
         <Link href="/" className="header-brand d-md-none">
           <svg width="80" height="46">
-            <title>CoreUI Logo</title>
+            <title>Catallactic Logo</title>
             <use xlinkHref="/assets/brand/catallactic.svg#full" />
           </svg>
         </Link>
         <div className="header-nav d-none d-md-flex">
           <HeaderFeaturedNav />
         </div>
+
+        <div className="header-nav ms-auto">
+					<button onClick={() => open()}>Open Connect Modal</button>
+      		<button onClick={() => open({ view: 'Networks' })}>Open Network Modal</button>
+				</div>
+
         <div className="header-nav ms-auto">
           <HeaderNotificationNav />
         </div>
+
         <div className="header-nav ms-2">
           <HeaderProfileNav />
         </div>
+
       </Container>
       <div className="header-divider border-top my-2 mx-sm-n2" />
       <Container fluid>
