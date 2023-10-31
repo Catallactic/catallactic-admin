@@ -133,12 +133,12 @@ export default function SidebarNav() {
         Dashboard
         <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small>
       </SidebarNavItem>
-      <SidebarNavItem icon={faDroplet} href="legacy">Legacy</SidebarNavItem>
+      <SidebarNavItem icon={faDroplet} href="/legacy">Legacy</SidebarNavItem>
 
       <SidebarNavTitle>Funding</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds">
-        <SidebarNavItem href="#">Features</SidebarNavItem>
+        <SidebarNavItem href="/rounds/features">Features</SidebarNavItem>
         <SidebarNavItem href="#">AntiWhale</SidebarNavItem>
         <SidebarNavItem href="#">Payments</SidebarNavItem>
         <SidebarNavItem href="#">Operations</SidebarNavItem>
