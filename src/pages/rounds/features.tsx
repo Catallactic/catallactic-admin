@@ -1,28 +1,39 @@
 import { NextPage } from 'next'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-regular-svg-icons'
-import { faLock } from '@fortawesome/free-solid-svg-icons'
-import {
-  Button, Col, Container, Form, InputGroup, Row,
-} from 'react-bootstrap'
+import { Button, Col, Container, Form, Row, } from 'react-bootstrap'
 import Dropdown from 'react-bootstrap/Dropdown';
-import Link from 'next/link'
-import { SyntheticEvent, useState } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'axios'
-import {Contract, ethers, utils} from "ethers"
+import { useState } from 'react'
+import { Contract } from "ethers"
 
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
+import { useResponseHook } from 'hooks/useResponseHook'
+import { useErrorHook } from 'hooks/useErrorHook'
+
 const RoundFeatures: NextPage = () => {
+
+	const { 
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
+		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
+		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
+		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
+		getBalancesUSDICOMeWallet, BALANCES_USD_ICO_ME_WALLET, 
+		getBalancesUSDICOSearchAddressWallet, BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET, 
+		getBalancesPaymentTokensMeWallet, BALANCES_PAYMENT_TOKENS_ME_WALLET,
+		getBalancesPaymentMethodsSearchAddress, BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS,
+		getBalancesPaymentMethodsICOWallet, BALANCES_PAYMENT_TOKENS_ICO_WALLET,
+		getBalancesTargetWallet, BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET,
+		isWhitelisted, 
+		isBlacklisted,
+	} = useCrowdsaleHook();
 
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
 	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
-
 
 	const KEY_ICON = function() {
 		return (
@@ -42,24 +53,24 @@ const RoundFeatures: NextPage = () => {
 		);
 	}
 
-  const [ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
-  const [ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
-	const [ICO_PRICE, setICOPrice] = useState<number>(0)
+  const [X_ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
+  const [X_ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
+	const [X_ICO_PRICE, setICOPrice] = useState<number>(0)
 
-  const [ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
-  const [ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
-	const [ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
+  const [X_ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
+  const [X_ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
+	const [X_ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
 
-	const [ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
+	const [X_ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
 	const [VESTING_IDS, setVestingIds] = useState([]);
 	const [VESTING_ID, setVestingId] = useState<string>('');
 
 	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
 
-	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
-	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
-	const STAGE: {[key: string]: number} = {
+	const [X_ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
+	const [X_ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
+	const X_STAGE: {[key: string]: number} = {
 		NOT_CREATED: 0,
 		NOT_STARTED: 1,
 		ONGOING: 2,
@@ -68,22 +79,22 @@ const RoundFeatures: NextPage = () => {
 	}
 
 	async function setMinTransferOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		let tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(ICO_MIN_TRANSFER).then(await useResponseHook).catch(useErrorHook);
 	}
 	async function setMaxTransferOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(ICO_MAX_TRANSFER).then(await useResponseHook).catch(useErrorHook);
 	}
 	async function setMaxInvestmentOnSC() {
 		console.log('ICO_MAX_INVESTMENT ' + ICO_MAX_INVESTMENT);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(ICO_MAX_INVESTMENT).then(await useResponseHook).catch(useErrorHook);
 	}
 
 	async function setWhitelistThresholdOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(ICO_WHITELIST_THRESHOLD) * 10**6).then(await useResponseHook).catch(useErrorHook);
 	}
 
 	async function setPercentVestedOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await useResponseHook).catch(useErrorHook);
 	}
 	const onSelectCurrentVestingId = async (vestingId: any)=>{
 		console.log('onSelectCurrentVestingId', vestingId);
@@ -94,94 +105,17 @@ const RoundFeatures: NextPage = () => {
 		//setVestingCliffInDays(vesting[0]);
 	}
 
-	async function loadICOFeatures() {
-
-		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
-		console.log("hardCap: " + hardCap);
-		setICOHardCap(hardCap);
-		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
-		console.log("softCap: " + softCap);
-		setICOSoftCap(softCap);
-		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
-		console.log("price: " + price);
-		setICOPrice(price);
-
-		// get read only - antiwhale
-		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
-		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
-		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
-		setMaxInvestment(maxInvestment * 10**6);
-		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
-		setWhitelistThreshold(whitelistThreshold / 10**6);
-
-		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
-		setCurrentState(currentStage);
-		if(currentStage == 0) setCurrentStateText("NOT CREATED");
-		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
-		else if(currentStage == 2) setCurrentStateText("ONGOING");
-		else if(currentStage == 3) setCurrentStateText("ON HOLD");
-		else if(currentStage == 4) setCurrentStateText("FINISHED");
-		console.log(currentStage);
-	}
-
 	async function setICOHardCapOnSC() {
 		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
 	}
 	async function setICOSoftCapOnSC() {
 		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
 	}
 	async function setICOSPriceOnSC() {
 		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function handleICOReceipt(tx:any) {
-		console.log('handle tx');
-		console.log(tx);
-
-		// process transaction
-		console.log(`Transaction hash: ${tx.hash}`);
-		const receipt = await tx.wait();
-		console.log(receipt);
-	  console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-		console.log(`Gas used: ${receipt.gasUsed.toString()}`);
-
-		//parseError(err.message,);
-		let msg = 'GasUsed: ' + receipt.gasUsed;
-		toast.info(msg, {
-			position: "bottom-right",
-			autoClose: 5000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "colored",
-		});
-
-		//populateICOContractData();
-	}
-	function handleError(err:any) {
-		console.log('Ohhhh nooo');
-		console.log(err);
-		console.log(err.code);
-		console.log('err.message: ' + err.message);
-
-		//parseError(err.message,);
-		toast.error(parseError(err.message), {
-			position: "bottom-right",
-			autoClose: 5000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "colored",
-		});
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await useResponseHook).catch(useErrorHook);
 	}
 
 	async function createICO() {
@@ -196,7 +130,7 @@ const RoundFeatures: NextPage = () => {
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-			.then(await processCreateCrowdsale).catch(handleError);
+			.then(await processCreateCrowdsale).catch(useErrorHook);
 	}
 
 	async function processCreateCrowdsale(receipt: any) {
@@ -216,33 +150,7 @@ const RoundFeatures: NextPage = () => {
 			});
 		});
 
-		handleICOReceipt(receipt);
-	}
-
-	function parseError(err:any) {
-		if(err.indexOf('ERRW_OWNR_NOT') > -1) return 'Caller is not the owner';
-		else if(err.indexOf('ERRP_INDX_PAY') > -1) return 'Wrong index';
-		else if(err.indexOf('ERRD_MUST_ONG') > -1) return 'ICO must be ongoing';
-		else if(err.indexOf('ERRD_MUSN_BLK') > -1) return 'Must not be blacklisted';
-		else if(err.indexOf('ERRD_TRAS_LOW') > -1) return 'Transfer amount too low';
-		else if(err.indexOf('ERRD_TRAS_HIG') > -1) return 'Transfer amount too high';
-		else if(err.indexOf('ERRD_MUST_WHI') > -1) return 'Must be whitelisted';
-		else if(err.indexOf('ERRD_INVT_HIG') > -1) return 'Total invested amount too high';
-		else if(err.indexOf('ERRD_HARD_CAP') > -1) return 'Amount higher than available';
-		else if(err.indexOf('ERRD_ALLO_LOW') > -1) return 'Insuffient allowance';
-		else if(err.indexOf('ERRR_MUST_FIN') > -1) return 'ICO must be finished';
-		else if(err.indexOf('ERRR_PASS_SOF') > -1) return 'Passed SoftCap. No refund';
-		else if(err.indexOf('ERRR_ZERO_REF') > -1) return 'Nothing to refund';
-		else if(err.indexOf('ERRR_WITH_REF') > -1) return 'Unable to refund';
-		else if(err.indexOf('ERRC_MUST_FIN') > -1) return 'ICO must be finished';
-		else if(err.indexOf('ERRC_NPAS_SOF') > -1) return 'Not passed SoftCap';
-		else if(err.indexOf('ERRC_MISS_TOK') > -1) return 'Provide Token';
-		else if(err.indexOf('ERRW_MUST_FIN') > -1) return 'ProvidICO must be finishede Token';
-		else if(err.indexOf('ERRW_MISS_WAL') > -1) return 'Provide Wallet';
-		else if(err.indexOf('ERRR_ZERO_WIT') > -1) return 'Nothing to withdraw';
-		else if(err.indexOf('ERRR_WITH_BAD') > -1) return 'Unable to withdraw';
-	
-		return err;
+		useResponseHook(receipt);
 	}
 
   return (
@@ -250,7 +158,7 @@ const RoundFeatures: NextPage = () => {
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
 
-			<Row className="mb-3"></Row>
+				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Main Features</div></div></Col>
@@ -358,10 +266,10 @@ const RoundFeatures: NextPage = () => {
 				</Row>
 				: ''}
 
-
 			</Container>
 		</div>
-			)
+
+	);
 }
 
 export default RoundFeatures

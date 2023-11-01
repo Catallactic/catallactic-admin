@@ -139,18 +139,18 @@ export default function SidebarNav() {
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds">
         <SidebarNavItem href="/rounds/features">Features</SidebarNavItem>
-        <SidebarNavItem href="#">AntiWhale</SidebarNavItem>
-        <SidebarNavItem href="#">Payments</SidebarNavItem>
-        <SidebarNavItem href="#">Operations</SidebarNavItem>
-        <SidebarNavItem href="#">Investors</SidebarNavItem>
-        <SidebarNavItem href="#">Contract</SidebarNavItem>
+        <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
+        <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Operations</SidebarNavItem>
+        <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
+        <SidebarNavItem href="/rounds/contract">Contract</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting">
-				<SidebarNavItem href="#">Features</SidebarNavItem>
-				<SidebarNavItem href="#">Operations</SidebarNavItem>
-        <SidebarNavItem href="#">Holders</SidebarNavItem>
-        <SidebarNavItem href="#">Contract</SidebarNavItem>
+				<SidebarNavItem href="/vesting/features">Features</SidebarNavItem>
+				<SidebarNavItem href="/vesting/operations">Operations</SidebarNavItem>
+        <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
+        <SidebarNavItem href="/vesting/contract">Contract</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>

@@ -2489,7 +2489,6 @@ const Home: NextPage = () => {
 										))}
 										*/}
 
-
 										<Form>
 											<Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
 												<Form.Label> { INTERFACE_MODAL && INTERFACE_MODAL.functions && INTERFACE_MODAL.functions[0] ? INTERFACE_MODAL.functions[0].name : '' } </Form.Label>
