@@ -38,10 +38,6 @@ const Investors: NextPage = () => {
 	const [ICO_INVESTORS_LIST, setInvestors] = useState([]);
 
 	// Investors Available
-
-	type MapType = { 
-		[id: string]: string; 
-	}
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')
 
   return (
