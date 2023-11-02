@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { Button, Container } from 'react-bootstrap'
 import Breadcrumb from '../Breadcrumb/Breadcrumb'
 import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
-import HeaderNotificationNav from '../Header/HeaderNotificationNav'
-import HeaderProfileNav from '../Header/HeaderProfileNav'
 
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 
@@ -21,7 +19,9 @@ export default function Header(props: HeaderProps) {
 	const { open } = useWeb3Modal()
 
   return (
+
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom">
+			
       <Container fluid className="header-navbar d-flex align-items-center">
         <Button
           variant="link"
@@ -53,20 +53,14 @@ export default function Header(props: HeaderProps) {
 					<button onClick={() => open()}>Open Connect Modal</button>
       		<button onClick={() => open({ view: 'Networks' })}>Open Network Modal</button>
 				</div>
-
-        <div className="header-nav ms-auto">
-          <HeaderNotificationNav />
-        </div>
-
-        <div className="header-nav ms-2">
-          <HeaderProfileNav />
-        </div>
-
       </Container>
+
       <div className="header-divider border-top my-2 mx-sm-n2" />
+
       <Container fluid>
         <Breadcrumb />
       </Container>
+
     </header>
   )
 }
