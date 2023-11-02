@@ -7,12 +7,23 @@ import { NextPage } from 'next'
 import { ChangeEvent, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
+import { useAccount } from 'wagmi'
 
 const Features: NextPage = () => {
 
+	const { isDisconnected } = useAccount()
+
 	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
+	const { 
+		loadVestingPrograms, VESTING_IDS,
+		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
+		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
+		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
+		computeVesting, 
+		releaseVesting, 
+		setVestinGrantorOnSC, setVestinGrantor,
+	} = useVestingHook();
 
 	const [VESTING_IDD, setVestingId] = useState<string>('');
 	const [VESTING_DURATION_DAYSS, setVestingDurationInDays] = useState<number>(0);
@@ -38,15 +49,7 @@ const Features: NextPage = () => {
 		);
 	}
 
-	const [VESTING_IDS, setVestingIds] = useState([]);
-	const { 
-		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
-		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
-		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
-		computeVesting, 
-		releaseVesting, 
-		setVestinGrantorOnSC, setVestinGrantor,
-	} = useVestingHook();
+
 
 
 	async function deleteVesting() {
@@ -137,23 +140,23 @@ const Features: NextPage = () => {
 						<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START_MILLIS != '0' ? VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF_DAYS != 0 ? VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+						<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_START_MILLIS != '0' ? VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={isDisconnected}></input></Col>
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_CLIFF_DAYS != 0 ? VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={isDisconnected}></input></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
 						<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION_DAYS != 0 ? VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES != 0 ? VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_DURATION_DAYS != 0 ? VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={isDisconnected}></input></Col>
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_NUM_SLIDES != 0 ? VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={isDisconnected}></input></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => cancelVesting()}> {KEY_ICON()}Cancel</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => cancelVesting()}> {KEY_ICON()}Cancel</Button></Col>
 					</Row>
 
 				</Form.Group>

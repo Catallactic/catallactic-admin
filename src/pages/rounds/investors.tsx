@@ -5,10 +5,11 @@ import { NextPage } from 'next'
 import { useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
+import { useAccount } from 'wagmi'
 
 const Investors: NextPage = () => {
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
+	const { isDisconnected } = useAccount()
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -68,7 +69,7 @@ const Investors: NextPage = () => {
 							<tbody>
 								{ICO_INVESTORS_LIST?.map((item, index) => (
 									<tr key={index}>
-										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
+										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
 										<td>{item}</td>
 										<td id={"weiContributedByValue" + (index+1) }></td>
 									</tr>

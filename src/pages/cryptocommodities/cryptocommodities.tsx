@@ -4,11 +4,13 @@ import { NextPage } from 'next'
 import { useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, ListGroup, Row } from 'react-bootstrap';
 
+import { useAccount } from 'wagmi'
+
 declare let window:any
 
 const Cryptomcommodities: NextPage = () => {
 
-  const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
+	const { isDisconnected } = useAccount()
 
 	const CFG_FACTORY_ABI = require('../../abi/CryptocommoditiesFactory.json');
 	const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../../abi/Diamond.json');
@@ -187,7 +189,7 @@ const Cryptomcommodities: NextPage = () => {
 				</Row>
 
 				<Row>
-					{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={FIND_CRYPTOCOMMODITY_NAME} onChange={(event) => setFindCryptocommodityName(event.target.value)} ></input></Col> : '' }
+					{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } defaultValue={SELECTED_CRYPTOCOMMODITY_NAME} value={FIND_CRYPTOCOMMODITY_NAME} onChange={(event) => setFindCryptocommodityName(event.target.value)} ></input></Col> : '' }
 					{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={4} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
 					{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col xs={8} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
 				</Row>
@@ -229,8 +231,8 @@ const Cryptomcommodities: NextPage = () => {
 
 				<Row className="mb-3"></Row>
 				<Row>
-					{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
-					{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT || !FIND_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+					{ SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+					{ !SELECTED_CRYPTOCOMMODITY_NAME ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FIND_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
 				</Row>
 
 				</Form.Group>

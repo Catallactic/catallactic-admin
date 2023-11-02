@@ -4,7 +4,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useState } from 'react'
 import { Contract } from "ethers"
 
-import { toast } from 'react-toastify';
+import { useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,6 +15,8 @@ import { useResponseHook } from 'hooks/useResponseHook'
 import { useErrorHook } from 'hooks/useErrorHook'
 
 const RoundFeatures: NextPage = () => {
+
+	const { isDisconnected } = useAccount()
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -32,8 +35,6 @@ const RoundFeatures: NextPage = () => {
 	} = useCrowdsaleHook();
 
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
-
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 
 	const KEY_ICON = function() {
 		return (
@@ -54,48 +55,50 @@ const RoundFeatures: NextPage = () => {
 	}
 
   const [X_ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
+	async function setICOHardCapOnSC() {
+		console.log(`X_ICO_HARD_CAP: ` + X_ICO_HARD_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(X_ICO_HARD_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
+	}
+
   const [X_ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
+	async function setICOSoftCapOnSC() {
+		console.log(`X_ICO_SOFT_CAP: ` + X_ICO_SOFT_CAP);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(X_ICO_SOFT_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
+	}
+
 	const [X_ICO_PRICE, setICOPrice] = useState<number>(0)
-
-  const [X_ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
-  const [X_ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
-	const [X_ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
-
-	const [X_ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
-	const [VESTING_IDS, setVestingIds] = useState([]);
-	const [VESTING_ID, setVestingId] = useState<string>('');
-
-	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
-	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
-
-	const [X_ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
-	const [X_ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
-	const X_STAGE: {[key: string]: number} = {
-		NOT_CREATED: 0,
-		NOT_STARTED: 1,
-		ONGOING: 2,
-		ONHOLD: 3,
-		FINISHED: 4,
+	async function setICOSPriceOnSC() {
+		console.log(`X_ICO_PRICE: ` + X_ICO_PRICE);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(X_ICO_PRICE).then(await useResponseHook).catch(useErrorHook);
 	}
 
+	const [X_ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
 	async function setMinTransferOnSC() {
-		let tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(ICO_MIN_TRANSFER).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(X_ICO_MIN_TRANSFER).then(await useResponseHook).catch(useErrorHook);
 	}
+
+  const [X_ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
 	async function setMaxTransferOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(ICO_MAX_TRANSFER).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(X_ICO_MAX_TRANSFER).then(await useResponseHook).catch(useErrorHook);
 	}
+
+	const [X_ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
 	async function setMaxInvestmentOnSC() {
 		console.log('ICO_MAX_INVESTMENT ' + ICO_MAX_INVESTMENT);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(ICO_MAX_INVESTMENT).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(X_ICO_MAX_INVESTMENT).then(await useResponseHook).catch(useErrorHook);
 	}
 
+	const [X_ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
 	async function setWhitelistThresholdOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(ICO_WHITELIST_THRESHOLD) * 10**6).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(X_ICO_WHITELIST_THRESHOLD) * 10**6).then(await useResponseHook).catch(useErrorHook);
 	}
 
+	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 	async function setPercentVestedOnSC() {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await useResponseHook).catch(useErrorHook);
 	}
+
+	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
 	const onSelectCurrentVestingId = async (vestingId: any)=>{
 		console.log('onSelectCurrentVestingId', vestingId);
 
@@ -105,18 +108,8 @@ const RoundFeatures: NextPage = () => {
 		//setVestingCliffInDays(vesting[0]);
 	}
 
-	async function setICOHardCapOnSC() {
-		console.log(`ICO_HARD_CAP: ` + ICO_HARD_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(ICO_HARD_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
-	}
-	async function setICOSoftCapOnSC() {
-		console.log(`ICO_SOFT_CAP: ` + ICO_SOFT_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(ICO_SOFT_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
-	}
-	async function setICOSPriceOnSC() {
-		console.log(`ICO_PRICE: ` + ICO_PRICE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(ICO_PRICE).then(await useResponseHook).catch(useErrorHook);
-	}
+	const [VESTING_IDS, setVestingIds] = useState([]);
+	const [VESTING_ID, setVestingId] = useState<string>('');
 
 	async function createICO() {
 		// createICO
@@ -130,27 +123,7 @@ const RoundFeatures: NextPage = () => {
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-			.then(await processCreateCrowdsale).catch(useErrorHook);
-	}
-
-	async function processCreateCrowdsale(receipt: any) {
-		console.log(receipt);
-	
-		SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.once('FundsWithdrawn', function (_symbol:any, _amount:any) {
-			console.log(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`);
-			toast.success(`FundsWithdrawn: ${_symbol} withdrawn by ${_amount}`, {
-				position: "bottom-right",
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		});
-
-		useResponseHook(receipt);
+		.then(await useResponseHook).catch(useErrorHook);
 	}
 
   return (
@@ -167,22 +140,22 @@ const RoundFeatures: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE != 0 ? ICO_PRICE : ''} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
+						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_PRICE != 0 ? ICO_PRICE : ''} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={isDisconnected} ></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_SOFT_CAP != 0 ? ICO_SOFT_CAP : ''} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
+						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_SOFT_CAP != 0 ? ICO_SOFT_CAP : ''} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={isDisconnected} ></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP != 0 ? ICO_HARD_CAP : ''} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
+						<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_HARD_CAP != 0 ? ICO_HARD_CAP : ''} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={isDisconnected} ></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
 					</Row>
 				</Form.Group>
 
@@ -195,29 +168,29 @@ const RoundFeatures: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Minimum Transfer (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER != 0 ? ICO_MIN_TRANSFER / 10**6 : ''}  onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT} ></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MIN_TRANSFER != 0 ? ICO_MIN_TRANSFER / 10**6 : ''}  onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={isDisconnected} ></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Maximum Transfer (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER != 0 ? ICO_MAX_TRANSFER / 10**6 : ''} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_TRANSFER != 0 ? ICO_MAX_TRANSFER / 10**6 : ''} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={isDisconnected}></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Maximum Investment (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT != 0 ? ICO_MAX_INVESTMENT / 10**6 : ''} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_MAX_INVESTMENT != 0 ? ICO_MAX_INVESTMENT / 10**6 : ''} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={isDisconnected}></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD != 0 ? ICO_WHITELIST_THRESHOLD : ''} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={ICO_WHITELIST_THRESHOLD != 0 ? ICO_WHITELIST_THRESHOLD : ''} disabled={isDisconnected} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={isDisconnected} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
 					</Row>
 				</Form.Group>
 
@@ -230,8 +203,8 @@ const RoundFeatures: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Vested Percentage</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_SCHEDULE_PERCENTAGE != 0 ? VESTING_SCHEDULE_PERCENTAGE : ''} disabled={!METAMASK_CURRENT_ACCOUNT} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
-						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={!METAMASK_CURRENT_ACCOUNT} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
+						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={VESTING_SCHEDULE_PERCENTAGE != 0 ? VESTING_SCHEDULE_PERCENTAGE : ''} disabled={isDisconnected} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
+						{ ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={isDisconnected} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Vesting Program</Form.Text></div></Col>

@@ -6,12 +6,14 @@ import { NextPage } from 'next'
 import { useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
+import { useAccount } from 'wagmi'
 
 const Operations: NextPage = () => {
 
+	const { isDisconnected } = useAccount()
+
 	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 	const [METAMASK_CHAIN_TIME_IN_MS, setChainTimeInMs] = useState<number>(0);
 
 	const [VESTING_SCHEDULE_LIST, setVestingScheduleList] = useState<[]>()
@@ -88,11 +90,11 @@ const Operations: NextPage = () => {
 
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60)}>+HOUR</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*1)}>+DAY</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => increaseTime(60*60)}>+HOUR</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => increaseTime(60*60*24*1)}>+DAY</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
 						</Row>
 
 					</Form.Group>
@@ -109,7 +111,7 @@ const Operations: NextPage = () => {
 						</Row>
 						<Row>
 							<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={VESTING_GRANTOR} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
 						</Row>
 
 						<Row>
@@ -117,7 +119,7 @@ const Operations: NextPage = () => {
 						</Row>
 						<Row>
 							<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={VESTING_SCHEDULE_TOKEN_ADDRESS} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
 						</Row>
 
 					</Form.Group>
@@ -182,8 +184,8 @@ const Operations: NextPage = () => {
 						</Row>
 						<Row>
 							<Col xs={6}><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={ VESTING_SCHEDULE_RELEASED_AMOUNT } ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => computeVesting()}>Compute</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !METAMASK_CURRENT_ACCOUNT } onClick={() => releaseVesting()}>Release</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => computeVesting()}>Compute</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected } onClick={() => releaseVesting()}>Release</Button></Col>
 						</Row>
 
 						<Row className="mb-3"></Row>

@@ -8,9 +8,11 @@ import { useResponseHook } from 'hooks/useResponseHook'
 import { useErrorHook } from 'hooks/useErrorHook'
 import { Contract } from 'ethers';
 
+import { useAccount } from 'wagmi'
+
 const AntiwhaleFeatures: NextPage = () => {
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
+	const { isDisconnected } = useAccount()
 
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
@@ -120,7 +122,7 @@ const AntiwhaleFeatures: NextPage = () => {
 											<tbody>
 												{ICO_WHITELIST_USER_LIST?.map((item, index) => (
 													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
 														<td>{item}</td>
 														<td id={"whitelistedValue" + (index+1) }></td>
 													</tr>
@@ -134,13 +136,13 @@ const AntiwhaleFeatures: NextPage = () => {
 
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
+							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={isDisconnected}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
 						</Row>
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
+							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={isDisconnected}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
 						</Row>
 
 					</Form.Group>
@@ -183,7 +185,7 @@ const AntiwhaleFeatures: NextPage = () => {
 											<tbody>
 												{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
 													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
 														<td>{item}</td>
 														<td id={"blacklistedValue" + (index+1) }></td>
 													</tr>
@@ -192,13 +194,13 @@ const AntiwhaleFeatures: NextPage = () => {
 										</table>
 									</Row>
 									<Row>
-										<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
+										<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected}></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
 									</Row>
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
+										<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected}></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
 									</Row>
 								</Accordion.Body>
 							</Accordion.Item>

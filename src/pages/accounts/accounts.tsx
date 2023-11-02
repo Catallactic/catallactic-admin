@@ -9,13 +9,16 @@ import { NextPage } from 'next'
 import { useState } from 'react';
 import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
+import { useAccount } from 'wagmi'
+
 declare let window:any
 
 const Accounts: NextPage = () => {
 
+	const { address, isConnecting, isDisconnected } = useAccount()
+
 	const CFG_ERC_20_ABI = require('../../abi/ERC20Facet.json');
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
 	const [TO_TRANSFER_CURRENCY, setToTransferCurrency] = useState<string>('USDT')
@@ -82,11 +85,11 @@ const Accounts: NextPage = () => {
 	const onSelectToRefundCurrency = async (symbol: any)=>{
 		setToRefundCurrency(symbol);
 
-		let contribution = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(METAMASK_CURRENT_ACCOUNT, symbol);
+		let contribution = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address, symbol);
 	  console.log(`contribution: ` + contribution);
 		setToRefundAmount(contribution);
 
-		let contributionUSD = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(METAMASK_CURRENT_ACCOUNT, symbol);
+		let contributionUSD = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address, symbol);
 	  console.log(`contributionUSD: ` + contributionUSD);
 		setToRefundAmountUSD(contributionUSD);
 	}
@@ -109,7 +112,7 @@ const Accounts: NextPage = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
-				from: METAMASK_CURRENT_ACCOUNT,
+				from: address,
 				to: SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
 				value: ethers.utils.parseEther(amountToInvest.toString()),
 				gasLimit: 1000000,
@@ -147,7 +150,7 @@ const Accounts: NextPage = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
-				from: METAMASK_CURRENT_ACCOUNT,
+				from: address,
 				to: TO_TRANSFER_ADDRESS,
 				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
 				gasLimit: 200000,
@@ -189,7 +192,7 @@ const Accounts: NextPage = () => {
 						<Col><div><Form.Text className="">Connected to Metamask Account</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={METAMASK_CURRENT_ACCOUNT} disabled={true}></input></Col>
+						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={address} disabled={true}></input></Col>
 					</Row>
 				</Form.Group>
 
@@ -263,9 +266,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
+									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 									<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => invest()}>Invest</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => invest()}>Invest</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -300,7 +303,7 @@ const Accounts: NextPage = () => {
 									</Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
+									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -312,7 +315,7 @@ const Accounts: NextPage = () => {
 
 								<Row className="mb-3"></Row>
 								<Row>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => claim()}>Claim</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => claim()}>Claim</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -364,9 +367,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!METAMASK_CURRENT_ACCOUNT} onClick={() => transfer()}>Transfer</Button></Col>
+									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => transfer()}>Transfer</Button></Col>
 								</Row>
 							</Form.Group>
 

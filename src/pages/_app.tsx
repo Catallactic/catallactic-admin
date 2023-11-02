@@ -2,8 +2,8 @@
 import type { AppProps } from 'next/app'
 
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
-import { WagmiConfig } from 'wagmi'
-import { arbitrum, mainnet } from 'wagmi/chains'
+import { WagmiConfig, sepolia } from 'wagmi'
+import { arbitrum, goerli, hardhat, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
@@ -23,7 +23,7 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
 
-const chains = [mainnet, arbitrum]
+const chains = [mainnet, arbitrum, hardhat, polygon, polygonMumbai, goerli, sepolia]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 // 3. Create modal

@@ -10,6 +10,21 @@ export function useVestingHook() {
 	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
 
 	// **********************************************************************************************************
+	// ********************************************** loadVestingPrograms ***************************************
+	// **********************************************************************************************************
+	const [VESTING_IDS, setVestingIds] = useState([]);
+	async function loadVestingPrograms() {
+		// vesting
+		let vestingIds = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingIds();
+		console.log(`vestingIds: ` + vestingIds);
+		setVestingIds(vestingIds);
+
+		let tokenAddressInVestingContract = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
+		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
+		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
+	}
+
+	// **********************************************************************************************************
 	// ************************************************ onSelectVestingId ***************************************
 	// **********************************************************************************************************
 	const [VESTING_ID, setVestingId] = useState<string>('');
@@ -181,7 +196,8 @@ export function useVestingHook() {
 		return err;
 	}
 
-	return { 
+	return {
+		loadVestingPrograms, VESTING_IDS,
 		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
 		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
 		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
