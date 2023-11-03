@@ -4,7 +4,6 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useState } from 'react'
 import { Contract } from "ethers"
 
-import { useNetwork } from 'wagmi'
 import { useAccount } from 'wagmi'
 
 import 'react-toastify/dist/ReactToastify.css';

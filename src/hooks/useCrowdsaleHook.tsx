@@ -5,12 +5,15 @@ import { useState } from 'react';
 
 const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
+import { useAccount } from 'wagmi'
+
 declare let window:any
 
 export function useCrowdsaleHook() {
 
+	const { address } = useAccount()
+
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
-  const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 
 	// **********************************************************************************************************
 	// ************************************************ loadICOFeatures *****************************************
@@ -139,7 +142,7 @@ export function useCrowdsaleHook() {
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')
 
 	async function getBalancesRawICOMeWallet() {
-		const mapBalances: MapType = await getInvestorInvestedRawInICOMap(METAMASK_CURRENT_ACCOUNT!);
+		const mapBalances: MapType = await getInvestorInvestedRawInICOMap(address!);
 		console.log('Updating InvestorInvestedRawInICOMe ', mapBalances);
 		setBalancesRawICOMeWallet(mapBalances);
 	}
@@ -165,7 +168,7 @@ export function useCrowdsaleHook() {
 	}
 
 	async function getBalancesUSDICOMeWallet() {
-		const mapBalances: MapType = await getInvestorInvestedUSDInICOMap(METAMASK_CURRENT_ACCOUNT!);
+		const mapBalances: MapType = await getInvestorInvestedUSDInICOMap(address!);
 		console.log('Updating InvestorInvestedUSDInICOMe ', mapBalances);
 		setBalancesUSDICOMeWallet(mapBalances);
 	}
@@ -207,7 +210,7 @@ export function useCrowdsaleHook() {
 	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
 
 	async function getBalancesPaymentTokensMeWallet() {
-		const mapBalances: MapType = await getPaymentTokensBalancesMap(METAMASK_CURRENT_ACCOUNT!);
+		const mapBalances: MapType = await getPaymentTokensBalancesMap(address!);
 		console.log('Updating BALANCES_PAYMENT_TOKENS_ME_WALLET ', mapBalances);
 		setBalancesPaymentTokensMeWallet(mapBalances);
 	}

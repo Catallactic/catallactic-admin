@@ -27,3 +27,20 @@ export const KEY_ICON = function() {
 export type MapType = { 
 	[id: string]: string; 
 }
+
+var METAMASK_CHAINS:any;
+export const getMETAMASK_CHAINS = function() {
+	if(!METAMASK_CHAINS && process.env.NEXT_PUBLIC_METAMASK_CHAINS) {
+		METAMASK_CHAINS = JSON.parse(process.env.NEXT_PUBLIC_METAMASK_CHAINS ? process.env.NEXT_PUBLIC_METAMASK_CHAINS : '[]' )
+	}
+	return METAMASK_CHAINS;
+}
+
+export const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
+export const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../abi/Diamond.json');
+export const CFG_DIAMOND_CUT_ABI = require('../abi/DiamondCutFacet.json');
+export const CFG_DIAMOND_LOUPE_ABI = require('../abi/DiamondLoupeFacet.json');
+export const CFG_COMMON_ABI = require('../abi/CommonFacet.json');
+export const CFG_CROWDSALE_ABI = require('../abi/CrowdsaleFacet.json');
+export const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
+export const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');

@@ -13,6 +13,9 @@ import { KEY_ICON } from '../../config/config'
 
 const Features: NextPage = () => {
 
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 	const { isDisconnected } = useAccount()
 
 	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
@@ -27,40 +30,43 @@ const Features: NextPage = () => {
 		setVestinGrantorOnSC, setVestinGrantor,
 	} = useVestingHook();
 
-	const [VESTING_IDD, setVestingId] = useState<string>('');
-	const [VESTING_DURATION_DAYSS, setVestingDurationInDays] = useState<number>(0);
-	const [VESTING_CLIFF_DAYSS, setVestingCliffInDays] = useState<number>(0);
-	const [VESTING_NUM_SLIDESS, setVestingNumSlides] = useState<number>(0);
-	const [VESTING_START_MILLISS, setVestingStartMillis] = useState("");
+	// *************************************************************************************************************************
+	// ******************************************************** Update Data ****************************************************
+	// *************************************************************************************************************************
+	const [X_VESTING_ID, setVestingId] = useState<string>('');
+	const [X_VESTING_DURATION_DAYS, setVestingDurationInDays] = useState<number>(0);
+	const [X_VESTING_CLIFF_DAYS, setVestingCliffInDays] = useState<number>(0);
+	const [X_VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
+	const [X_VESTING_START_MILLIS, setVestingStartMillis] = useState("");
 
 	async function deleteVesting() {
-		console.log('deletVesting', VESTING_ID);
+		console.log('deletVesting', X_VESTING_ID);
 
-		//await VESTING_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+		//await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
 
 		//populateICOContractData();
 		//cancelICOPaymentMethod();
 	}
 	async function saveVesting() {
 		// calculate vestingId
-		let vestingId = (Date.parse(VESTING_START_MILLIS) / 1000) + '_' + VESTING_CLIFF_DAYS + '_' + VESTING_DURATION_DAYS + '_' + VESTING_NUM_SLIDES;
+		let vestingId = (Date.parse(X_VESTING_START_MILLIS) / 1000) + '_' + VESTING_CLIFF_DAYS + '_' + VESTING_DURATION_DAYS + '_' + X_VESTING_NUM_SLIDES;
 		setVestingId(vestingId);
 
 		// saveVesting
 		console.log(`creating vesting: `);
 		console.log(`\nVESTING_ID: ` + vestingId);
-		console.log(`\nVESTING_START: ` + (Date.parse(VESTING_START_MILLIS)) / 1000);
-		console.log(`\nVESTING_START_SECS: ` + Date.parse(VESTING_START_MILLIS));
-		console.log(`\nVESTING_CLIFF_DAYS: ` + VESTING_CLIFF_DAYS + ' days');
-		console.log(`\nVESTING_CLIFF_SECS: ` + VESTING_CLIFF_DAYS * 60 * 60 * 24 + ' seconds' );
-		console.log(`\nVESTING_DURATION_DAYS: ` + VESTING_DURATION_DAYS + ' days');
-		console.log(`\nVESTING_DURATION_SECS: ` + VESTING_DURATION_DAYS * 60 * 60 * 24 + ' seconds');
-		console.log(`\nVESTING_NUM_SLIDES: ` + VESTING_NUM_SLIDES);
+		console.log(`\nVESTING_START: ` + (Date.parse(X_VESTING_START_MILLIS)) / 1000);
+		console.log(`\nVESTING_START_SECS: ` + Date.parse(X_VESTING_START_MILLIS));
+		console.log(`\nVESTING_CLIFF_DAYS: ` + X_VESTING_CLIFF_DAYS + ' days');
+		console.log(`\nVESTING_CLIFF_SECS: ` + X_VESTING_CLIFF_DAYS * 60 * 60 * 24 + ' seconds' );
+		console.log(`\nVESTING_DURATION_DAYS: ` + X_VESTING_DURATION_DAYS + ' days');
+		console.log(`\nVESTING_DURATION_SECS: ` + X_VESTING_DURATION_DAYS * 60 * 60 * 24 + ' seconds');
+		console.log(`\nVESTING_NUM_SLIDES: ` + X_VESTING_NUM_SLIDES);
 
-		const vestingStart = Date.parse(VESTING_START_MILLIS) / 1000;
+		const vestingStart = Date.parse(X_VESTING_START_MILLIS) / 1000;
 		const cliffInSecs = VESTING_CLIFF_DAYS * 60 * 60 * 24;
 		const durationInSecs = VESTING_DURATION_DAYS * 60 * 60 * 24;
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, VESTING_NUM_SLIDES).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, X_VESTING_NUM_SLIDES).then(await useResponseHook).catch(useErrorHook);
 
 		cancelVesting();
 	}
@@ -79,6 +85,11 @@ const Features: NextPage = () => {
 
     setVestingStartMillis(e.target.value);
   };
+
+	// *************************************************************************************************************************
+	// ********************************************************** Preload ******************************************************
+	// *************************************************************************************************************************
+	loadVestingPrograms();
 
   return (
 
