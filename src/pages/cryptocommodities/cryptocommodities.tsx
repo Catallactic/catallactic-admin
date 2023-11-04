@@ -5,13 +5,11 @@ import { Button, Col, Container, Dropdown, Form, ListGroup, Row } from 'react-bo
 
 import { useAccount, useNetwork } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON, getSelectors, removeSelectors, FacetCutAction} from '../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useDiamonsLoupeHook } from 'hooks/useDiamonsLoupeHook';
 import { useResponseHook } from 'hooks/useResponseHook';
-
-declare let window:any
 
 const Cryptomcommodities: NextPage = () => {
 
@@ -40,9 +38,8 @@ const Cryptomcommodities: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log('createFactoryContract1');
+		console.log('createEnvContracts');
 		createEnvContracts(chain?.id ? chain.id : 0);
-		console.log('createFactoryContract2');
 	}, [])
 
 	useEffect(() => {
@@ -85,6 +82,35 @@ const Cryptomcommodities: NextPage = () => {
 		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
 
 		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
+	}
+
+	async function installFacet(facetName: string) {
+		console.log("installFacet ", facetName);
+
+		let selectors: any = [];
+		let commonSelectors = getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!))
+		if (facetName == 'DiamondCutFacet') selectors = [];
+		else if (facetName == 'DiamondLoupeFacet') selectors = getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.interface.functions!));
+		else if (facetName == 'CommonFacet') selectors = getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.interface.functions!));
+		else if (facetName == 'CrowdsaleFacet') selectors = removeSelectors(getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'VestingFacet') selectors = removeSelectors(getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.interface.functions!)), commonSelectors);
+		else if (facetName == 'ERC20Facet') selectors = removeSelectors(getSelectors(Object.keys(contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.interface.functions!)), commonSelectors);
+		console.log("selectors ", selectors);
+
+		// would need to merge abi files
+		let tx = await contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
+			facetAddress: FACTORY_FACETS[facetName][1],
+			action: FacetCutAction.Add,
+			functionSelectors: selectors,
+		}]);
+		await tx.wait();
+
+		loadCryptocommodityFacets();
+
+		console.log("installFacet end", facetName);
+	}
+	async function uninstallFacet(facetName: string) {
+		console.log("uninstallFacet ", facetName);
 	}
 
   return (
@@ -155,12 +181,15 @@ const Cryptomcommodities: NextPage = () => {
 										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 										<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
 
-										{ SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ true }>Installed</Button></Col>
-										:
-											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ true }>Not Installed</Button></Col>
-										}
+									{ item == 'DiamondCutFacet' ?
+										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+									: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+									:
+										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+									}
 									</Row>
+
 								);
 							})}
 						</ListGroup>

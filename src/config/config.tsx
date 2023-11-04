@@ -1,3 +1,5 @@
+import { Contract, utils } from "ethers";
+
 const truncateRegex = '^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$';
 export const truncateEthAddress = (address: string) => {
 	if (!address) return '';
@@ -5,6 +7,27 @@ export const truncateEthAddress = (address: string) => {
 	if (!match) return address;
 	return `${match[1]}…${match[2]}`;
 };
+
+export const FacetCutAction = { Add: 0, Replace: 1, Remove: 2 }
+export let getSelectors = function (signatures: string[] ) {
+	return signatures.reduce((acc: string[], val) => {
+			if (val !== 'init(bytes)') {
+					acc.push(utils.id(val).substring(0, 10));
+			}
+			return acc;
+	}, []);
+}
+export let removeSelectors = function (selectors: string[], removeSelectors: string[]) {
+	selectors = selectors.filter(v => !removeSelectors.includes(v))
+	return selectors
+}
+export let logSelectors = function (contract:Contract) {
+	const signatures: string[] = Object.keys(contract.interface.functions);
+	return signatures.reduce((acc: string[], val) => {
+		console.log(val + '->' + contract.interface.getSighash(val));
+		return acc;
+	}, []);
+}
 
 export const KEY_ICON = function() {
 	return (
