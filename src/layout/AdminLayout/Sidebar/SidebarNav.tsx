@@ -28,8 +28,11 @@ import {
 import classNames from 'classnames'
 import Link from 'next/link'
 
+import { ContractsContext } from '../../../hooks/useContractContextHook'
+
 type SidebarNavItemProps = {
   href: string;
+  disabled?: boolean;
   icon?: IconDefinition;
 } & PropsWithChildren
 
@@ -38,12 +41,13 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
     icon,
     children,
     href,
+    disabled,
   } = props
 
   return (
     <Nav.Item>
       <Link href={href} passHref legacyBehavior>
-        <Nav.Link className="px-3 py-2 d-flex align-items-center">
+        <Nav.Link className="px-3 py-2 d-flex align-items-center" disabled={disabled}>
           {icon ? <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} />
             : <span className="nav-icon ms-n3" />}
           {children}
@@ -126,85 +130,97 @@ const SidebarNavGroup = (props: SidebarNavGroupProps) => {
   )
 }
 
-export default function SidebarNav() {
+type SidebarNavIconProps = {
+  isSelected: boolean;
+} & PropsWithChildren
+
+const SidebarNavIcon = (props: SidebarNavIconProps) => {
+  const { isSelected } = props
+
   return (
+		<div>{ !isSelected ? <a href='/cryptocommodities/cryptocommodities'><small className="ps-2 ms-auto"><Badge bg="danger" className="ms-auto"> ! </Badge></small></a> : '' }</div>
+  );
+}
+
+export default function SidebarNav() {
+
+	const { selectedCrypto } = useContext(ContractsContext);
+
+	return (
     <ul className="list-unstyled">
-      <SidebarNavItem icon={faGauge} href="/">
-        Dashboard
-        <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small>
-      </SidebarNavItem>
+      <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small></SidebarNavItem>
       <SidebarNavItem icon={faDroplet} href="/legacy">Legacy</SidebarNavItem>
 
       <SidebarNavTitle>Funding</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds">
-        <SidebarNavItem href="/rounds/features">Features</SidebarNavItem>
-        <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
-        <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Operations</SidebarNavItem>
-        <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
-        <SidebarNavItem href="/rounds/contract">Contract</SidebarNavItem>
+        <SidebarNavItem href="/rounds/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/antiwhale">AntiWhale <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/payments">Payments <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Operations <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/investors">Investors <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting">
-				<SidebarNavItem href="/vesting/features">Features</SidebarNavItem>
-				<SidebarNavItem href="/vesting/operations">Operations</SidebarNavItem>
-        <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
-        <SidebarNavItem href="/vesting/contract">Contract</SidebarNavItem>
+				<SidebarNavItem href="/vesting/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+				<SidebarNavItem href="/vesting/operations">Operations <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/vesting/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/vesting/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity">
-				<SidebarNavItem href="#">Features</SidebarNavItem>
-        <SidebarNavItem href="#">Holders</SidebarNavItem>
-        <SidebarNavItem href="#">Contract</SidebarNavItem>
+				<SidebarNavItem href="#">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve">
-        <SidebarNavItem href="#">Buttons</SidebarNavItem>
-        <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
-        <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
+        <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Dropdowns <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Rewards">
-        <SidebarNavItem href="#">Buttons</SidebarNavItem>
-        <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
-        <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
+        <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Dropdowns <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavTitle>Distribution</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations">
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops">
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending">
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Staking">
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers">
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
     </ul>
