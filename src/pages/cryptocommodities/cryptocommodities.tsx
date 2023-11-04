@@ -67,8 +67,8 @@ const Cryptomcommodities: NextPage = () => {
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 		await selectCrypto(cryptocommodityName);
-		loadFacets();
-		loadCryptocommodityFacets();
+		await loadFacets();
+		await loadCryptocommodityFacets();
 	}
 	async function unselectCryptocommodity() {
 		console.log("unselectCryptocommodity");
@@ -183,7 +183,7 @@ const Cryptomcommodities: NextPage = () => {
 
 									{ item == 'DiamondCutFacet' ?
 										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-									: SELECTED_CRYPTOCOMMODITY_FACETS && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+									: SELECTED_CRYPTOCOMMODITY_FACETS && FACTORY_FACETS[item][1] && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
 										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
 									:
 										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>

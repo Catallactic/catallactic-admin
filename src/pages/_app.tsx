@@ -1,5 +1,6 @@
 // src/pages/_app.tsx
 import type { AppProps } from 'next/app'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 import { WagmiConfig, sepolia } from 'wagmi'
@@ -13,7 +14,20 @@ import { ContractsContext, useContractContextHook } from 'hooks/useContractConte
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import '../styles/globals.scss'
 import '../styles/_app.css';
-import { ErrorBoundary } from 'react-error-boundary'
+
+/*declare let window:any
+window.ethereum.on('accountsChanged', (accounts: any) => {
+	window.location.reload();
+});
+window.ethereum.on('disconnect', (accounts: any) => {
+	window.location.reload();
+});
+const setListener = provider => {
+	provider.on("chainChanged", _ => window.location.reload());
+};
+window.ethereum.on('chainChanged', (chainId: any) => {
+	window.location.reload();
+});*/
 
 // 1. Get projectId
 const projectId = '75b26af85c05f056c40e2788823e66ae'

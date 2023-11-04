@@ -1,13 +1,13 @@
 "use client";
 
-import { Contract } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { ContractsContext } from './useContractContextHook';
 
 export function useVestingHook() {
 
-	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
+	const { contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
 	// ********************************************** loadVestingPrograms ***************************************
@@ -15,11 +15,11 @@ export function useVestingHook() {
 	const [VESTING_IDS, setVestingIds] = useState([]);
 	async function loadVestingPrograms() {
 		// vesting
-		let vestingIds = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingIds();
+		let vestingIds = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingIds();
 		console.log(`vestingIds: ` + vestingIds);
 		setVestingIds(vestingIds);
 
-		let tokenAddressInVestingContract = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
+		let tokenAddressInVestingContract = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
 		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
 		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
 	}
@@ -36,7 +36,7 @@ export function useVestingHook() {
 	const onSelectVestingId = async (vestingId: any)=>{
 		console.log('onSelectVestingId', vestingId);
 
-		let vesting = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVesting(vestingId);
+		let vesting = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVesting(vestingId);
 		console.log('vesting', vesting);
 		console.log('vesting[0])', vesting[0]);
 		let vestingStartInMillis = parseInt(vesting[0]) * 1000;
@@ -64,7 +64,7 @@ export function useVestingHook() {
 	const onSelectVestingSchedule = async (vestingScheduleId: any)=>{
 		console.log('onSelectVestingSchedule', vestingScheduleId);
 
-		let vestingSchedule = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
+		let vestingSchedule = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
 		console.log('vestingSchedule', vestingSchedule);
 
 		setVestingScheduleId(vestingScheduleId);
@@ -80,7 +80,7 @@ export function useVestingHook() {
 	const [VESTING_SCHEDULE_LIST, setVestingScheduleList] = useState<[]>()
 
 	async function loadVestingScheduleList() {
-		let vestingScheduleList = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedulesIds();
+		let vestingScheduleList = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedulesIds();
 		console.log(`VESTING_SCHEDULE_LIST: ` + vestingScheduleList);
 		setVestingScheduleList(vestingScheduleList);
 	}
@@ -90,7 +90,7 @@ export function useVestingHook() {
 	// **********************************************************************************************************
 	async function computeVesting() {
 		console.log('computeVesting', VESTING_SCHEDULE_ID);
-		let releseableAmount = await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
+		let releseableAmount = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
 		console.log('releseableAmount', releseableAmount);
 		setVestingScheduleReleasedAmount(releseableAmount);
 	}
@@ -100,7 +100,7 @@ export function useVestingHook() {
 	// **********************************************************************************************************
 	async function releaseVesting() {
 		console.log('releaseVesting', VESTING_SCHEDULE_ID);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
+		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
 	}
 
 	// **********************************************************************************************************
@@ -110,7 +110,7 @@ export function useVestingHook() {
 
 	async function setVestinGrantorOnSC() {
 		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// **********************************************************************************************************
@@ -120,7 +120,7 @@ export function useVestingHook() {
 
 	async function setTokenAddressOnVestingSC() {
 		console.log(`setting VESTING_SCHEDULE_TOKEN_ADDRESS: ` + VESTING_SCHEDULE_TOKEN_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************

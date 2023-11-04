@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
+	//swcMinify: false,			// https://github.com/vercel/next.js/discussions/39425
 	/*env: {
 		METAMASK_CHAINS: [
 			{ id: "0x1", name: "ETH MainNet", ico_address: "" },
