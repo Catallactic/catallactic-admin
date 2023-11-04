@@ -28,6 +28,9 @@ export function useCrowdsaleHook() {
 
 	const [ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
 
+	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
+	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
+
 	const [ICO_CURRENT_STAGE, setCurrentState] = useState<number>(0);
 	const [ICO_CURRENT_STAGE_TEXT, setCurrentStateText] = useState<string>('NOT CREATED')
 	const STAGE: {[key: string]: number} = {
@@ -40,6 +43,7 @@ export function useCrowdsaleHook() {
 
 	async function loadICOFeatures() {
 
+		// get read only - crowdsale
 		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
 		console.log("hardCap: " + hardCap);
 		setICOHardCap(hardCap);
@@ -59,7 +63,13 @@ export function useCrowdsaleHook() {
 		setMaxInvestment(maxInvestment * 10**6);
 		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
 		setWhitelistThreshold(whitelistThreshold / 10**6);
-
+	
+		// get read only - vesting
+		let percentVested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPercentVested();
+		setVestingSchedulePercentage(percentVested);
+		let vestingScheduleId = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingId();
+		setVestingScheduleCurrentId(vestingScheduleId);
+		
 		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
 		setCurrentState(currentStage);
 		if(currentStage == 0) setCurrentStateText("NOT CREATED");
@@ -298,7 +308,7 @@ export function useCrowdsaleHook() {
 
 
 	return { 
-		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
