@@ -6,7 +6,7 @@ import { MapType } from 'config/config';
 
 export function useFactoryHook() {
 
-	const { contracts } = useContext(ContractsContext);
+	const { envContracts, contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
 	// ************************************************ loadFacets **********************************************
@@ -16,7 +16,7 @@ export function useFactoryHook() {
 
 	async function loadFacets() {
 		// get read only - payment methods
-		let facetTypes = await contracts.FACTORY_CONTRACT?.getFacetTypes();
+		let facetTypes = await envContracts.FACTORY_CONTRACT?.getFacetTypes();
 		setFactoryFacetTypes(facetTypes);
 		console.log("facetTypes: " + facetTypes);
 		console.log(facetTypes);
@@ -24,7 +24,7 @@ export function useFactoryHook() {
 		const map: MapType = {};
 		for (var i = 0; i < facetTypes.length; i++) {
 			console.log("facetType: " + facetTypes[i]);
-			let facetType = await contracts.FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
+			let facetType = await envContracts.FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
 			console.log("facetType: " + facetType);
 			console.log(facetType);
 			map[facetTypes[i]] = facetType[0];
@@ -42,7 +42,7 @@ export function useFactoryHook() {
 
 	async function loadFactoryPaymentMethod() {
 		// get read only - payment methods
-		let paymentSymbols = await contracts.FACTORY_CONTRACT?.getPaymentSymbols();
+		let paymentSymbols = await envContracts.FACTORY_CONTRACT?.getPaymentSymbols();
 		setFactoryPaymentSymbols(paymentSymbols);
 		console.log("paymentSymbols: " + paymentSymbols);
 		console.log(paymentSymbols);
@@ -50,7 +50,7 @@ export function useFactoryHook() {
 		const map: MapType = {};
 		for (var i = 0; i < paymentSymbols.length; i++) {
 			console.log("paymentSymbol: " + paymentSymbols[i]);
-			let method = await contracts.FACTORY_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			let method = await envContracts.FACTORY_CONTRACT?.getPaymentToken(paymentSymbols[i]);
 			console.log("getPaymentTokenData: " + method);
 			console.log(method);
 			map[paymentSymbols[i]] = method;
@@ -68,7 +68,7 @@ export function useFactoryHook() {
 
 	async function loadYourCryptocommodities() {
 		console.log("fetching cryptocommodities for user");
-		let cryptocommodities = await contracts.FACTORY_CONTRACT?.getCryptocommodities();
+		let cryptocommodities = await envContracts.FACTORY_CONTRACT?.getCryptocommodities();
 		console.log("cryptocommodities: " + cryptocommodities);
 		setCryptocommodities(cryptocommodities);
 	}

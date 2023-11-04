@@ -9,38 +9,32 @@ declare let window:any
 export function useContractContextHook() {
 
 	const [selectedCrypto, setSelectedCryptocommodity] = useState<Cryptocommodity>();
-	const [contracts, setContracts] = useState<Contracts>({} as Contracts);
+	const [envContracts, setEnvContract] = useState<EnvContracts>({} as EnvContracts);
+	const [contracts, setContracts] = useState<CryptoContracts>({} as CryptoContracts);
 
-  const createFactoryContract = async (chainId: number) => {
+  const createEnvContracts = async (chainId: number) => {
+		console.log("createEnvContracts", chainId);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner();
-
-		console.log("createFactoryContracto");
-		console.log("createFactoryContract", chainId);
-
 		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == chainId; })?.factory_address || '';
 		console.log("factory_address: " + factory_address);
 
-		const factoryContract: Contract = new ethers.Contract(factory_address, CFG_FACTORY_ABI, signer);
-		console.log("factoryContract: " + factoryContract);
-
-		contracts.FACTORY_CONTRACT = factoryContract;
-		setContracts(contracts);
-
+		envContracts.FACTORY_CONTRACT = new ethers.Contract(factory_address, CFG_FACTORY_ABI, signer);
+		setEnvContract(envContracts);
 	}
 
-  const updateContracts = async (cryptocommodityName: string) => {
+  const selectCrypto = async (cryptocommodityName: string) => {
 
 		console.log("updateContracts: " + cryptocommodityName);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner();
 
-		let cryptocommodityAddress = await contracts.FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
+		let cryptocommodityAddress = await envContracts.FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
 		let selectedCryptoObject = {} as Cryptocommodity;
 		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_NAME = cryptocommodityName;
-		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_NAME = cryptocommodityName;
+		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_ADDRESS = cryptocommodityAddress;
 		setSelectedCryptocommodity(selectedCryptoObject);
 
 		contracts.SELECTED_CRYPTOCOMMODITY_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
@@ -56,11 +50,18 @@ export function useContractContextHook() {
 
   };
 
+  const unselectCrypto = async () => {
+		setSelectedCryptocommodity(undefined);
+		setContracts(({} as any) as CryptoContracts);
+	}
+
 	return {
+		createEnvContracts,
+		envContracts,
+		selectCrypto,
+		unselectCrypto,
 		selectedCrypto,
-		contracts,
-		updateContracts,
-		createFactoryContract
+		contracts
 	};
 
 };
@@ -70,9 +71,11 @@ interface Cryptocommodity {
   SELECTED_CRYPTOCOMMODITY_ADDRESS: string;
 }
 
-interface Contracts {
-	FACTORY_CONTRACT: Contract;
+interface EnvContracts {
+  FACTORY_CONTRACT: Contract;
+}
 
+interface CryptoContracts {
   SELECTED_CRYPTOCOMMODITY_CONTRACT: Contract;
   SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT: Contract;
   SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT: Contract;
@@ -83,17 +86,22 @@ interface Contracts {
 }
 
 export interface ContractsContextData {
+  createEnvContracts: (chainId: number) => void;
+	envContracts: EnvContracts;
+	selectCrypto: (cryptocommodityName: string) => void;
+  unselectCrypto: () => void;
   selectedCrypto: Cryptocommodity | undefined;
-  contracts: Contracts;
-  updateContracts: (cryptocommodityName: string) => void;
-  createFactoryContract: (chainId: number) => void;
+  contracts: CryptoContracts;
+
 }
  
 export const contractsContextDefaultValue: ContractsContextData = {
+  createEnvContracts: () => null,
+  envContracts: ({} as any) as EnvContracts,
+	selectCrypto: () => null,
+  unselectCrypto: () => null,
   selectedCrypto: undefined,
-  contracts: ({} as any) as Contracts,
-  updateContracts: () => null,
-  createFactoryContract: () => null
+  contracts: ({} as any) as CryptoContracts,
 }
  
 export const ContractsContext = createContext<ContractsContextData>(contractsContextDefaultValue);

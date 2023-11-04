@@ -22,11 +22,10 @@ const Cryptomcommodities: NextPage = () => {
 
 	const { isDisconnected } = useAccount()
 
-	const { selectedCrypto, contracts, updateContracts, createFactoryContract } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
-		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
 
@@ -42,7 +41,7 @@ const Cryptomcommodities: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 		console.log('createFactoryContract1');
-		createFactoryContract(chain?.id ? chain.id : 0);
+		createEnvContracts(chain?.id ? chain.id : 0);
 		console.log('createFactoryContract2');
 	}, [])
 
@@ -59,10 +58,24 @@ const Cryptomcommodities: NextPage = () => {
 	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
 
 	async function saveCryptocommodity() {
-		await contracts.FACTORY_CONTRACT?.createCryptocommodity(FIND_CRYPTOCOMMODITY_NAME)
+		await envContracts.FACTORY_CONTRACT?.createCryptocommodity(FIND_CRYPTOCOMMODITY_NAME)
 			.then(await handleICOReceipt)
 			.then(await loadYourCryptocommodities)
 			.catch(handleError);
+	}
+
+	async function findCryptocommodity() {
+		onSelectCryptocommodity(FIND_CRYPTOCOMMODITY_NAME);
+	}
+	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
+		console.log('onSelectCryptocommodity', cryptocommodityName);
+		await selectCrypto(cryptocommodityName);
+		loadFacets();
+		loadCryptocommodityFacets();
+	}
+	async function unselectCryptocommodity() {
+		console.log("unselectCryptocommodity");
+		await unselectCrypto();
 	}
 
 	const onSelectFacet = async (facetName: any, pp: any)=>{
@@ -72,24 +85,6 @@ const Cryptomcommodities: NextPage = () => {
 		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
 
 		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
-	}
-	async function unselectCryptocommodity() {
-		console.log("unselectCryptocommodity");
-		//setSelectedCryptocommodityName('');
-		//setSelectedCryptocommodityAddress('');
-		//setAddCryptocommodityName('');
-	}
-
-	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
-		console.log('onSelectCryptocommodity', cryptocommodityName);
-		await updateContracts(cryptocommodityName);
-		loadFacets();
-		loadCryptocommodityFacets();
-	}
-
-	async function findCryptocommodity() {
-		console.log("FIND_CRYPTOCOMMODITY_NAME: ", FIND_CRYPTOCOMMODITY_NAME);
-		onSelectCryptocommodity(FIND_CRYPTOCOMMODITY_NAME);
 	}
 
   return (
