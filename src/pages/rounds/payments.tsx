@@ -1,7 +1,6 @@
 
 import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
@@ -13,6 +12,10 @@ import { useAccount } from 'wagmi'
 import { KEY_ICON } from '../../config/config'
 
 const Payments: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -43,6 +46,12 @@ const Payments: NextPage = () => {
 		isBlacklisted,
 	} = useCrowdsaleHook();
 
+	const { handleICOReceipt, handleError } = useResponseHook()
+	
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+
 	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
 	const [ICO_PAYMENT_SYMBOL_PRICE, setICOPaymentSymbolPrice] = useState<any | undefined>()
 	const [ICO_PAYMENT_SYMBOL_DECIMALS, setICOPaymentSymbolDecimals] = useState<any | undefined>()
@@ -64,7 +73,7 @@ const Payments: NextPage = () => {
 
 	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
 	async function setDynamicPriceSC(event:any) {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS, setSelectedCryptocommodityReceiveAddress] = useState<any>();

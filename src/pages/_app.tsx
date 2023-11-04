@@ -8,9 +8,12 @@ import { arbitrum, goerli, hardhat, mainnet, polygon, polygonMumbai } from 'wagm
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
 
+import { ContractsContext, useContractContextHook } from 'hooks/useContractContextHook'
+
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import '../styles/globals.scss'
 import '../styles/_app.css';
+import { ErrorBoundary } from 'react-error-boundary'
 
 // 1. Get projectId
 const projectId = '75b26af85c05f056c40e2788823e66ae'
@@ -30,12 +33,19 @@ const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 createWeb3Modal({ wagmiConfig, projectId, chains })
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+	const contractsContextDefaultValue = useContractContextHook();
+
   return (
-		<WagmiConfig config={wagmiConfig}>
-			<AdminLayout>
-				<Component {...pageProps} />
-			</AdminLayout>
-		</WagmiConfig>
+		<ErrorBoundary fallback={<div>Something went wrong</div>}>
+			<WagmiConfig config={wagmiConfig}>
+				<ContractsContext.Provider value={contractsContextDefaultValue} >
+					<AdminLayout>
+						<Component {...pageProps} />
+					</AdminLayout>
+				</ContractsContext.Provider>
+			</WagmiConfig>
+		</ErrorBoundary>
   )
 }
 

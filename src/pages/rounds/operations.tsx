@@ -1,7 +1,6 @@
 
 import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useState } from 'react';
@@ -12,6 +11,10 @@ import { useAccount } from 'wagmi'
 import { KEY_ICON } from '../../config/config'
 
 const Operations: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -33,6 +36,12 @@ const Operations: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
+
+	const { handleICOReceipt, handleError } = useResponseHook()
+	
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
 
 	const [TO_REFUND_ALL_CURRENCY, setToRefundAllCurrency] = useState<string>()
   const [TO_REFUND_ALL_AMOUNT_USD, setToRefundAllAmountUSD] = useState<string>()
@@ -76,39 +85,39 @@ const Operations: NextPage = () => {
 
 	// whitelist user
 	async function setTargetWalletAddress() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function setTokenAddressOnSC() {
 		console.log(`setting token address: ` + TOKEN_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function refundAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function setVestingTokenOnSC() {
 		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function claimAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function withdrawICO() {
 		console.log(`WITHDRAW_CURRENCY: ` + WITHDRAW_CURRENCY);
 		console.log(`WITHDRAW_PERCENTAGE: ` + WITHDRAW_PERCENTAGE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// click purchase
 	async function setCrowdsaleStage(stage: number) {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
 	}
 	async function reset() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
 	}
 
   return (

@@ -11,11 +11,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { useResponseHook } from 'hooks/useResponseHook'
-import { useErrorHook } from 'hooks/useErrorHook'
 
 import { KEY_ICON } from '../../config/config'
 
 const RoundFeatures: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -35,50 +38,56 @@ const RoundFeatures: NextPage = () => {
 		isBlacklisted,
 	} = useCrowdsaleHook();
 
+	const { handleICOReceipt, handleError } = useResponseHook()
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
   const [X_ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
 	async function setICOHardCapOnSC() {
 		console.log(`X_ICO_HARD_CAP: ` + X_ICO_HARD_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(X_ICO_HARD_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(X_ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 
   const [X_ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
 	async function setICOSoftCapOnSC() {
 		console.log(`X_ICO_SOFT_CAP: ` + X_ICO_SOFT_CAP);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(X_ICO_SOFT_CAP * 10**6).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(X_ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [X_ICO_PRICE, setICOPrice] = useState<number>(0)
 	async function setICOSPriceOnSC() {
 		console.log(`X_ICO_PRICE: ` + X_ICO_PRICE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(X_ICO_PRICE).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(X_ICO_PRICE).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [X_ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
 	async function setMinTransferOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(X_ICO_MIN_TRANSFER).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(X_ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(handleError);
 	}
 
   const [X_ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
 	async function setMaxTransferOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(X_ICO_MAX_TRANSFER).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(X_ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [X_ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
 	async function setMaxInvestmentOnSC() {
 		console.log('ICO_MAX_INVESTMENT ' + ICO_MAX_INVESTMENT);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(X_ICO_MAX_INVESTMENT).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(X_ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [X_ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
 	async function setWhitelistThresholdOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(X_ICO_WHITELIST_THRESHOLD) * 10**6).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(X_ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 	async function setPercentVestedOnSC() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
 	}
 
 	const [VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
@@ -106,7 +115,7 @@ const RoundFeatures: NextPage = () => {
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + VESTING_ID);
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(ICO_PRICE, ICO_HARD_CAP * 10**6, ICO_SOFT_CAP * 10**6, ICO_WHITELIST_THRESHOLD * 10**6, ICO_MAX_INVESTMENT, ICO_MAX_TRANSFER, ICO_MIN_TRANSFER, VESTING_SCHEDULE_PERCENTAGE, VESTING_ID)
-		.then(await useResponseHook).catch(useErrorHook);
+		.then(await handleICOReceipt).catch(handleError);
 	}
 
   return (

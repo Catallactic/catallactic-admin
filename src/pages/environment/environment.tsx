@@ -1,6 +1,5 @@
 
 import { Contract, ethers } from 'ethers';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { NextPage } from 'next'
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootst
 import { useAccount } from 'wagmi'
 
 import { truncateEthAddress, KEY_ICON } from '../../config/config'
+import { useResponseHook } from 'hooks/useResponseHook';
 
 const Environment: NextPage = () => {
 
@@ -30,6 +30,8 @@ const Environment: NextPage = () => {
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
+
+	const { handleICOReceipt, handleError } = useResponseHook()
 
 	const [FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
 	const [FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
@@ -89,8 +91,9 @@ const Environment: NextPage = () => {
 		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_PRICE);
 		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_DECIMALS);
 		FACTORY_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS)
+			.then(await handleICOReceipt)
 			.then(await loadFactoryPaymentMethod)
-			.catch(useErrorHook);
+			.catch(handleError);
 
 		cancelFactoryPaymentMethod();
 	}

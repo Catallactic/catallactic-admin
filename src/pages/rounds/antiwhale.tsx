@@ -5,7 +5,6 @@ import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook'
-import { useErrorHook } from 'hooks/useErrorHook'
 import { Contract } from 'ethers';
 
 import { useAccount } from 'wagmi'
@@ -13,6 +12,10 @@ import { useAccount } from 'wagmi'
 import { KEY_ICON } from '../../config/config'
 
 const AntiwhaleFeatures: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -34,15 +37,21 @@ const AntiwhaleFeatures: NextPage = () => {
 		isBlacklisted,
 	} = useCrowdsaleHook();
 
+	const { handleICOReceipt, handleError } = useResponseHook()
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+
 	const [ICO_USER_TO_WHITELIST, setUserToWhitelist] = useState<string | undefined>()
 	// whitelist user
 	async function whitelistUser(flag: boolean) {
 		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT " + SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
 
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await useResponseHook).catch(useErrorHook);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await useResponseHook).catch(useErrorHook);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		}
 
 	}
@@ -58,9 +67,9 @@ const AntiwhaleFeatures: NextPage = () => {
 
 		// process transaction
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await useResponseHook).catch(useErrorHook);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await useResponseHook).catch(useErrorHook);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		}
 	}
 
@@ -68,7 +77,7 @@ const AntiwhaleFeatures: NextPage = () => {
 	async function setIsBlacklist(event:any) {
 
 		// process transaction
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setUseBlacklist(event.target.checked).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setUseBlacklist(event.target.checked).then(await handleICOReceipt).catch(handleError);
 	}
 
   return (

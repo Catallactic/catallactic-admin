@@ -1,6 +1,5 @@
 
 import { Contract } from 'ethers';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { useVestingHook } from 'hooks/useVestingHook';
 import { NextPage } from 'next'
@@ -29,6 +28,13 @@ const Features: NextPage = () => {
 		releaseVesting, 
 		setVestinGrantorOnSC, setVestinGrantor,
 	} = useVestingHook();
+
+	const { handleICOReceipt, handleError } = useResponseHook()
+	
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+	loadVestingPrograms();
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -66,7 +72,7 @@ const Features: NextPage = () => {
 		const vestingStart = Date.parse(X_VESTING_START_MILLIS) / 1000;
 		const cliffInSecs = VESTING_CLIFF_DAYS * 60 * 60 * 24;
 		const durationInSecs = VESTING_DURATION_DAYS * 60 * 60 * 24;
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, X_VESTING_NUM_SLIDES).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, X_VESTING_NUM_SLIDES).then(await handleICOReceipt).catch(handleError);
 
 		cancelVesting();
 	}
@@ -85,11 +91,6 @@ const Features: NextPage = () => {
 
     setVestingStartMillis(e.target.value);
   };
-
-	// *************************************************************************************************************************
-	// ********************************************************** Preload ******************************************************
-	// *************************************************************************************************************************
-	loadVestingPrograms();
 
   return (
 

@@ -2,7 +2,6 @@
 import { Contract, ethers } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
@@ -16,6 +15,10 @@ import { KEY_ICON } from '../../config/config'
 declare let window:any
 
 const Accounts: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { address, isConnecting, isDisconnected } = useAccount()
 
@@ -66,6 +69,12 @@ const Accounts: NextPage = () => {
 		getBalancesCygasTargetWallet, BALANCES_ERC_20_TARGET_WALLET, 
 	} = useERC20Hook();
 
+	const { handleICOReceipt, handleError } = useResponseHook()
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+
 	const onSelectToRefundCurrency = async (symbol: any)=>{
 		setToRefundCurrency(symbol);
 
@@ -82,7 +91,7 @@ const Accounts: NextPage = () => {
 		setToTransferCurrency(symbol);
 	}
 	async function claim() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(await handleICOReceipt).catch(handleError);
 	}
 	// click purchase
 	async function invest() {
@@ -107,7 +116,7 @@ const Accounts: NextPage = () => {
 				//.once('receipt', function(receipt){ ... })
 				//.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
 				//.on('error', function(error){ ... })
-				.then(await useResponseHook).catch(useErrorHook);
+				.then(await handleICOReceipt).catch(handleError);
 
 		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
 			// N/A
@@ -122,8 +131,8 @@ const Accounts: NextPage = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner();
 			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
-			await paymentToken?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await useResponseHook).catch(useErrorHook);
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await useResponseHook).catch(useErrorHook);
+			await paymentToken?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
+			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
 		}
 
 	}
@@ -138,7 +147,7 @@ const Accounts: NextPage = () => {
 				to: TO_TRANSFER_ADDRESS,
 				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
 				gasLimit: 200000,
-			}).then(await useResponseHook).catch(useErrorHook);
+			}).then(await handleICOReceipt).catch(handleError);
 
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
 
@@ -150,7 +159,7 @@ const Accounts: NextPage = () => {
 			let currencyDecimals = currencyMap[3];
 			const currencyToken: Contract = new ethers.Contract(currencyAddress, CFG_ERC_20_ABI, signer);
 			console.log('currencyToken ', currencyToken);
-			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString()).then(await useResponseHook).catch(useErrorHook);
+			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString()).then(await handleICOReceipt).catch(handleError);
 		}
 
 	}
@@ -160,7 +169,7 @@ const Accounts: NextPage = () => {
 	}
 
 	async function refund() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(await handleICOReceipt).catch(handleError);
 	}
   return (
 

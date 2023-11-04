@@ -1,7 +1,6 @@
 
 import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useState } from 'react';
@@ -12,6 +11,10 @@ import { useAccount } from 'wagmi'
 import { KEY_ICON } from '../../config/config'
 
 const ICOContract: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -33,6 +36,12 @@ const ICOContract: NextPage = () => {
 		isBlacklisted,
 	} = useCrowdsaleHook();
 
+	const { handleICOReceipt, handleError } = useResponseHook()
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+
   const [ICO_OWNER, setICOOwner] = useState<string | undefined>()
   const [ICO_PENDING_OWNER, setICOPendingOwner] = useState<string | undefined>()
   const [ICO_BALANCE, setICOBalance] = useState<string | undefined>()
@@ -42,10 +51,10 @@ const ICOContract: NextPage = () => {
 
 	// ICO Owner
 	async function setNewICOOwner() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await handleICOReceipt).catch(handleError);
 	}
 	async function acceptNewICOOwner() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.acceptOwnership().then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.acceptOwnership().then(await handleICOReceipt).catch(handleError);
 	}
 
 	var METAMASK_CHAINS:any;

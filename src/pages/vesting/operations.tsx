@@ -1,6 +1,5 @@
 
 import { Contract, ethers } from 'ethers';
-import { useErrorHook } from 'hooks/useErrorHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useState } from 'react';
@@ -10,7 +9,17 @@ import { useAccount } from 'wagmi'
 
 const Operations: NextPage = () => {
 
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
+
 	const { isDisconnected } = useAccount()
+
+	const { handleICOReceipt, handleError } = useResponseHook()
+	
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
 
 	const [SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT, setSelectedCryptocommodityVestingContract] = useState<Contract>()
 
@@ -35,7 +44,7 @@ const Operations: NextPage = () => {
 
 	async function setVestinGrantorOnSC() {
 		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function computeVesting() {
@@ -65,7 +74,7 @@ const Operations: NextPage = () => {
 
 	async function setTokenAddressOnVestingSC() {
 		console.log(`setting VESTING_SCHEDULE_TOKEN_ADDRESS: ` + VESTING_SCHEDULE_TOKEN_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await useResponseHook).catch(useErrorHook);
+		await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
   return (

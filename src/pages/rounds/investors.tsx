@@ -1,6 +1,7 @@
 
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
+import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
@@ -8,6 +9,10 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useAccount } from 'wagmi'
 
 const Investors: NextPage = () => {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
 
@@ -36,6 +41,12 @@ const Investors: NextPage = () => {
 	} = useERC20Hook();
 
 	const [ICO_INVESTORS_LIST, setInvestors] = useState([]);
+
+	const { handleICOReceipt, handleError } = useResponseHook()
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
 
 	// Investors Available
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')

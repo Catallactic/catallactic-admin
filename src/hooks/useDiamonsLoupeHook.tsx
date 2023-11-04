@@ -1,11 +1,11 @@
 "use client";
 
-import { Contract } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { ContractsContext } from './useContractContextHook';
 
 export function useDiamonsLoupeHook() {
 
-	const [SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT, setSelectedCryptocommodityDiamondLoupeContract] = useState<Contract>()
+	const { contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
 	// ************************************************ loadERC20Features ***************************************
@@ -13,12 +13,14 @@ export function useDiamonsLoupeHook() {
 	const [SELECTED_CRYPTOCOMMODITY_FACETS, setSelectedCryptocommodityFacets] = useState<any>();
 
 	async function loadCryptocommodityFacets() {
-		let facets = await SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
+		console.log("contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT: ", contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT);
+		let facets = await contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT?.facets();
 		console.log("loadCryptocommodityFacets: ", facets);
 		setSelectedCryptocommodityFacets(facets);
 	}
 
 	return { 
-		loadCryptocommodityFacets, SELECTED_CRYPTOCOMMODITY_FACETS,
+		loadCryptocommodityFacets, 
+		SELECTED_CRYPTOCOMMODITY_FACETS,
 	}
 }
