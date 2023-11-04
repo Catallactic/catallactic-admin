@@ -1,96 +1,77 @@
 
-import { Contract, ethers } from 'ethers';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { NextPage } from 'next'
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootstrap';
 
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import { truncateEthAddress, KEY_ICON } from '../../config/config'
 import { useResponseHook } from 'hooks/useResponseHook';
+import { ContractsContext } from 'hooks/useContractContextHook';
 
 const Environment: NextPage = () => {
 
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
+	const { chain } = useNetwork()
+
 	const { isDisconnected } = useAccount()
-
-	const CFG_FACTORY_ABI = require('../../abi/CryptocommoditiesFactory.json');
-	const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../../abi/Diamond.json');
-	const CFG_DIAMOND_CUT_ABI = require('../../abi/DiamondCutFacet.json');
-	const CFG_DIAMOND_LOUPE_ABI = require('../../abi/DiamondLoupeFacet.json');
-	const CFG_COMMON_ABI = require('../../abi/CommonFacet.json');
-	const CFG_CROWDSALE_ABI = require('../../abi/CrowdsaleFacet.json');
-	const CFG_VESTING_ABI = require('../../abi/VestingFacet.json');
-	const CFG_ERC_20_ABI = require('../../abi/ERC20Facet.json');
-
-	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
+		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
+		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,
 		loadYourCryptocommodities, CRYPTOCOMMODITIES,
-	} = useFactoryHook();	
+	} = useFactoryHook();
 
 	const { handleICOReceipt, handleError } = useResponseHook()
 
-	const [FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_PRICE, setFactoryPaymentSymbolPrice] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_REF, setFactoryPaymentSymbolRef] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_DYN_PRICE, setFactoryPaymentSymbolDynPrice] = useState<any | undefined>()
+	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
-	const onFactorySelectPaymentMethod = async (symbol: any)=>{
-		console.log('selectPaymentMethod', symbol);
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
+	useEffect(() => {
 
-		let paymentMethod = await FACTORY_CONTRACT?.getPaymentToken(symbol);
-		console.log('paymentMethod', paymentMethod);
-		setFactoryPaymentSymbolSymbol(symbol);
-		setFactoryPaymentSymbolAddress(paymentMethod[0]);
-		setFactoryPaymentSymbolRef(paymentMethod[1]);
-		setFactoryPaymentSymbolPrice(paymentMethod[2]);
-		setFactoryPaymentSymbolDecimals(paymentMethod[3]);
+		console.log('createEnvContracts');
+		createEnvContracts(chain?.id ? chain.id : 0);
 
-		/*try {
-			let dynPrice = await FACTORY_CONTRACT?.getUusdPerToken(symbol);
-			console.log('dynPrice' + dynPrice);
-			setFactoryPaymentSymbolDynPrice(dynPrice);
-		} catch (error) {
-			console.error(error);
-			setFactoryPaymentSymbolDynPrice(0);
-		}*/
+		console.log('loadFactoryPaymentMethod');
+		loadFactoryPaymentMethod();
 
-	}
+	}, [])
 
-	const [SHOW_FUNCTIONS, showFunctionsModal] = useState(false);
-	const [INTERFACE_MODAL, setInterfaceModal] = useState<ethers.utils.Interface>();
+	useEffect(() => {
 
-	async function handleShowFunctions(facet: string) {
-		console.log(facet);
+		setFactoryPaymentSymbolSymbol(FACTORY_PAYMENT_SYMBOL_SYMBOL)
+		setFactoryPaymentSymbolDecimals(FACTORY_PAYMENT_SYMBOL_DECIMALS)
+		setFactoryPaymentSymbolAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS)
+		setFactoryPaymentSymbolPrice(FACTORY_PAYMENT_SYMBOL_PRICE)
+		setFactoryPaymentSymbolRef(FACTORY_PAYMENT_SYMBOL_REF)
+		setFactoryPaymentSymbolDynPrice(FACTORY_PAYMENT_SYMBOL_DYN_PRICE)
 
-		let facetInterface: ethers.utils.Interface = new ethers.utils.Interface(CFG_SELECTED_CRYPTOCOMMODITIY_ABI);
-		if(facet == 'DiamondCutFacet') facetInterface = new ethers.utils.Interface(CFG_DIAMOND_CUT_ABI)!;
-		else if(facet == 'DiamondLoupeFacet') facetInterface = new ethers.utils.Interface(CFG_DIAMOND_LOUPE_ABI)!;
-		else if(facet == 'CommonFacet') facetInterface = new ethers.utils.Interface(CFG_COMMON_ABI)!;
-		else if(facet == 'CrowdsaleFacet') facetInterface = new ethers.utils.Interface(CFG_CROWDSALE_ABI)!;
-		else if(facet == 'VestingFacet') facetInterface = new ethers.utils.Interface(CFG_VESTING_ABI)!;
-		else if(facet == 'ERC20Facet') facetInterface = new ethers.utils.Interface(CFG_ERC_20_ABI)!;
-		console.log(facetInterface);
-		console.log(facetInterface.functions);
+	}, [FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE])
 
-		setInterfaceModal(facetInterface);
-
-		showFunctionsModal(true);
-
-	}
+	// *************************************************************************************************************************
+	// ******************************************************** Update Data ****************************************************
+	// *************************************************************************************************************************
+	const [X_FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_PRICE, setFactoryPaymentSymbolPrice] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_REF, setFactoryPaymentSymbolRef] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_DYN_PRICE, setFactoryPaymentSymbolDynPrice] = useState<any | undefined>()
 
 	async function saveFactoryPaymentMethod() {
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_ADDRESS);
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_REF);
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_PRICE);
-		console.log('saveFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_DECIMALS);
-		FACTORY_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS)
+		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
+		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_ADDRESS);
+		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_REF);
+		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_PRICE);
+		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_DECIMALS);
+		envContracts.FACTORY_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS)
 			.then(await handleICOReceipt)
 			.then(await loadFactoryPaymentMethod)
 			.catch(handleError);
@@ -109,9 +90,9 @@ const Environment: NextPage = () => {
 	}
 
 	async function deleteFactoryPaymentMethod() {
-		console.log('deleteFactoryPaymentMethod', FACTORY_PAYMENT_SYMBOL_SYMBOL);
+		console.log('deleteFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		let tx = await FACTORY_CONTRACT?.deletePaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(FACTORY_PAYMENT_SYMBOL_SYMBOL));
+		let tx = await envContracts.FACTORY_CONTRACT?.deletePaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(X_FACTORY_PAYMENT_SYMBOL_SYMBOL));
 		await tx.wait();
 
 		//populateICOContractData();
@@ -136,13 +117,13 @@ const Environment: NextPage = () => {
 						<Col>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
 								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-									{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
 									{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+											<Dropdown.Item as="button" key={index} eventKey={item} active={X_FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
 												{item}
 											</Dropdown.Item>
 										);
@@ -160,9 +141,9 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_SYMBOL ? FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_DECIMALS ? FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
 					</Row>
 
 					<Row>
@@ -172,16 +153,16 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_PRICE ? FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>

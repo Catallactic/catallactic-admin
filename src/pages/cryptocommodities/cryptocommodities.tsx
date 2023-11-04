@@ -10,6 +10,8 @@ import { ContractsContext } from 'hooks/useContractContextHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useDiamonsLoupeHook } from 'hooks/useDiamonsLoupeHook';
 import { useResponseHook } from 'hooks/useResponseHook';
+import { keccak256 } from "@ethersproject/keccak256";
+import { toUtf8Bytes } from "@ethersproject/strings";
 
 const Cryptomcommodities: NextPage = () => {
 
@@ -47,22 +49,30 @@ const Cryptomcommodities: NextPage = () => {
 		loadYourCryptocommodities();
 	}, [contracts])
 
+	useEffect(() => {
+		setSelectedCryptocommodityName(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME!);
+		setSelectedCryptocommodityAddress(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS!);
+	}, [selectCrypto])
+
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
-	const [FIND_CRYPTOCOMMODITY_NAME, setFindCryptocommodityName] = useState<string>('');
+	const [X_SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
+	const [X_SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
 
 	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
 
+	const [SELECTED_CRYPTOCOMMODITY_STORAGE, setCryptocommodityStorage] = useState<string>('');
+
 	async function saveCryptocommodity() {
-		await envContracts.FACTORY_CONTRACT?.createCryptocommodity(FIND_CRYPTOCOMMODITY_NAME)
+		await envContracts.FACTORY_CONTRACT?.createCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME)
 			.then(await handleICOReceipt)
 			.then(await loadYourCryptocommodities)
 			.catch(handleError);
 	}
 
 	async function findCryptocommodity() {
-		onSelectCryptocommodity(FIND_CRYPTOCOMMODITY_NAME);
+		onSelectCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME);
 	}
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
@@ -113,6 +123,13 @@ const Cryptomcommodities: NextPage = () => {
 		console.log("uninstallFacet ", facetName);
 	}
 
+	async function setStorage() {
+		console.log("SELECTED_CRYPTOCOMMODITY_STORAGE", SELECTED_CRYPTOCOMMODITY_STORAGE);
+		let storage = keccak256(toUtf8Bytes(SELECTED_CRYPTOCOMMODITY_STORAGE));
+		console.log("storage", storage);
+		await contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage);
+	}
+
   return (
 
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
@@ -154,9 +171,8 @@ const Cryptomcommodities: NextPage = () => {
 				</Row>
 
 				<Row>
-					{ !selectedCrypto ? <Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={(event) => setFindCryptocommodityName(event.target.value)} ></input></Col> : '' }
-					{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={selectedCrypto.SELECTED_CRYPTOCOMMODITY_ADDRESS} ></input></Col> : '' }
-					{ selectedCrypto ? <Col xs={4} ><input className="form-control form-control-lg text-center border-0" disabled={ true } value={selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME} ></input></Col> : '' }
+					<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ isDisconnected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
+					{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ isDisconnected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
 				</Row>
 
 				<Row className="mb-3"></Row>
@@ -181,13 +197,13 @@ const Cryptomcommodities: NextPage = () => {
 										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 										<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
 
-									{ item == 'DiamondCutFacet' ?
-										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-									: SELECTED_CRYPTOCOMMODITY_FACETS && FACTORY_FACETS[item][1] && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
-									:
-										<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
-									}
+										{ item == 'DiamondCutFacet' ?
+											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+										: SELECTED_CRYPTOCOMMODITY_FACETS && FACTORY_FACETS[item][1] && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+										:
+											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+										}
 									</Row>
 
 								);
@@ -199,9 +215,18 @@ const Cryptomcommodities: NextPage = () => {
 
 				<Row className="mb-3"></Row>
 				<Row>
-					{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !selectedCrypto } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FIND_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FIND_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
+					{ selectedCrypto ? <Col><div><Form.Text className="color-frame">Storage</Form.Text></div></Col> : '' }
+				</Row>
+				<Row>
+					{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
+					{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
+				</Row>
+
+				<Row className="mb-3"></Row>
+				<Row>
+					{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
 				</Row>
 
 				</Form.Group>
