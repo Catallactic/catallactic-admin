@@ -21,15 +21,14 @@ const Environment: NextPage = () => {
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
-		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
+		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, 
 		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
 		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,
-		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();
 
 	const { handleICOReceipt, handleError } = useResponseHook()
 
-	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts } = useContext(ContractsContext);
 
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
@@ -41,6 +40,9 @@ const Environment: NextPage = () => {
 
 		console.log('loadFactoryPaymentMethod');
 		loadFactoryPaymentMethod();
+
+		console.log('loadFacets');
+		loadFacets();
 
 	}, [])
 
@@ -71,7 +73,7 @@ const Environment: NextPage = () => {
 		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_REF);
 		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_PRICE);
 		console.log('saveFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_DECIMALS);
-		envContracts.FACTORY_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS)
+		await envContracts.FACTORY_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS)
 			.then(await handleICOReceipt)
 			.then(await loadFactoryPaymentMethod)
 			.catch(handleError);
@@ -79,6 +81,17 @@ const Environment: NextPage = () => {
 		cancelFactoryPaymentMethod();
 	}
 	
+	async function deleteFactoryPaymentMethod() {
+		console.log('deleteFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
+
+		await envContracts.FACTORY_CONTRACT?.deletePaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(X_FACTORY_PAYMENT_SYMBOL_SYMBOL))
+			.then(await handleICOReceipt)
+			.then(await loadFactoryPaymentMethod)
+			.catch(handleError);
+
+		cancelFactoryPaymentMethod();
+	}
+
 	async function cancelFactoryPaymentMethod() {
 		console.log('cancelFactoryPaymentMethod');
 
@@ -87,16 +100,6 @@ const Environment: NextPage = () => {
 		setFactoryPaymentSymbolRef(undefined);
 		setFactoryPaymentSymbolPrice(undefined);
 		setFactoryPaymentSymbolDecimals(undefined);
-	}
-
-	async function deleteFactoryPaymentMethod() {
-		console.log('deleteFactoryPaymentMethod', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
-
-		let tx = await envContracts.FACTORY_CONTRACT?.deletePaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(X_FACTORY_PAYMENT_SYMBOL_SYMBOL));
-		await tx.wait();
-
-		//populateICOContractData();
-		//cancelICOPaymentMethod();
 	}
 
   return (
@@ -172,7 +175,7 @@ const Environment: NextPage = () => {
 				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Behaviors</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Behaviours</div></div></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
@@ -206,9 +209,6 @@ const Environment: NextPage = () => {
 					</Modal.Header>
 					<Modal.Body>
 
-
-						
-
 						{/*
 						{Object.keys(INTERFACE_MODAL?.functions!).map((item: string, index: any) => (
 							<Row className="mb-3" key={index}>
@@ -228,6 +228,7 @@ const Environment: NextPage = () => {
 							</Form.Group>
 						</Form>
 					</Modal.Body>
+
 					<Modal.Footer>
 						<Button variant="secondary" onClick={() => showFunctionsModal(false)}>
 							Close
@@ -236,6 +237,7 @@ const Environment: NextPage = () => {
 							Save Changes
 						</Button>
 					</Modal.Footer>
+
 				</Modal>
 
 			</Container>
