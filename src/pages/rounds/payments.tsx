@@ -4,29 +4,32 @@ import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { truncateEthAddress, KEY_ICON } from '../../config/config'
+import { ContractsContext } from 'hooks/useContractContextHook';
 
 const Payments: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	const { chain } = useNetwork()
 
 	const { isDisconnected } = useAccount()
 
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_CONTRACT, setSelectedCryptocommodityContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
+	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+
 	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
+		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
+		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,
 		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
 
@@ -51,58 +54,36 @@ const Payments: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	useEffect(() => {
 
-	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_PRICE, setICOPaymentSymbolPrice] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_DECIMALS, setICOPaymentSymbolDecimals] = useState<any | undefined>()
+		console.log('createEnvContracts');
+		createEnvContracts(chain?.id ? chain.id : 0);
 
-	const [ICO_PAYMENT_SYMBOL_ADDRESS, setICOPaymentSymbolAddress] = useState<any | undefined>()
-	const [ICO_PAYMENT_SYMBOL_REF, setICOPaymentSymbolRef] = useState<any | undefined>()
+		console.log('loadFactoryPaymentMethod');
+		loadFactoryPaymentMethod();
 
-	const [ICO_PAYMENT_SYMBOL_DYN_PRICE, setICOPaymentSymbolDynPrice] = useState<any | undefined>()
+	}, [])
 
+	useEffect(() => {
 
-	const [ICO_PAYMENT_METHOD_SEARCH_ADDRESS, setICOPaymentMethodSearchAddress] = useState<string | undefined>()
-	const [ICO_PAYMENT_METHOD_SEARCH_BALANCE, setICOPaymentMethodSearchBalance] = useState<string | undefined>()
+		setFactoryPaymentSymbolSymbol(FACTORY_PAYMENT_SYMBOL_SYMBOL)
+		setFactoryPaymentSymbolDecimals(FACTORY_PAYMENT_SYMBOL_DECIMALS)
+		setFactoryPaymentSymbolAddress(FACTORY_PAYMENT_SYMBOL_ADDRESS)
+		setFactoryPaymentSymbolPrice(FACTORY_PAYMENT_SYMBOL_PRICE)
+		setFactoryPaymentSymbolRef(FACTORY_PAYMENT_SYMBOL_REF)
+		//setFactoryPaymentSymbolDynPrice(FACTORY_PAYMENT_SYMBOL_DYN_PRICE)
 
-	const [FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_PRICE, setFactoryPaymentSymbolPrice] = useState<any | undefined>()
-	const [FACTORY_PAYMENT_SYMBOL_REF, setFactoryPaymentSymbolRef] = useState<any | undefined>()
+	}, [FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE])
 
-	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
-	async function setDynamicPriceSC(event:any) {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
-	}
-
-	const [SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS, setSelectedCryptocommodityReceiveAddress] = useState<any>();
-
-	async function deleteICOPaymentMethod() {
-		console.log('deleteICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
-
-		const tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
-		await tx.wait();
-
-		loadICOPaymentMethod();
-		cancelICOPaymentMethod();
-	}
-
-	async function setReceiveAddress() {
-		console.log("setReceiveAddress", SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
-		
-		await SELECTED_CRYPTOCOMMODITY_CONTRACT?.setReceiveFacet(SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
-	}
-
-	async function getICOPaymentMethodBalance() {
-		console.log('ICO_PAYMENT_METHOD_SEARCH_ADDRESS', ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
-		console.log('ICO_PAYMENT_SYMBOL_ADDRESS', ICO_PAYMENT_SYMBOL_ADDRESS);
-
-		console.log('balanceOf4');
-		let balance = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
-		console.log(balance);
-		setICOPaymentMethodSearchBalance(balance);
-	}
+	// *************************************************************************************************************************
+	// ******************************************************** Update Data ****************************************************
+	// *************************************************************************************************************************
+	// payment methods
+	const [X_FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_PRICE, setFactoryPaymentSymbolPrice] = useState<any | undefined>()
+	const [X_FACTORY_PAYMENT_SYMBOL_REF, setFactoryPaymentSymbolRef] = useState<any | undefined>()
 
 	async function cancelICOPaymentMethod() {
 		console.log('cancelICOPaymentMethod');
@@ -114,50 +95,10 @@ const Payments: NextPage = () => {
 		setICOPaymentSymbolDecimals(undefined);
 	}
 
-	async function saveICOPaymentMethod() {
-		console.log('FACTORY_PAYMENT_SYMBOL_SYMBOL', FACTORY_PAYMENT_SYMBOL_SYMBOL);
-
-		const tx = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_DECIMALS);
-		await tx.wait();
-
-		loadICOPaymentMethod();
-		cancelICOPaymentMethod();
-	}
-
-	const truncateRegex = '^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$';
-	const truncateEthAddress = (address: string) => {
-		if (!address) return '';
-		const match = address.match(truncateRegex);
-		if (!match) return address;
-		return `${match[1]}…${match[2]}`;
-	};
-
-	const onFactorySelectPaymentMethod = async (symbol: any)=>{
-		console.log('selectPaymentMethod', symbol);
-
-		let paymentMethod = await FACTORY_CONTRACT?.getPaymentToken(symbol);
-		console.log('paymentMethod', paymentMethod);
-		setFactoryPaymentSymbolSymbol(symbol);
-		setFactoryPaymentSymbolAddress(paymentMethod[0]);
-		setFactoryPaymentSymbolRef(paymentMethod[1]);
-		setFactoryPaymentSymbolPrice(paymentMethod[2]);
-		setFactoryPaymentSymbolDecimals(paymentMethod[3]);
-
-		/*try {
-			let dynPrice = await FACTORY_CONTRACT?.getUusdPerToken(symbol);
-			console.log('dynPrice' + dynPrice);
-			setFactoryPaymentSymbolDynPrice(dynPrice);
-		} catch (error) {
-			console.error(error);
-			setFactoryPaymentSymbolDynPrice(0);
-		}*/
-
-	}
-
 	const onICOSelectPaymentMethod = async (symbol: any)=>{
 		console.log('selectPaymentMethod', symbol);
 
-		let paymentMethod = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
+		let paymentMethod = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
 		console.log('paymentMethod', paymentMethod);
 		setICOPaymentSymbolSymbol(symbol);
 		setICOPaymentSymbolAddress(paymentMethod[0]);
@@ -166,7 +107,7 @@ const Payments: NextPage = () => {
 		setICOPaymentSymbolDecimals(paymentMethod[3]);
 
 		try {
-			let dynPrice = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
+			let dynPrice = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
 			console.log('dynPrice' + dynPrice);
 			setICOPaymentSymbolDynPrice(dynPrice);
 		} catch (error) {
@@ -174,6 +115,66 @@ const Payments: NextPage = () => {
 			setICOPaymentSymbolDynPrice(0);
 		}
 
+	}
+
+	async function saveICOPaymentMethod() {
+		console.log('FACTORY_PAYMENT_SYMBOL_SYMBOL', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
+
+		const tx = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS);
+		await tx.wait();
+
+		loadICOPaymentMethod();
+		cancelICOPaymentMethod();
+	}
+
+	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_PRICE, setICOPaymentSymbolPrice] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DECIMALS, setICOPaymentSymbolDecimals] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_ADDRESS, setICOPaymentSymbolAddress] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_REF, setICOPaymentSymbolRef] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DYN_PRICE, setICOPaymentSymbolDynPrice] = useState<any | undefined>()
+
+
+	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
+	async function setDynamicPriceSC(event:any) {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
+	}
+
+
+
+	const [ICO_PAYMENT_METHOD_SEARCH_ADDRESS, setICOPaymentMethodSearchAddress] = useState<string | undefined>()
+	const [ICO_PAYMENT_METHOD_SEARCH_BALANCE, setICOPaymentMethodSearchBalance] = useState<string | undefined>()
+
+
+
+
+
+	const [SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS, setSelectedCryptocommodityReceiveAddress] = useState<any>();
+
+	async function deleteICOPaymentMethod() {
+		console.log('deleteICOPaymentMethod', ICO_PAYMENT_SYMBOL_SYMBOL);
+
+		const tx = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
+		await tx.wait();
+
+		loadICOPaymentMethod();
+		cancelICOPaymentMethod();
+	}
+
+	async function setReceiveAddress() {
+		console.log("setReceiveAddress", SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
+		
+		await contracts.SELECTED_CRYPTOCOMMODITY_CONTRACT?.setReceiveFacet(SELECTED_CRYPTOCOMMODITY_RECEIVE_ADDRESS);
+	}
+
+	async function getICOPaymentMethodBalance() {
+		console.log('ICO_PAYMENT_METHOD_SEARCH_ADDRESS', ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
+		console.log('ICO_PAYMENT_SYMBOL_ADDRESS', ICO_PAYMENT_SYMBOL_ADDRESS);
+
+		console.log('balanceOf4');
+		let balance = await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(ICO_PAYMENT_METHOD_SEARCH_ADDRESS);
+		console.log(balance);
+		setICOPaymentMethodSearchBalance(balance);
 	}
 
   return (
@@ -195,13 +196,13 @@ const Payments: NextPage = () => {
 						<Col xs={8}>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
 								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
-									{ FACTORY_PAYMENT_SYMBOL_SYMBOL }
+									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
 									{FACTORY_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
+											<Dropdown.Item as="button" key={index} eventKey={item} active={X_FACTORY_PAYMENT_SYMBOL_SYMBOL == item}>
 												{item}
 											</Dropdown.Item>
 										);
@@ -209,7 +210,7 @@ const Payments: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>Install</Button></Col>
+						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveICOPaymentMethod()}>Install</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
