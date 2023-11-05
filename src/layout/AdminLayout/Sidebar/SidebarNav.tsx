@@ -176,9 +176,9 @@ export default function SidebarNav() {
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity" disabled={false}>
-				<SidebarNavItem href="#">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+				<SidebarNavItem href="/erc20/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/erc20/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/erc20/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve" disabled={true}>
