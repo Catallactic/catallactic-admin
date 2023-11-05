@@ -66,6 +66,7 @@ const Investors: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -73,6 +74,7 @@ const Investors: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -82,7 +84,7 @@ const Investors: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -126,8 +128,8 @@ const Investors: NextPage = () => {
 						<Col><div><Form.Text className="">Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setPaymentMethodsSearchAddress(event.target.value) } value={PAYMENT_METHODS_SEARCH_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
+						<Col xs={9}><input type="email" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS || !CAN_TYPE} onChange={(event) => setPaymentMethodsSearchAddress(event.target.value) } value={PAYMENT_METHODS_SEARCH_ADDRESS} ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS || !CAN_TYPE} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>

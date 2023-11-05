@@ -83,6 +83,7 @@ const ICOContract: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -90,6 +91,7 @@ const ICOContract: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -99,7 +101,7 @@ const ICOContract: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -124,12 +126,12 @@ const ICOContract: NextPage = () => {
 						<Col><div><Form.Text className="">Pending ICO Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={12}><input dir="rtl" type="email" className="form-control form-control-lg bg-yellow color-frame border-0 text-center" defaultValue={ICO_PENDING_OWNER} disabled={isDisconnected} onChange={(event) => setICOPendingOwner(event.target.value)} ></input></Col>
+						<Col xs={12}><input dir="rtl" type="email" className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={ICO_PENDING_OWNER} disabled={!CAN_TYPE} onChange={(event) => setICOPendingOwner(event.target.value)} ></input></Col>
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ICO_PENDING_OWNER != undefined} onClick={() => setNewICOOwner()}> {KEY_ICON()} Transfer</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER} onClick={() => acceptNewICOOwner()}> {KEY_ICON()} Accept</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER || !CAN_TYPE} onClick={() => setNewICOOwner()}> {KEY_ICON()} Transfer</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER || !CAN_TYPE} onClick={() => acceptNewICOOwner()}> {KEY_ICON()} Accept</Button></Col>
 					</Row>
 				</Form.Group>
 

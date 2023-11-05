@@ -178,6 +178,7 @@ const Payments: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -185,6 +186,7 @@ const Payments: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -194,7 +196,7 @@ const Payments: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -277,9 +279,9 @@ const Payments: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolSymbol(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_SYMBOL ? X_ICO_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolAddress(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolDecimals(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_DECIMALS ? X_ICO_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolSymbol(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_SYMBOL ? X_ICO_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolAddress(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolDecimals(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_DECIMALS ? X_ICO_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
 					</Row>
 
 					<Row>
@@ -289,8 +291,8 @@ const Payments: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolPrice(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_PRICE ? X_ICO_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolRef(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolPrice(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_PRICE ? X_ICO_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolRef(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_ICO_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 
@@ -313,7 +315,7 @@ const Payments: NextPage = () => {
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col xs={8}><input className="form-control form-control-lg border-0 bg-yellow" disabled={ !CAN_TYPE } onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
+						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
 						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !CAN_TYPE } onClick={setReceiveAddress}>Update</Button></Col>
 					</Row>
 				</Form.Group>

@@ -133,6 +133,7 @@ const Features: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -140,6 +141,7 @@ const Features: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -149,7 +151,7 @@ const Features: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -189,16 +191,16 @@ const Features: NextPage = () => {
 						<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="datetime-local" className="form-control form-control-lg bg-yellow color-frame border-0" value={X_VESTING_START_MILLIS && X_VESTING_START_MILLIS != '0' ? X_VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={isDisconnected || !selectedCrypto}></input></Col>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={X_VESTING_CLIFF_DAYS != 0 ? X_VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
+						<Col><input type="datetime-local" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_START_MILLIS && X_VESTING_START_MILLIS != '0' ? X_VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={isDisconnected || !selectedCrypto}></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_CLIFF_DAYS != 0 ? X_VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
 						<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={X_VESTING_DURATION_DAYS != 0 ? X_VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
-						<Col><input type="number" className="form-control form-control-lg bg-yellow color-frame border-0" value={X_VESTING_NUM_SLIDES != 0 ? X_VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_DURATION_DAYS != 0 ? X_VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_NUM_SLIDES != 0 ? X_VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={isDisconnected || !selectedCrypto}></input></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>

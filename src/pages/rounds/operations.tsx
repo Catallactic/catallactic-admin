@@ -130,6 +130,7 @@ const Operations: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -137,6 +138,7 @@ const Operations: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -146,7 +148,7 @@ const Operations: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -224,7 +226,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
@@ -233,7 +235,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter ERC-20 Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
@@ -250,7 +252,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 					<Row className="mb-3"></Row>
@@ -279,7 +281,7 @@ const Operations: NextPage = () => {
 							</Dropdown>
 						</Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3]) : 0} disabled={true}></input></Col>
-						<Col xs={3}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={isDisconnected} ></input></Col>
+						<Col xs={3}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={!CAN_TYPE} ></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? (Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3])) * Number(WITHDRAW_PERCENTAGE) / 100 : 0} disabled={true}></input></Col>
 					</Row>
 					<Row className="mb-3"></Row>

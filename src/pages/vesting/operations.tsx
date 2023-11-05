@@ -112,6 +112,7 @@ const Operations: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -119,6 +120,7 @@ const Operations: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -128,7 +130,7 @@ const Operations: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
 				</Row>
 				}
 
@@ -169,7 +171,7 @@ const Operations: NextPage = () => {
 							<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
+							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
 							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
 						</Row>
 
@@ -177,7 +179,7 @@ const Operations: NextPage = () => {
 							<Col><div><Form.Text className="">Enter Token Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" defaultValue={X_VESTING_SCHEDULE_TOKEN_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
+							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_SCHEDULE_TOKEN_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
 							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
 						</Row>
 
