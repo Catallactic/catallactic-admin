@@ -4,10 +4,25 @@ import { useContext, useState } from 'react';
 
 import { toast } from 'react-toastify';
 import { ContractsContext } from './useContractContextHook';
+import { ethers } from 'ethers';
+
+declare let window:any
 
 export function useVestingHook() {
 
 	const { contracts } = useContext(ContractsContext);
+
+	// **********************************************************************************************************
+	// ********************************************** loadVestingPrograms ***************************************
+	// **********************************************************************************************************
+	const [METAMASK_CHAIN_TIME_IN_MS, setChainTimeInMs] = useState<number>(0);
+
+	async function loadBlockchainDatetime() {
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		const blockTimestamp = (await provider.getBlock("latest")).timestamp;
+		console.log('blockTimestamp: ', blockTimestamp);
+		setChainTimeInMs(blockTimestamp * 1000) ;
+	}
 
 	// **********************************************************************************************************
 	// ********************************************** loadVestingPrograms ***************************************
@@ -104,16 +119,6 @@ export function useVestingHook() {
 	}
 
 	// **********************************************************************************************************
-	// **************************************** setVestinGrantorOnSC ********************************************
-	// **********************************************************************************************************
-	const [VESTING_GRANTOR, setVestinGrantor] = useState<string>('');
-
-	async function setVestinGrantorOnSC() {
-		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
-		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
-	}
-
-	// **********************************************************************************************************
 	// ************************************* setTokenAddressOnVestingSC *****************************************
 	// **********************************************************************************************************
 	const [VESTING_SCHEDULE_TOKEN_ADDRESS, setVestingScheduleTokenAddress] = useState<string>()
@@ -197,12 +202,12 @@ export function useVestingHook() {
 	}
 
 	return {
+		loadBlockchainDatetime, METAMASK_CHAIN_TIME_IN_MS,
 		loadVestingPrograms, VESTING_IDS,
 		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
 		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
 		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
 		computeVesting, 
-		releaseVesting, 
-		setVestinGrantorOnSC, setVestinGrantor,
+		releaseVesting,
 	}
 }

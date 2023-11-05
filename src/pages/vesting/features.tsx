@@ -26,7 +26,6 @@ const Features: NextPage = () => {
 		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
 		computeVesting, 
 		releaseVesting, 
-		setVestinGrantorOnSC, setVestinGrantor,
 	} = useVestingHook();
 
 	const { handleICOReceipt, handleError } = useResponseHook()
