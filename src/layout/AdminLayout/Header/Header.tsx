@@ -84,7 +84,7 @@ export default function Header(props: HeaderProps) {
 				</Dropdown>
 
         <div className="header-nav ms-auto">
-					<button type="button" className="btn btn-primary m-2" onClick={() => open()}>{ isDisconnected ? 'Connect User' : address }</button>
+					<button type="button" className="btn btn-primary m-2" onClick={() => open()}>{ isDisconnected || !address ? 'Connect User' : truncateEthAddress(address) }</button>
       		<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{isDisconnected ? 'Connect Chain' : chain?.name}</button>
 				</div>
 
