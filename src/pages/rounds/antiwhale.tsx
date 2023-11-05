@@ -93,6 +93,7 @@ const AntiwhaleFeatures: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
 		console.log(`isDisconnected: ` + isDisconnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
@@ -100,6 +101,7 @@ const AntiwhaleFeatures: NextPage = () => {
 		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -119,50 +121,43 @@ const AntiwhaleFeatures: NextPage = () => {
 							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
 						</Row>
 						<Row className="mb-3"></Row>
-						<Accordion className="inner-accordion">
-							<Accordion.Item className="border-0" eventKey="0">
-								<Accordion.Header>
-									<Row className="w-100">
-										<Col className="text-center">
-											{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
-											{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
-											{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT > 0) ? "Click to see " + ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
-										</Col>
-									</Row>
-								</Accordion.Header>
-								<Accordion.Body className="bg-frame">
-									<Row className="mb-3">
-										<table className="table table-dark">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Investor</th>
-													<th scope="col">Amount</th>
-												</tr>
-											</thead>
-											<tbody>
-												{ICO_WHITELIST_USER_LIST?.map((item, index) => (
-													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-														<td>{item}</td>
-														<td id={"whitelistedValue" + (index+1) }></td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</Row>
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+						<Row>
+							<table className="table table-dark">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">Investor</th>
+										<th scope="col">Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+									{ICO_WHITELIST_USER_LIST?.map((item, index) => (
+										<tr key={index}>
+											<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+											<td>{item}</td>
+											<td id={"whitelistedValue" + (index+1) }></td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</Row>
+						<Row className="w-100">
+							<Col className="text-center">
+								{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
+								{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
+								{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT > 0) ? "Click to see " + ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
+							</Col>
+						</Row>
+						<Row className="mb-3"></Row>
 
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+							<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
 							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
 						</Row>
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+							<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
 							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
 						</Row>
 
@@ -181,50 +176,43 @@ const AntiwhaleFeatures: NextPage = () => {
 						</Row>
 
 						<Row className="mb-3"></Row>
-						<Accordion className="inner-accordion">
-							<Accordion.Item className="border-0" eventKey="0">
-							<Accordion.Header>
-									<Row className="w-100">
-										<Col className="text-center">
-											{ (ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
-											{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
-											{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
-										</Col>
-									</Row>
-								</Accordion.Header>
-								<Accordion.Body className="bg-frame">
-									<Row className="mb-3">
-										<table className="table table-dark">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Investor</th>
-													<th scope="col">Amount</th>
-												</tr>
-											</thead>
-											<tbody>
-												{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
-													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-														<td>{item}</td>
-														<td id={"blacklistedValue" + (index+1) }></td>
-													</tr>
-												))}
-											</tbody>
-										</table>
-									</Row>
-									<Row>
-										<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
-									</Row>
-									<Row className="mb-3"></Row>
-									<Row>
-										<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
-									</Row>
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
+						<Row className="w-100">
+							<Col className="text-center">
+								{ (ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
+								{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
+								{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
+							</Col>
+						</Row>
+
+						<Row className="mb-3">
+							<table className="table table-dark">
+								<thead>
+									<tr>
+										<th scope="col">#</th>
+										<th scope="col">Investor</th>
+										<th scope="col">Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+									{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
+										<tr key={index}>
+											<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+											<td>{item}</td>
+											<td id={"blacklistedValue" + (index+1) }></td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</Row>
+						<Row>
+							<Col><input id="blacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
+						</Row>
+						<Row className="mb-3"></Row>
+						<Row>
+							<Col><input id="unblacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
+						</Row>
 
 					</Form.Group>
 
