@@ -41,6 +41,13 @@ const Cryptomcommodities: NextPage = () => {
 	useEffect(() => {
 		console.log('createEnvContracts');
 		createEnvContracts(chain?.id ? chain.id : 0);
+
+		if(selectedCrypto) {
+			selectCrypto(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME);
+			loadFacets();
+			loadCryptocommodityFacets();
+		}
+
 	}, [])
 
 	useEffect(() => {
