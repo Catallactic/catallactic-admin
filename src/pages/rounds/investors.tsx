@@ -1,9 +1,10 @@
 
+import { ContractsContext } from 'hooks/useContractContextHook';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
@@ -15,6 +16,8 @@ const Investors: NextPage = () => {
 	// *************************************************************************************************************************
 
 	const { isDisconnected } = useAccount()
+
+	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -55,6 +58,12 @@ const Investors: NextPage = () => {
 
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
+
+				{ !isDisconnected && selectedCrypto != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? '' :
+				<Row>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled. You need to create a CryptoCommodity to enable them.</Form.Text></Col>
+				</Row>
+				}
 
 				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">

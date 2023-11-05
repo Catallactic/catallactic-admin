@@ -3,20 +3,22 @@ import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
 
 import { KEY_ICON } from '../../config/config'
+import { ContractsContext } from 'hooks/useContractContextHook';
 
 const ICOContract: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-
 	const { isDisconnected } = useAccount()
+
+	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
@@ -70,6 +72,12 @@ const ICOContract: NextPage = () => {
 
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
+
+				{ !isDisconnected && selectedCrypto != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? '' :
+				<Row>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled. You need to create a CryptoCommodity to enable them.</Form.Text></Col>
+				</Row>
+				}
 
 				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">

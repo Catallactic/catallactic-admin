@@ -182,6 +182,12 @@ const Payments: NextPage = () => {
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
 
+				{ !isDisconnected && selectedCrypto != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED ? '' :
+				<Row>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled. You need to create a CryptoCommodity to enable them.</Form.Text></Col>
+				</Row>
+				}
+
 				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
 					<Row>
