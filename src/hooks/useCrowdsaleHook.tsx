@@ -1,11 +1,12 @@
 "use client";
 
 import { Contract, ethers } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
 import { useAccount } from 'wagmi'
+import { ContractsContext } from './useContractContextHook';
 
 declare let window:any
 
@@ -13,7 +14,74 @@ export function useCrowdsaleHook() {
 
 	const { address } = useAccount()
 
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
+	const { envContracts, contracts } = useContext(ContractsContext);
+
+	// **********************************************************************************************************
+	// ********************************************* loadICOPaymentMethod ***************************************
+	// **********************************************************************************************************
+	const [ICO_PAYMENT_SYMBOLS, setICOPaymentSymbols] = useState<any | undefined>()
+	const [ICO_PAYMENT_METHODS, setICOPaymentMethods] = useState<MapType>({})
+
+	type MapType = { 
+		[id: string]: string; 
+	}
+
+	async function loadICOPaymentMethod() {
+
+		if(!contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT)
+			return;
+
+		// get read only - payment methods
+		let paymentSymbols = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentSymbols();
+		setICOPaymentSymbols(paymentSymbols);
+		console.log("paymentSymbols: " + paymentSymbols);
+		console.log(paymentSymbols);
+
+		const map: MapType = {};
+		for (var i = 0; i < paymentSymbols.length; i++) {
+			console.log("paymentSymbol: " + paymentSymbols[i]);
+			let method = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			console.log("getPaymentTokenData: " + method);
+			console.log(method);
+			map[paymentSymbols[i]] = method;
+		}
+		console.log(map);
+		console.log("ICO_PAYMENT_METHODS: " + map);
+		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
+		setICOPaymentMethods(map);
+	}
+
+	// **********************************************************************************************************
+	// ******************************************** onICOSelectPaymentMethod ************************************
+	// **********************************************************************************************************
+	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DECIMALS, setICOPaymentSymbolDecimals] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_ADDRESS, setICOPaymentSymbolAddress] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_PRICE, setICOPaymentSymbolPrice] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_REF, setICOPaymentSymbolRef] = useState<any | undefined>()
+	const [ICO_PAYMENT_SYMBOL_DYN_PRICE, setICOPaymentSymbolDynPrice] = useState<any | undefined>()
+
+	const onICOSelectPaymentMethod = async (symbol: any)=>{
+		console.log('selectPaymentMethod', symbol);
+
+		let paymentMethod = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
+		console.log('paymentMethod', paymentMethod);
+		setICOPaymentSymbolSymbol(symbol);
+		setICOPaymentSymbolAddress(paymentMethod[0]);
+		setICOPaymentSymbolRef(paymentMethod[1]);
+		setICOPaymentSymbolPrice(paymentMethod[2]);
+		setICOPaymentSymbolDecimals(paymentMethod[3]);
+
+		try {
+			let dynPrice = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUusdPerToken(symbol);
+			console.log('dynPrice' + dynPrice);
+			setICOPaymentSymbolDynPrice(dynPrice);
+		} catch (error) {
+			console.error(error);
+			setICOPaymentSymbolDynPrice(0);
+		}
+
+	}
 
 	// **********************************************************************************************************
 	// ************************************************ loadICOFeatures *****************************************
@@ -42,77 +110,43 @@ export function useCrowdsaleHook() {
 	}
 
 	async function loadICOFeatures() {
+		console.log('loading ICO Features....');
 
 		// get read only - crowdsale
-		let hardCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
+		let hardCap = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getHardCap();
 		console.log("hardCap: " + hardCap);
 		setICOHardCap(hardCap);
-		let softCap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
+		let softCap = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getSoftCap();
 		console.log("softCap: " + softCap);
 		setICOSoftCap(softCap);
-		let price = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
+		let price = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPriceuUSD();
 		console.log("price: " + price);
 		setICOPrice(price);
 
 		// get read only - antiwhale
-		let minTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
+		let minTransfer = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMinUSDTransfer();
 		setMinTransfer(minTransfer * 10**6);
-		let maxTransfer = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
+		let maxTransfer = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDTransfer();
 		setMaxTransfer(maxTransfer * 10**6);
-		let maxInvestment = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
+		let maxInvestment = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getMaxUSDInvestment();
 		setMaxInvestment(maxInvestment * 10**6);
-		let whitelistThreshold = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
+		let whitelistThreshold = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistuUSDThreshold();
 		setWhitelistThreshold(whitelistThreshold / 10**6);
 	
 		// get read only - vesting
-		let percentVested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPercentVested();
+		let percentVested = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPercentVested();
 		setVestingSchedulePercentage(percentVested);
-		let vestingScheduleId = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingId();
+		let vestingScheduleId = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingId();
 		setVestingScheduleCurrentId(vestingScheduleId);
 		
-		let currentStage = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
+		let currentStage = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getCrowdsaleStage();
 		setCurrentState(currentStage);
 		if(currentStage == 0) setCurrentStateText("NOT CREATED");
 		else if(currentStage == 1) setCurrentStateText("NOT STARTED");
 		else if(currentStage == 2) setCurrentStateText("ONGOING");
 		else if(currentStage == 3) setCurrentStateText("ON HOLD");
 		else if(currentStage == 4) setCurrentStateText("FINISHED");
-		console.log(currentStage);
-	}
-
-	// **********************************************************************************************************
-	// ************************************************ loadICOFeatures *****************************************
-	// **********************************************************************************************************
-	const [ICO_PAYMENT_SYMBOLS, setICOPaymentSymbols] = useState<any | undefined>()
-	const [ICO_PAYMENT_METHODS, setICOPaymentMethods] = useState<MapType>({})
-
-	type MapType = { 
-		[id: string]: string; 
-	}
-
-	async function loadICOPaymentMethod() {
-
-		if(!SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT)
-			return;
-
-		// get read only - payment methods
-		let paymentSymbols = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentSymbols();
-		setICOPaymentSymbols(paymentSymbols);
-		console.log("paymentSymbols: " + paymentSymbols);
-		console.log(paymentSymbols);
-
-		const map: MapType = {};
-		for (var i = 0; i < paymentSymbols.length; i++) {
-			console.log("paymentSymbol: " + paymentSymbols[i]);
-			let method = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(paymentSymbols[i]);
-			console.log("getPaymentTokenData: " + method);
-			console.log(method);
-			map[paymentSymbols[i]] = method;
-		}
-		console.log(map);
-		console.log("ICO_PAYMENT_METHODS: " + map);
-		//console.log("ICO_PAYMENT_METHODS44: " + map['USDT'][4]);
-		setICOPaymentMethods(map);
+		console.log("currentStage: " + currentStage);
 	}
 
 	// **********************************************************************************************************
@@ -126,17 +160,17 @@ export function useCrowdsaleHook() {
 
 	async function loadAntiWhale() {
 
-		let whitelisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelisted();
+		let whitelisted = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelisted();
 		setWhitelistUserList(whitelisted);
-		let whitelistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistUserCount();
+		let whitelistUserCount = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getWhitelistUserCount();
 		setWhitelistUserCount(whitelistUserCount);
 
-		let isUseBlackList = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUseBlacklist();
+		let isUseBlackList = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getUseBlacklist();
 		console.log("isUseBlackList: " + isUseBlackList);
 		setIsUseBlacklist(isUseBlackList);
-		let blacklisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklisted();
+		let blacklisted = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklisted();
 		setBlacklistUserList(blacklisted);
-		let blacklistUserCount = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklistUserCount();
+		let blacklistUserCount = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getBlacklistUserCount();
 		setBlacklistUserCount(blacklistUserCount);
 	}
 
@@ -169,7 +203,7 @@ export function useCrowdsaleHook() {
 		}
 
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {	
-			let balance = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
+			let balance = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
 			mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 		}
 
@@ -195,11 +229,11 @@ export function useCrowdsaleHook() {
 		}
 
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {	
-			let balance = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
+			let balance = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address!, ICO_PAYMENT_SYMBOLS[i]);
 			mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
 		}
 
-		let uUSDToClaim = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDToClaim(address);
+		let uUSDToClaim = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDToClaim(address);
 		console.log('TOTAL2 ', uUSDToClaim);
 		mapBalances['TOTAL'] = uUSDToClaim;
 
@@ -230,7 +264,7 @@ export function useCrowdsaleHook() {
 		setBalancesPaymentTokensSearchAddress(mapBalances);
 	}
 	async function getBalancesPaymentMethodsICOWallet() {
-		const mapBalances: MapType = await getPaymentTokensBalancesMap(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
+		const mapBalances: MapType = await getPaymentTokensBalancesMap(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		console.log('Updating BALANCES_PAYMENT_TOKENS_ICO_WALLET ', mapBalances);
 		setBalancesPaymentTokensICOWallet(mapBalances);
 	}
@@ -250,7 +284,7 @@ export function useCrowdsaleHook() {
 
 		console.log('balances for address', address);
 		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {
-			let method = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(ICO_PAYMENT_SYMBOLS[i]);
+			let method = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(ICO_PAYMENT_SYMBOLS[i]);
 			console.log('ICO_PAYMENT_SYMBOL: ', ICO_PAYMENT_SYMBOLS[i]);
 
 			if(ICO_PAYMENT_SYMBOLS[i] == 'COIN') {
@@ -283,7 +317,7 @@ export function useCrowdsaleHook() {
 	// ***********************************************************************************************
 	async function isWhitelisted(address: any, index: any) {
 
-		const isWhitelisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isWhitelisted(address);
+		const isWhitelisted = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isWhitelisted(address);
 
 		const element = window.document.getElementById('whitelistedValue'+index);
 		if (element === null) {
@@ -295,7 +329,7 @@ export function useCrowdsaleHook() {
 	}
 	async function isBlacklisted(address: any, index: any) {
 
-		const isBlacklisted = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isBlacklisted(address);
+		const isBlacklisted = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.isBlacklisted(address);
 
 		const element = window.document.getElementById('blacklistedValue'+index);
 		if (element === null) {
@@ -308,8 +342,9 @@ export function useCrowdsaleHook() {
 
 
 	return { 
-		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		onICOSelectPaymentMethod, ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_DECIMALS, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_DYN_PRICE,
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
 		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
