@@ -1,11 +1,10 @@
 
 import { NextPage } from 'next'
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook'
-import { Contract } from 'ethers';
 
 import { useAccount } from 'wagmi'
 
@@ -21,8 +20,6 @@ const AntiwhaleFeatures: NextPage = () => {
 	const { isDisconnected } = useAccount()
 
 	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
-
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -56,12 +53,12 @@ const AntiwhaleFeatures: NextPage = () => {
 	const [ICO_USER_TO_WHITELIST, setUserToWhitelist] = useState<string | undefined>()
 	// whitelist user
 	async function whitelistUser(flag: boolean) {
-		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT " + SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
+		console.log("SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT " + contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT);
 
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST).then(await handleICOReceipt).catch(handleError);
 		}
 
 	}
@@ -77,9 +74,9 @@ const AntiwhaleFeatures: NextPage = () => {
 
 		// process transaction
 		if(flag) {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		} else {
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user).then(await handleICOReceipt).catch(handleError);
 		}
 	}
 
@@ -87,8 +84,23 @@ const AntiwhaleFeatures: NextPage = () => {
 	async function setIsBlacklist(event:any) {
 
 		// process transaction
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setUseBlacklist(event.target.checked).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setUseBlacklist(event.target.checked).then(await handleICOReceipt).catch(handleError);
 	}
+
+	// *************************************************************************************************************************
+	// ************************************************************ UI *********************************************************
+	// *************************************************************************************************************************
+  const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
+  const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
+  const [CAN_TYPE, setCanType] = useState<boolean>(false);
+	useEffect(() => {
+		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`selectedCrypto: ` + selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
+		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(!isDisconnected && selectedCrypto != undefined);
+	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -109,7 +121,7 @@ const AntiwhaleFeatures: NextPage = () => {
 						<Row className="mb-3"></Row>
 						<Accordion className="inner-accordion">
 							<Accordion.Item className="border-0" eventKey="0">
-							<Accordion.Header>
+								<Accordion.Header>
 									<Row className="w-100">
 										<Col className="text-center">
 											{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
@@ -131,7 +143,7 @@ const AntiwhaleFeatures: NextPage = () => {
 											<tbody>
 												{ICO_WHITELIST_USER_LIST?.map((item, index) => (
 													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
 														<td>{item}</td>
 														<td id={"whitelistedValue" + (index+1) }></td>
 													</tr>
@@ -145,13 +157,13 @@ const AntiwhaleFeatures: NextPage = () => {
 
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={isDisconnected}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
+							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
 						</Row>
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={isDisconnected}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
+							<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
 						</Row>
 
 					</Form.Group>
@@ -165,11 +177,10 @@ const AntiwhaleFeatures: NextPage = () => {
 
 						<Row className="mb-3"></Row>
 						<Row>
-							<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame"  onChange={setIsBlacklist} defaultChecked={ICO_IS_USE_BLACKLIST} /></Col>
+							<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame" disabled={!CAN_TYPE} onChange={setIsBlacklist} defaultChecked={ICO_IS_USE_BLACKLIST} /></Col>
 						</Row>
 
 						<Row className="mb-3"></Row>
-						{ ICO_IS_USE_BLACKLIST ?
 						<Accordion className="inner-accordion">
 							<Accordion.Item className="border-0" eventKey="0">
 							<Accordion.Header>
@@ -194,7 +205,7 @@ const AntiwhaleFeatures: NextPage = () => {
 											<tbody>
 												{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
 													<tr key={index}>
-														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+														<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
 														<td>{item}</td>
 														<td id={"blacklistedValue" + (index+1) }></td>
 													</tr>
@@ -203,18 +214,17 @@ const AntiwhaleFeatures: NextPage = () => {
 										</table>
 									</Row>
 									<Row>
-										<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
+										<Col><input id="blacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE}></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
 									</Row>
 									<Row className="mb-3"></Row>
 									<Row>
-										<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected}></input></Col>
-										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
+										<Col><input id="unblacklistUser" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE}></input></Col>
+										<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
 									</Row>
 								</Accordion.Body>
 							</Accordion.Item>
 						</Accordion>
-						: "" }
 
 					</Form.Group>
 
