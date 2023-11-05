@@ -3,7 +3,7 @@ import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
@@ -20,9 +20,6 @@ const Operations: NextPage = () => {
 	const { isDisconnected } = useAccount()
 
 	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
-
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
-	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -52,22 +49,23 @@ const Operations: NextPage = () => {
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
 
+	// crowdsale stage
+	async function setCrowdsaleStage(stage: number) {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
+	}
+	async function reset() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
+	}
+
+	// refund	
 	const [TO_REFUND_ALL_CURRENCY, setToRefundAllCurrency] = useState<string>()
   const [TO_REFUND_ALL_AMOUNT_USD, setToRefundAllAmountUSD] = useState<string>()
 	const [TO_REFUND_ALL_AMOUNT, setToRefundAllAmount] = useState<string>()
 
-	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
-
-	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
-
-	const [WITHDRAW_CURRENCY, setWithdrawCurrency] = useState<string>('')
-
-	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
-
 	const onSelectToRefundAllCurrency = async (symbol: any)=>{
 		setToRefundAllCurrency(symbol);
 
-		let invested = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
+		let invested = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(symbol);
 	  console.log(`invested: ` + invested);
 	  console.log(`invested: ` + invested[4]);
 		setToRefundAllAmountUSD(invested[4]);
@@ -75,59 +73,71 @@ const Operations: NextPage = () => {
 		setToRefundAllAmount(invested[5]);
 	}
 
+	async function refundAll() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await handleICOReceipt).catch(handleError);
+	}
+
+
 	// transferClaimableAmountToICO
+	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
+	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 	async function transferClaimableAmountToICO() {
 		console.log(`ICO CATokens Required: ` + ICO_TOTAL_uUSD_INVESTED / ICO_PRICE);
 	  console.log(`ICO CATokens Current: ` + BALANCES_ERC_20_ICO_WALLET);
 		let amountRequiredCATokens = BigInt(ICO_TOTAL_uUSD_INVESTED * 10**18 / ICO_PRICE);
 		let amountCurrentCATokens = BigInt(BALANCES_ERC_20_ICO_WALLET) * BigInt(10**18);
 	  console.log(`amountToTransferCATokensWithDecimals: ` + (amountRequiredCATokens - amountCurrentCATokens));
-		await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
+		await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
 	}
+
+	const [WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
+	async function setTargetWalletAddress() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
+	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
+	async function setVestingTokenOnSC() {
+		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
+	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
+	async function setTokenAddressOnSC() {
+		console.log(`setting token address: ` + TOKEN_ADDRESS);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+	}
+
+	async function claimAll() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await handleICOReceipt).catch(handleError);
+	}
+
+	// withdraw
+	const [WITHDRAW_CURRENCY, setWithdrawCurrency] = useState<string>('')
+	const [WITHDRAW_PERCENTAGE, setWithdrawPercentage] = useState<string>('')
 
 	const onSelectToWitdrawCurrency = async (symbol: any)=>{
 		setWithdrawCurrency(symbol);
 	}
-	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
-	const [WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
-	const [WITHDRAW_PERCENTAGE, setWithdrawPercentage] = useState<string>('')
-
-	// whitelist user
-	async function setTargetWalletAddress() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function setTokenAddressOnSC() {
-		console.log(`setting token address: ` + TOKEN_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function refundAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function setVestingTokenOnSC() {
-		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
-	}
-
-	async function claimAll() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await handleICOReceipt).catch(handleError);
-	}
-
 	async function withdrawICO() {
 		console.log(`WITHDRAW_CURRENCY: ` + WITHDRAW_CURRENCY);
 		console.log(`WITHDRAW_PERCENTAGE: ` + WITHDRAW_PERCENTAGE);
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
 	}
 
-	// click purchase
-	async function setCrowdsaleStage(stage: number) {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
-	}
-	async function reset() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
-	}
+	// *************************************************************************************************************************
+	// ************************************************************ UI *********************************************************
+	// *************************************************************************************************************************
+  const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
+  const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
+  const [CAN_TYPE, setCanType] = useState<boolean>(false);
+	useEffect(() => {
+		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`selectedCrypto: ` + selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
+		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(!isDisconnected && selectedCrypto != undefined);
+	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -170,7 +180,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToRefundAllCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CAN_TYPE}>
 									{TO_REFUND_ALL_CURRENCY}
 								</Dropdown.Toggle>
 
@@ -187,7 +197,7 @@ const Operations: NextPage = () => {
 						</Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT ? Number(TO_REFUND_ALL_AMOUNT) /  10**Number(ICO_PAYMENT_METHODS[TO_REFUND_ALL_CURRENCY!][3]) : 0} ></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT_USD ? Number(TO_REFUND_ALL_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
+						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
 					</Row>
 				</Form.Group>
 
@@ -206,7 +216,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } ></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
@@ -214,8 +224,8 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
@@ -223,12 +233,12 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter ERC-20 Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
-					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
+					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
 				</Form.Group>
 
 				<Row className="mb-3"></Row>
@@ -240,8 +250,8 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_TARGET_ADDRESS} disabled={isDisconnected} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
@@ -274,7 +284,7 @@ const Operations: NextPage = () => {
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
 					</Row>
 				</Form.Group>
 
