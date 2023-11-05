@@ -68,6 +68,7 @@ const SidebarNavTitle = (props: PropsWithChildren) => {
 type SidebarNavGroupToggleProps = {
   eventKey: string;
   icon: IconDefinition;
+	disabled: boolean,
   setIsShow: (isShow: boolean) => void;
 } & PropsWithChildren
 
@@ -75,7 +76,7 @@ const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
   // https://react-bootstrap.github.io/components/accordion/#custom-toggle-with-expansion-awareness
   const { activeEventKey } = useContext(AccordionContext)
   const {
-    eventKey, icon, children, setIsShow,
+    eventKey, icon, children, disabled, setIsShow,
   } = props
 
   const decoratedOnClick = useAccordionButton(eventKey)
@@ -94,6 +95,7 @@ const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
         collapsed: !isCurrentEventKey,
       })}
       onClick={decoratedOnClick}
+			disabled={disabled}
     >
       <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} />
       {children}
@@ -107,6 +109,7 @@ const SidebarNavGroupToggle = (props: SidebarNavGroupToggleProps) => {
 type SidebarNavGroupProps = {
   toggleIcon: IconDefinition;
   toggleText: string;
+	disabled: boolean;
 } & PropsWithChildren
 
 const SidebarNavGroup = (props: SidebarNavGroupProps) => {
@@ -114,13 +117,14 @@ const SidebarNavGroup = (props: SidebarNavGroupProps) => {
     toggleIcon,
     toggleText,
     children,
+		disabled,
   } = props
 
   const [isShow, setIsShow] = useState(false)
 
   return (
     <Accordion as="li" bsPrefix="nav-group" className={classNames({ show: isShow })}>
-      <SidebarNavGroupToggle icon={toggleIcon} eventKey="0" setIsShow={setIsShow}>{toggleText}</SidebarNavGroupToggle>
+      <SidebarNavGroupToggle icon={toggleIcon} eventKey="0" setIsShow={setIsShow} disabled={disabled}>{toggleText}</SidebarNavGroupToggle>
       <Accordion.Collapse eventKey="0">
         <ul className="nav-group-items list-unstyled">
           {children}
@@ -153,7 +157,7 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Funding</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds">
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
         <SidebarNavItem href="/rounds/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/payments">Payments <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
@@ -162,7 +166,7 @@ export default function SidebarNav() {
         <SidebarNavItem href="/rounds/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting">
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
 				<SidebarNavItem href="/vesting/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
 				<SidebarNavItem href="/vesting/operations">Operations <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/vesting/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
@@ -171,19 +175,19 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity">
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity" disabled={false}>
 				<SidebarNavItem href="#">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve">
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve" disabled={true}>
         <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Rewards">
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Rewards" disabled={true}>
         <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
@@ -191,13 +195,13 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Distribution</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations">
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops">
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
@@ -205,19 +209,19 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending">
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Staking">
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Staking" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers">
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
