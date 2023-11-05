@@ -9,6 +9,7 @@ import { useVestingHook } from 'hooks/useVestingHook';
 
 import { KEY_ICON } from '../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
+import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 
 const Features: NextPage = () => {
 
@@ -17,7 +18,23 @@ const Features: NextPage = () => {
 	// *************************************************************************************************************************
 	const { isDisconnected } = useAccount()
 
-	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+
+	const { 
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
+		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
+		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
+		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
+		getBalancesUSDICOMeWallet, BALANCES_USD_ICO_ME_WALLET, 
+		getBalancesUSDICOSearchAddressWallet, BALANCES_USD_ICO_SEARCH_ADDRESS_WALLET, 
+		getBalancesPaymentTokensMeWallet, BALANCES_PAYMENT_TOKENS_ME_WALLET,
+		getBalancesPaymentMethodsSearchAddress, BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS,
+		getBalancesPaymentMethodsICOWallet, BALANCES_PAYMENT_TOKENS_ICO_WALLET,
+		getBalancesTargetWallet, BALANCES_PAYMENT_TOKENS_LIQUIDITY_WALLET,
+		isWhitelisted, 
+		isBlacklisted,
+	} = useCrowdsaleHook();
 
 	const { 
 		loadVestingPrograms, VESTING_IDS,
@@ -110,10 +127,31 @@ const Features: NextPage = () => {
 		setVestingStartMillis(e.target.value);
   };
 
+	// *************************************************************************************************************************
+	// ************************************************************ UI *********************************************************
+	// *************************************************************************************************************************
+  const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
+  const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
+  const [CAN_TYPE, setCanType] = useState<boolean>(false);
+	useEffect(() => {
+		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`selectedCrypto: ` + selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
+		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(!isDisconnected && selectedCrypto != undefined);
+	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+
   return (
 
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
+
+				{ CAN_CREATE || CAN_MODIFY ? '' :
+				<Row>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled. You need to create a CryptoCommodity to enable them.</Form.Text></Col>
+				</Row>
+				}
 
 				<Row className="mb-3"></Row>
 				<Form.Group className="p-3 border border-dark rounded bg-light-grey">

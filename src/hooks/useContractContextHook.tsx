@@ -12,6 +12,9 @@ export function useContractContextHook() {
 	const [envContracts, setEnvContract] = useState<EnvContracts>({} as EnvContracts);
 	const [contracts, setContracts] = useState<CryptoContracts>({} as CryptoContracts);
 
+	// **********************************************************************************************************
+	// ******************************************* createEnvContracts *******************************************
+	// **********************************************************************************************************
   const createEnvContracts = async (chainId: number) => {
 		console.log("createEnvContracts", chainId);
 
@@ -24,6 +27,21 @@ export function useContractContextHook() {
 		setEnvContract(envContracts);
 	}
 
+	// **********************************************************************************************************
+	// ******************************************* loadYourCryptocommodities ************************************
+	// **********************************************************************************************************
+	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
+
+	async function loadYourCryptocommodities() {
+		console.log("fetching cryptocommodities for user");
+		let cryptocommodities = await envContracts.FACTORY_CONTRACT?.getCryptocommodities();
+		console.log("cryptocommodities: " + cryptocommodities);
+		setCryptocommodities(cryptocommodities);
+	}
+
+	// **********************************************************************************************************
+	// ******************************************* selectCrypto *************************************************
+	// **********************************************************************************************************
   const selectCrypto = async (cryptocommodityName: string) => {
 
 		console.log("updateContracts: " + cryptocommodityName);
@@ -55,17 +73,18 @@ export function useContractContextHook() {
 		setContracts(({} as any) as CryptoContracts);
 	}
 
+
 	return {
-		createEnvContracts,
-		envContracts,
-		selectCrypto,
-		unselectCrypto,
-		selectedCrypto,
-		contracts
+		createEnvContracts, envContracts,
+		loadYourCryptocommodities, CRYPTOCOMMODITIES,
+		selectCrypto, unselectCrypto, selectedCrypto, contracts
 	};
 
 };
 
+// **********************************************************************************************************
+// **************************************************** Context *********************************************
+// **********************************************************************************************************
 interface Cryptocommodity {
 	SELECTED_CRYPTOCOMMODITY_NAME: string;
   SELECTED_CRYPTOCOMMODITY_ADDRESS: string;
@@ -88,6 +107,10 @@ interface CryptoContracts {
 export interface ContractsContextData {
   createEnvContracts: (chainId: number) => void;
 	envContracts: EnvContracts;
+
+  loadYourCryptocommodities: () => void;
+	CRYPTOCOMMODITIES: string[],
+
 	selectCrypto: (cryptocommodityName: string) => void;
   unselectCrypto: () => void;
   selectedCrypto: Cryptocommodity | undefined;
@@ -98,6 +121,10 @@ export interface ContractsContextData {
 export const contractsContextDefaultValue: ContractsContextData = {
   createEnvContracts: () => null,
   envContracts: ({} as any) as EnvContracts,
+
+  loadYourCryptocommodities: () => null,
+	CRYPTOCOMMODITIES: [],
+
 	selectCrypto: () => null,
   unselectCrypto: () => null,
   selectedCrypto: undefined,

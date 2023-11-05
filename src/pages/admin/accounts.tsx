@@ -5,12 +5,13 @@ import { useERC20Hook } from 'hooks/useERC20Hook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
 
 import { KEY_ICON } from '../../config/config'
+import { ContractsContext } from 'hooks/useContractContextHook';
 
 declare let window:any
 
@@ -58,7 +59,6 @@ const Accounts: NextPage = () => {
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
-		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
 
 	const { 
@@ -70,6 +70,8 @@ const Accounts: NextPage = () => {
 	} = useERC20Hook();
 
 	const { handleICOReceipt, handleError } = useResponseHook()
+
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************

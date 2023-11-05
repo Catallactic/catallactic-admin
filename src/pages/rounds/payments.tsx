@@ -21,7 +21,7 @@ const Payments: NextPage = () => {
 
 	const { isDisconnected } = useAccount()
 
-	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
 
@@ -30,7 +30,6 @@ const Payments: NextPage = () => {
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
 		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,
-		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
 
 	const { 

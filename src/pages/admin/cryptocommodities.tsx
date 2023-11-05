@@ -22,11 +22,10 @@ const Cryptomcommodities: NextPage = () => {
 
 	const { isDisconnected } = useAccount()
 
-	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
-		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	} = useFactoryHook();	
 
 	const { 
@@ -52,7 +51,7 @@ const Cryptomcommodities: NextPage = () => {
 	useEffect(() => {
 		setSelectedCryptocommodityName(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME!);
 		setSelectedCryptocommodityAddress(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS!);
-	}, [selectCrypto])
+	}, [selectedCrypto])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************

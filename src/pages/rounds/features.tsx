@@ -23,7 +23,7 @@ const RoundFeatures: NextPage = () => {
 
 	const { isDisconnected } = useAccount()
 
-	const { createEnvContracts, envContracts, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -56,6 +56,9 @@ const RoundFeatures: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+
+		if(!selectedCrypto)
+			return;
 
 		console.log('loadICOFeatures');
 		loadICOFeatures();

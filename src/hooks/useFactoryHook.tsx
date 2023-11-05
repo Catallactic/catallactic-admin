@@ -120,23 +120,10 @@ export function useFactoryHook() {
 		showFunctionsModal(true);
 	}
 
-	// **********************************************************************************************************
-	// ******************************************* loadYourCryptocommodities ************************************
-	// **********************************************************************************************************
-	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
-
-	async function loadYourCryptocommodities() {
-		console.log("fetching cryptocommodities for user");
-		let cryptocommodities = await envContracts.FACTORY_CONTRACT?.getCryptocommodities();
-		console.log("cryptocommodities: " + cryptocommodities);
-		setCryptocommodities(cryptocommodities);
-	}
-
 	return { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
 		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,
-		loadYourCryptocommodities, CRYPTOCOMMODITIES,
 	}
 }
