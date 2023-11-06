@@ -42,13 +42,32 @@ const AntiwhaleFeatures: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	useEffect(() => {
 
+		console.log('loadERC20Features');
+		loadAntiWhale();
 
+	}, [])
+
+	useEffect(() => {
+
+		setWhitelistUserList(ICO_WHITELIST_USER_LIST);
+		setWhitelistUserCount(ICO_WHITELIST_USER_COUNT);
+		setIsUseBlacklist(ICO_IS_USE_BLACKLIST);
+		setBlacklistUserList(ICO_BLACKLIST_USER_LIST);
+		setBlacklistUserCount(ICO_BLACKLIST_USER_COUNT);
+
+	}, [ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT])
 
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
+	const [X_ICO_WHITELIST_USER_LIST, setWhitelistUserList] = useState([])
+  const [X_ICO_WHITELIST_USER_COUNT, setWhitelistUserCount] = useState<number>(0);
+	const [X_ICO_IS_USE_BLACKLIST, setIsUseBlacklist] = useState<boolean | undefined>()
+	const [X_ICO_BLACKLIST_USER_LIST, setBlacklistUserList] = useState([]);
+	const [X_ICO_BLACKLIST_USER_COUNT, setBlacklistUserCount] = useState<number | undefined>()
 
 	const [ICO_USER_TO_WHITELIST, setUserToWhitelist] = useState<string | undefined>()
 	// whitelist user
@@ -116,105 +135,107 @@ const AntiwhaleFeatures: NextPage = () => {
 				}
 
 				<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
-						</Row>
-						<Row className="mb-3"></Row>
-						<Row>
-							<table className="table table-dark">
-								<thead>
-									<tr>
-										<th scope="col">#</th>
-										<th scope="col">Investor</th>
-										<th scope="col">Amount</th>
-									</tr>
-								</thead>
-								<tbody>
-									{ICO_WHITELIST_USER_LIST?.map((item, index) => (
-										<tr key={index}>
-											<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-											<td>{item}</td>
-											<td id={"whitelistedValue" + (index+1) }></td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</Row>
-						<Row className="w-100">
-							<Col className="text-center">
-								{ (ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
-								{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
-								{ (ICO_WHITELIST_USER_COUNT != undefined && ICO_WHITELIST_USER_COUNT > 0) ? "Click to see " + ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
-							</Col>
-						</Row>
-						<Row className="mb-3"></Row>
-
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
-						</Row>
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
-						</Row>
-
-					</Form.Group>
+				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
+					</Row>
 
 					<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Blacklist</div></div></Col>
-						</Row>
-						<Row className="mb-3"></Row>
+					<Row className="mb-3"></Row>
+					<Row className="w-100">
+						<Col className="text-center">
+							{ (X_ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
+							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
+							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT > 0) ? X_ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
+						</Col>
+					</Row>
 
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame" disabled={!CAN_TYPE} onChange={setIsBlacklist} defaultChecked={ICO_IS_USE_BLACKLIST} /></Col>
-						</Row>
-
-						<Row className="mb-3"></Row>
-						<Row className="w-100">
-							<Col className="text-center">
-								{ (ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
-								{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
-								{ (ICO_BLACKLIST_USER_COUNT != undefined && ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
-							</Col>
-						</Row>
-
-						<Row className="mb-3">
-							<table className="table table-dark">
-								<thead>
-									<tr>
-										<th scope="col">#</th>
-										<th scope="col">Investor</th>
-										<th scope="col">Amount</th>
+					<Row>
+						<table className="table table-dark">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Investor</th>
+									<th scope="col">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								{X_ICO_WHITELIST_USER_LIST?.map((item, index) => (
+									<tr key={index}>
+										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+										<td>{item}</td>
+										<td id={"whitelistedValue" + (index+1) }></td>
 									</tr>
-								</thead>
-								<tbody>
-									{ICO_BLACKLIST_USER_LIST?.map((item, index) => (
-										<tr key={index}>
-											<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
-											<td>{item}</td>
-											<td id={"blacklistedValue" + (index+1) }></td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</Row>
-						<Row>
-							<Col><input id="blacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
-						</Row>
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><input id="unblacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
-							<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
-						</Row>
+								))}
+							</tbody>
+						</table>
+					</Row>
 
-					</Form.Group>
+					<Row className="mb-3"></Row>
+					<Row>
+						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
+					</Row>
+					<Row className="mb-3"></Row>
+					<Row>
+						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
+					</Row>
+
+				</Form.Group>
+
+				<Row className="mb-3"></Row>
+				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Blacklist</div></div></Col>
+					</Row>
+					<Row className="mb-3"></Row>
+
+					<Row className="mb-3"></Row>
+					<Row>
+						<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame" disabled={!CAN_TYPE} onChange={setIsBlacklist} defaultChecked={X_ICO_IS_USE_BLACKLIST} /></Col>
+					</Row>
+
+					<Row className="mb-3"></Row>
+					<Row className="w-100">
+						<Col className="text-center">
+							{ (X_ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
+							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
+							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + X_ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
+						</Col>
+					</Row>
+
+					<Row className="mb-3">
+						<table className="table table-dark">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Investor</th>
+									<th scope="col">Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								{X_ICO_BLACKLIST_USER_LIST?.map((item, index) => (
+									<tr key={index}>
+										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => isBlacklisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+										<td>{item}</td>
+										<td id={"blacklistedValue" + (index+1) }></td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</Row>
+					<Row>
+						<Col><input id="blacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
+					</Row>
+					<Row className="mb-3"></Row>
+					<Row>
+						<Col><input id="unblacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
+					</Row>
+
+				</Form.Group>
 
 			</Container>
 		</div>
