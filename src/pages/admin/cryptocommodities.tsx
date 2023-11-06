@@ -94,8 +94,7 @@ const Cryptomcommodities: NextPage = () => {
 	const onSelectFacet = async (facetName: any, pp: any)=>{
 		console.log('onSelectFacet', facetName);
 		console.log('onSelectFacet', pp);
-		console.log('onSelectFacet', FACTORY_FACETS[facetName][0]);
-		console.log('onSelectFacet', FACTORY_FACETS[facetName][1]);
+		console.log('onSelectFacet', FACTORY_FACETS);
 
 		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
 	}

@@ -1,11 +1,12 @@
 "use client";
 
 import { Contract } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { ContractsContext } from './useContractContextHook';
 
 export function useERC20Hook() {
 
-	const [SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT, setSelectedCryptocommodityTokenContract] = useState<Contract>()
+	const { contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
 	// ************************************************ loadERC20Features ***************************************
@@ -16,15 +17,15 @@ export function useERC20Hook() {
 	const [TOKEN_SUPPLY, setTokenSupply] = useState<number>(0)
 
 	async function loadERC20Features() {
-		let name = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.name();
+		let name = await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.name();
 		console.log('name: ' + name);
 		setTokenName(name);
 
-		let symbol = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.symbol();
+		let symbol = await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.symbol();
 		console.log('symbol: ' + symbol);
 		setTokenSymbol(symbol);
 
-		let supply = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.totalSupply();
+		let supply = await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.totalSupply();
 		console.log('supply: ' + supply);
 		setTokenSupply(supply);
 
@@ -70,9 +71,9 @@ export function useERC20Hook() {
 	async function getTokenBalanceOf(address: string) {
 		console.log('getTokenBalanceOf', address);
 
-		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
+		console.log('SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT', contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT);
 		console.log('balanceOf2');
-		const balanceOf = await SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
+		const balanceOf = await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.balanceOf(address);
 		console.log('balanceOf22');
 		console.log('ERC-20 balanceOf ', balanceOf);
 		if(!balanceOf)
