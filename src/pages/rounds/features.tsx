@@ -153,7 +153,9 @@ const RoundFeatures: NextPage = () => {
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + X_VESTING_SCHEDULE_PERCENTAGE);
 		console.log(`VESTING_ID: ` + X_VESTING_ID);
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(X_ICO_PRICE, X_ICO_HARD_CAP * 10**6, X_ICO_SOFT_CAP * 10**6, X_ICO_WHITELIST_THRESHOLD * 10**6, X_ICO_MAX_INVESTMENT, X_ICO_MAX_TRANSFER, X_ICO_MIN_TRANSFER, X_VESTING_SCHEDULE_PERCENTAGE, X_VESTING_ID)
-		.then(await handleICOReceipt).catch(handleError);
+			.then(await handleICOReceipt)
+			.then(await loadICOFeatures)
+			.catch(handleError);
 	}
 
 	// *************************************************************************************************************************

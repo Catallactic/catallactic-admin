@@ -4,7 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 import { WagmiConfig, sepolia } from 'wagmi'
-import { arbitrum, goerli, hardhat, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
+import { goerli, hardhat, polygonMumbai } from 'wagmi/chains'
 
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
