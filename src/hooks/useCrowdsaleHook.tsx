@@ -330,35 +330,39 @@ export function useCrowdsaleHook() {
 
 	async function getPaymentTokensBalancesMap(address: string) {
 		console.log('getPaymentTokensBalancesMap -----------------');
+
+		let paymentSymbols = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentSymbols();
+		setICOPaymentSymbols(paymentSymbols);
+
 		const mapBalances: MapType = {};
-		if(!ICO_PAYMENT_SYMBOLS) {
+		if(!paymentSymbols) {
 			console.log('no ICO_PAYMENT_SYMBOLS');
 			return mapBalances;
 		}
 
 		console.log('balances for address', address);
-		for (var i = 0; i < ICO_PAYMENT_SYMBOLS.length; i++) {
-			let method = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(ICO_PAYMENT_SYMBOLS[i]);
-			console.log('ICO_PAYMENT_SYMBOL: ', ICO_PAYMENT_SYMBOLS[i]);
+		for (var i = 0; i < paymentSymbols.length; i++) {
+			let method = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(paymentSymbols[i]);
+			console.log('ICO_PAYMENT_SYMBOL: ', paymentSymbols[i]);
 
-			if(ICO_PAYMENT_SYMBOLS[i] == 'COIN') {
-				console.log('COIN code for ', ICO_PAYMENT_SYMBOLS[i]);
+			if(paymentSymbols[i] == 'COIN') {
+				console.log('COIN code for ', paymentSymbols[i]);
 				const provider = new ethers.providers.Web3Provider(window.ethereum)
 				let balance = await provider.getBalance(address!);
 				console.log('COIN balance ', balance);
-				mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance.toString();
+				mapBalances[paymentSymbols[i]] = balance.toString();
 
 			} else {
-				console.log('Token code for ', ICO_PAYMENT_SYMBOLS[i]);
+				console.log('Token code for ', paymentSymbols[i]);
 				const provider = new ethers.providers.Web3Provider(window.ethereum)
 				const signer = provider.getSigner();
 				const paymentToken: Contract = new ethers.Contract(method[0], CFG_ERC_20_ABI, signer);
 				let balance = await paymentToken.balanceOf(address);
-				console.log('Token balance ', ICO_PAYMENT_SYMBOLS[i], Number(balance));
-				mapBalances[ICO_PAYMENT_SYMBOLS[i]] = balance;
+				console.log('Token balance ', paymentSymbols[i], Number(balance));
+				mapBalances[paymentSymbols[i]] = balance;
 			}
 
-			console.log('balance ',ICO_PAYMENT_SYMBOLS[i], mapBalances[ICO_PAYMENT_SYMBOLS[i]]);
+			console.log('balance ',paymentSymbols[i], mapBalances[paymentSymbols[i]]);
 		}
 
 		console.log('got balances');
