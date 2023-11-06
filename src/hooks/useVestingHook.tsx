@@ -101,6 +101,17 @@ export function useVestingHook() {
 	}
 
 	// **********************************************************************************************************
+	// ********************************* setVestingScheduleTokenAddress *****************************************
+	// **********************************************************************************************************
+	const [VESTING_SCHEDULE_TOKEN_ADDRESS, setVestingScheduleTokenAddress] = useState<string>()
+
+	async function loadVestingScheduleTokenAddress() {
+		let tokenAddressInVestingContract = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
+		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
+		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
+	}
+
+	// **********************************************************************************************************
 	// ********************************************** computeVesting ********************************************
 	// **********************************************************************************************************
 	async function computeVesting() {
@@ -116,16 +127,6 @@ export function useVestingHook() {
 	async function releaseVesting() {
 		console.log('releaseVesting', VESTING_SCHEDULE_ID);
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
-	}
-
-	// **********************************************************************************************************
-	// ************************************* setTokenAddressOnVestingSC *****************************************
-	// **********************************************************************************************************
-	const [VESTING_SCHEDULE_TOKEN_ADDRESS, setVestingScheduleTokenAddress] = useState<string>()
-
-	async function setTokenAddressOnVestingSC() {
-		console.log(`setting VESTING_SCHEDULE_TOKEN_ADDRESS: ` + VESTING_SCHEDULE_TOKEN_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// ***********************************************************************************************
@@ -204,6 +205,7 @@ export function useVestingHook() {
 	return {
 		loadBlockchainDatetime, METAMASK_CHAIN_TIME_IN_MS,
 		loadVestingPrograms, VESTING_IDS,
+		loadVestingScheduleTokenAddress, VESTING_SCHEDULE_TOKEN_ADDRESS,
 		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
 		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
 		loadVestingScheduleList, VESTING_SCHEDULE_LIST,

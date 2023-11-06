@@ -38,6 +38,7 @@ const Operations: NextPage = () => {
 	const { 
 		loadBlockchainDatetime, METAMASK_CHAIN_TIME_IN_MS,
 		loadVestingPrograms, VESTING_IDS,
+		loadVestingScheduleTokenAddress, VESTING_SCHEDULE_TOKEN_ADDRESS,
 		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
 		onSelectVestingSchedule, VESTING_SCHEDULE_ID, VESTING_SCHEDULE_PROGRAM_ID, VESTING_SCHEDULE_HOLDER, VESTING_SCHEDULE_AMOUNT, VESTING_SCHEDULE_RELEASED_AMOUNT,
 		loadVestingScheduleList, VESTING_SCHEDULE_LIST,
@@ -56,11 +57,21 @@ const Operations: NextPage = () => {
 		console.log('loadBlockchainDatetime');
 		loadBlockchainDatetime();
 
+		console.log('loadVestingScheduleTokenAddress');
+		loadVestingScheduleTokenAddress();
+
+		console.log('loadVestingScheduleList');
+		loadVestingScheduleList();
+
 	}, [])
 
 	useEffect(() => {
 		setChainTimeInMs(METAMASK_CHAIN_TIME_IN_MS)
 	}, [METAMASK_CHAIN_TIME_IN_MS])
+
+	useEffect(() => {
+		setVestingScheduleTokenAddress(VESTING_SCHEDULE_TOKEN_ADDRESS)
+	}, [VESTING_SCHEDULE_TOKEN_ADDRESS])
 
 	useEffect(() => {
 		setVestingScheduleHolder(VESTING_SCHEDULE_HOLDER)
@@ -94,7 +105,7 @@ const Operations: NextPage = () => {
 
 	// token adddress
 	async function setTokenAddressOnVestingSC() {
-		console.log(`setting VESTING_SCHEDULE_TOKEN_ADDRESS: ` + X_VESTING_SCHEDULE_TOKEN_ADDRESS);
+		console.log(`setting X_VESTING_SCHEDULE_TOKEN_ADDRESS: ` + X_VESTING_SCHEDULE_TOKEN_ADDRESS);
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(X_VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
