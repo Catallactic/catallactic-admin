@@ -3,8 +3,11 @@
 import { Contract } from 'ethers';
 import { useContext, useState } from 'react';
 import { ContractsContext } from './useContractContextHook';
+import { useAccount } from 'wagmi';
 
 export function useERC20Hook() {
+
+	const { address } = useAccount()
 
 	const { contracts } = useContext(ContractsContext);
 
@@ -42,14 +45,13 @@ export function useERC20Hook() {
 	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 	const [BALANCES_ERC_20_TARGET_WALLET, setBalancesCygasTargetWallet] = useState<string>('0')
 
-	const [METAMASK_CURRENT_ACCOUNT, setCurrentAccount] = useState<string | undefined>()
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
 
 
 	async function getBalancesCygasMeWallet() {
-		const balance: string = await getTokenBalanceOf(METAMASK_CURRENT_ACCOUNT!);
+		const balance: string = await getTokenBalanceOf(address!);
 		setBalancesCygasMeWallet(balance);
 	}
 

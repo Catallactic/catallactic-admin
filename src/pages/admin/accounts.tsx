@@ -5,7 +5,7 @@ import { useERC20Hook } from 'hooks/useERC20Hook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
@@ -76,7 +76,17 @@ const Accounts: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	useEffect(() => {
+		console.log('loadERC20Features');
+		loadICOPaymentMethod();
+	}, [])
 
+	useEffect(() => {
+		getBalancesRawICOMeWallet();
+		getBalancesUSDICOMeWallet();
+		getBalancesPaymentTokensMeWallet();
+		getBalancesCygasMeWallet();
+	}, [ICO_PAYMENT_METHODS])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -178,6 +188,24 @@ const Accounts: NextPage = () => {
 	async function refund() {
 		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(await handleICOReceipt).catch(handleError);
 	}
+
+	// *************************************************************************************************************************
+	// ************************************************************ UI *********************************************************
+	// *************************************************************************************************************************
+  const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
+  const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
+  const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
+	useEffect(() => {
+		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`selectedCrypto: ` + selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
+		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(!isDisconnected && selectedCrypto != undefined);
+		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+
   return (
 
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
@@ -339,7 +367,7 @@ const Accounts: NextPage = () => {
 									<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
 								</Row>
 								<Row>
-									<Col><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
+									<Col><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
 								</Row>
 
 								<Row className="mb-3"></Row>
