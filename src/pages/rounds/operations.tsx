@@ -10,6 +10,7 @@ import { useAccount } from 'wagmi'
 
 import { KEY_ICON } from '../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
+import { useERC20Hook } from 'hooks/useERC20Hook';
 
 const Operations: NextPage = () => {
 
@@ -22,9 +23,14 @@ const Operations: NextPage = () => {
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
-		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		onICOSelectPaymentMethod, ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_DECIMALS, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_DYN_PRICE,
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
+		loadInvested, ICO_TOTAL_uUSD_INVESTED, ICO_INVESTORS_COUNT, ICO_INVESTORS_LIST,
+		loadICOVestingAddress, VESTING_ADDRESS,
+		loadWithdrawTargetAddress, WITHDRAW_TARGET_ADDRESS,
+		loadTokenAddressOnCrowdsaleContract, TOKEN_ADDRESS,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
 		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
 		getBalancesUSDICOMeWallet, BALANCES_USD_ICO_ME_WALLET, 
@@ -36,6 +42,15 @@ const Operations: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
+
+	const { 
+		loadERC20Features, TOKEN_INITIALIZED, TOKEN_NAME, TOKEN_SYMBOL, TOKEN_SUPPLY,
+		getBalancesCygasMeWallet, BALANCES_ERC_20_ME_WALLET, 
+		getBalancesCygasSearchAddress, BALANCES_ERC_20_SEARCH_ADDRESS, 
+		getBalancesCygasICOWallet, BALANCES_ERC_20_ICO_WALLET, 
+		getBalancesCygasTargetWallet, BALANCES_ERC_20_TARGET_WALLET, 
+	} = useERC20Hook();
+
 
 	const { handleICOReceipt, handleError } = useResponseHook()
 	
@@ -53,16 +68,41 @@ const Operations: NextPage = () => {
 		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
 
+		console.log('loadTokenAddressOnCrowdsaleContract');
+		loadTokenAddressOnCrowdsaleContract();
+
+		console.log('loadICOVestingAddress');
+		loadICOVestingAddress();
+
+		console.log('loadWithdrawTargetAddress');
+		loadWithdrawTargetAddress();
+
+		console.log('loadInvested');
+		loadInvested();
+
 		console.log('getBalancesPaymentMethodsICOWallet');
 		getBalancesPaymentMethodsICOWallet();
 
+		console.log('getBalancesCygasICOWallet');
+		getBalancesCygasICOWallet();
+
 	}, [])
 
+	useEffect(() => {
+		setVestingAddress(VESTING_ADDRESS);
+	}, [VESTING_ADDRESS])
+
+	useEffect(() => {
+		setVestingAddress(TOKEN_ADDRESS);
+	}, [TOKEN_ADDRESS])
+
+	useEffect(() => {
+		setWithdrawTargetAddress(WITHDRAW_TARGET_ADDRESS);
+	}, [WITHDRAW_TARGET_ADDRESS])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
-
 	// crowdsale stage
 	async function setCrowdsaleStage(stage: number) {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage)
@@ -96,8 +136,6 @@ const Operations: NextPage = () => {
 
 
 	// transferClaimableAmountToICO
-	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
-	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 	async function transferClaimableAmountToICO() {
 		console.log(`ICO CATokens Required: ` + ICO_TOTAL_uUSD_INVESTED / ICO_PRICE);
 	  console.log(`ICO CATokens Current: ` + BALANCES_ERC_20_ICO_WALLET);
@@ -105,23 +143,26 @@ const Operations: NextPage = () => {
 		let amountCurrentCATokens = BigInt(BALANCES_ERC_20_ICO_WALLET) * BigInt(10**18);
 	  console.log(`amountToTransferCATokensWithDecimals: ` + (amountRequiredCATokens - amountCurrentCATokens));
 		await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
+		.then(await handleICOReceipt)
+		.then(await getBalancesCygasICOWallet)
+		.catch(handleError);
 	}
 
-	const [WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
+	const [X_WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
 	async function setTargetWalletAddress() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(X_WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
-	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
+	const [X_VESTING_ADDRESS, setVestingAddress] = useState<string>()
 	async function setVestingTokenOnSC() {
-		console.log(`setting VESTING_ADDRESS: ` + VESTING_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		console.log(`setting VESTING_ADDRESS: ` + X_VESTING_ADDRESS);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(X_VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
-	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
+	const [X_TOKEN_ADDRESS, setTokenAddress] = useState<string>()
 	async function setTokenAddressOnSC() {
-		console.log(`setting token address: ` + TOKEN_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		console.log(`setting token address: ` + X_TOKEN_ADDRESS);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(X_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
 	}
 
 	async function claimAll() {
@@ -243,7 +284,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={VESTING_ADDRESS} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={X_VESTING_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
@@ -269,7 +310,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 					<Row className="mb-3"></Row>

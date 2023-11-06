@@ -46,7 +46,6 @@ export function useERC20Hook() {
 	const [BALANCES_ERC_20_TARGET_WALLET, setBalancesCygasTargetWallet] = useState<string>('0')
 
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
 
 
@@ -61,7 +60,7 @@ export function useERC20Hook() {
 	}
 
 	async function getBalancesCygasICOWallet() {
-		const balance: string = await getTokenBalanceOf(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
+		const balance: string = await getTokenBalanceOf(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address!);
 		setBalancesCygasICOWallet(balance);
 	}
 

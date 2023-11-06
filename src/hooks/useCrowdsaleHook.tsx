@@ -175,6 +175,60 @@ export function useCrowdsaleHook() {
 	}
 
 	// ***********************************************************************************************
+	// ***************************************** loadInvested ****************************************
+	// ***********************************************************************************************
+	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
+	const [ICO_INVESTORS_COUNT, setCountInvestors] = useState<number | undefined>()
+	const [ICO_INVESTORS_LIST, setInvestors] = useState([]);
+
+	async function loadInvested() {
+		// get read only - investors
+		let totalWeiInvested = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTotaluUSDInvested();
+		setTotaluUSDInvested(totalWeiInvested);
+		let countInvestors = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestorsCount();
+		setCountInvestors(countInvestors);
+		let investors = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getInvestors();
+		setInvestors(investors);
+		console.log("investors: " + investors);
+	}
+
+	// ***********************************************************************************************
+	// ***************************************** Whitelisted *****************************************
+	// ***********************************************************************************************
+	const [VESTING_ADDRESS, setVestingAddress] = useState<string>()
+
+	async function loadICOVestingAddress() {
+
+		// vesting
+		let vestingAddress = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVestingAddress();
+		console.log("vestingAddress: " + vestingAddress);
+		setVestingAddress(vestingAddress);
+
+	}
+
+	// ***********************************************************************************************
+	// ***************************************** Whitelisted *****************************************
+	// ***********************************************************************************************
+	const [WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
+	async function loadWithdrawTargetAddress() {
+		let withdrawAddress = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTargetWalletAddress();
+		console.log("withdrawAddress: " + withdrawAddress);
+		setWithdrawTargetAddress(withdrawAddress);
+	}
+
+	// ***********************************************************************************************
+	// ************************************* loadTokenAddressOnCrowdsaleContract *********************
+	// ***********************************************************************************************
+	const [TOKEN_ADDRESS, setTokenAddress] = useState<string>()
+
+	async function loadTokenAddressOnCrowdsaleContract() {
+		// token address
+		let tokenAddress = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getTokenAddress();
+		console.log("tokenAddress: " + tokenAddress);
+		setTokenAddress(tokenAddress);
+	}
+
+	// ***********************************************************************************************
 	// ***************************************** ICO Balances ****************************************
 	// ***********************************************************************************************
 	// Investors Invested in ICO
@@ -339,13 +393,15 @@ export function useCrowdsaleHook() {
 		element.innerHTML = isBlacklisted.toString();
 	}
 
-
-
 	return { 
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
 		onICOSelectPaymentMethod, ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOL_DECIMALS, ICO_PAYMENT_SYMBOL_ADDRESS, ICO_PAYMENT_SYMBOL_PRICE, ICO_PAYMENT_SYMBOL_REF, ICO_PAYMENT_SYMBOL_DYN_PRICE,
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
+		loadInvested, ICO_TOTAL_uUSD_INVESTED, ICO_INVESTORS_COUNT, ICO_INVESTORS_LIST,
+		loadICOVestingAddress, VESTING_ADDRESS,
+		loadWithdrawTargetAddress, WITHDRAW_TARGET_ADDRESS,
+		loadTokenAddressOnCrowdsaleContract, TOKEN_ADDRESS,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
 		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
 		getBalancesUSDICOMeWallet, BALANCES_USD_ICO_ME_WALLET, 

@@ -25,20 +25,7 @@ const Accounts: NextPage = () => {
 
 	const CFG_ERC_20_ABI = require('../../abi/ERC20Facet.json');
 
-	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
 
-	const [TO_TRANSFER_CURRENCY, setToTransferCurrency] = useState<string>('USDT')
-  const [TO_TRANSFER_AMOUNT_USD, setToTransferAmountUSD] = useState<string>('0')
-  const [TO_TRANSFER_AMOUNT, setToTransferAmount] = useState<string>('0')
-  const [TO_TRANSFER_ADDRESS, setToTransferAddress] = useState<string>('')
-
-	const [TO_INVEST_CURRENCY, setToInvestCurrency] = useState<string>('USDT')
-  const [TO_INVEST_AMOUNT_USD, setToInvestAmountUSD] = useState<string>('0')
-  const [TO_INVEST_AMOUNT, setToInvestAmount] = useState<string>('0')
-
-  const [TO_REFUND_AMOUNT, setToRefundAmount] = useState<string>()
-  const [TO_REFUND_AMOUNT_USD, setToRefundAmountUSD] = useState<string>()
-	const [TO_REFUND_CURRENCY, setToRefundCurrency] = useState<string>()
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -77,6 +64,9 @@ const Accounts: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+		console.log('loadICOFeatures');
+		loadICOFeatures();
+
 		console.log('loadERC20Features');
 		loadICOPaymentMethod();
 	}, [])
@@ -91,39 +81,41 @@ const Accounts: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
+	// invest
+	const [TO_INVEST_CURRENCY, setToInvestCurrency] = useState<string>('USDT')
+  const [TO_INVEST_AMOUNT_USD, setToInvestAmountUSD] = useState<string>('0')
+  const [TO_INVEST_AMOUNT, setToInvestAmount] = useState<string>('0')
 
-	const onSelectToRefundCurrency = async (symbol: any)=>{
-		setToRefundCurrency(symbol);
-
-		let contribution = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address, symbol);
-	  console.log(`contribution: ` + contribution);
-		setToRefundAmount(contribution);
-
-		let contributionUSD = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address, symbol);
-	  console.log(`contributionUSD: ` + contributionUSD);
-		setToRefundAmountUSD(contributionUSD);
+	const onSelectToInvestCurrency = async (symbol: any)=>{
+		setToInvestCurrency(symbol);
 	}
 
-	const onSelectToTransferCurrency = async (symbol: any)=>{
-		setToTransferCurrency(symbol);
-	}
-	async function claim() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim().then(await handleICOReceipt).catch(handleError);
-	}
-	// click purchase
+	useEffect(() => {
+		console.log('useEffect9');
+		if(!TO_INVEST_CURRENCY) return;
+		if(!ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY]) return;
+		console.log('TO_INVEST_AMOUNT', TO_INVEST_AMOUNT);
+
+		let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
+		let amountTokenPrice: number = Number(amountToken[2])
+		let amountToInvestUSD: number = Number(TO_INVEST_AMOUNT) * amountTokenPrice / 10**6;
+		setToInvestAmountUSD(amountToInvestUSD.toString());
+
+	}, [TO_INVEST_AMOUNT, TO_INVEST_CURRENCY]);
+
 	async function invest() {
 
 		let amountToInvest: number = Number(TO_INVEST_AMOUNT)
 		console.log('investing amountToInvest ', amountToInvest, TO_INVEST_CURRENCY);
 
 		if(TO_INVEST_CURRENCY == 'COIN') {
-			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
 
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
 				from: address,
-				to: SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
+				to: contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
 				value: ethers.utils.parseEther(amountToInvest.toString()),
 				gasLimit: 1000000,
 			})
@@ -133,13 +125,18 @@ const Accounts: NextPage = () => {
 				//.once('receipt', function(receipt){ ... })
 				//.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
 				//.on('error', function(error){ ... })
-				.then(await handleICOReceipt).catch(handleError);
+				.then(await handleICOReceipt)
+				.then(await getBalancesRawICOMeWallet)
+				.then(await getBalancesUSDICOMeWallet)
+				.then(await getBalancesPaymentTokensMeWallet)
+				.then(await getBalancesCygasMeWallet)
+				.catch(handleError);
 
 		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
 			// N/A
 
 		} else {
-			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
 
 			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
 			console.log('amountToken: ', amountToken);
@@ -148,11 +145,66 @@ const Accounts: NextPage = () => {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner();
 			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
-			await paymentToken?.approve(SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
+			await paymentToken?.approve(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString()))
+				.then(await handleICOReceipt)
+				.then(await getBalancesRawICOMeWallet)
+				.then(await getBalancesUSDICOMeWallet)
+				.then(await getBalancesPaymentTokensMeWallet)
+				.then(await getBalancesCygasMeWallet)
+				.catch(handleError);
 		}
 
 	}
+
+	// refund
+  const [TO_REFUND_AMOUNT, setToRefundAmount] = useState<string>()
+  const [TO_REFUND_AMOUNT_USD, setToRefundAmountUSD] = useState<string>()
+	const [TO_REFUND_CURRENCY, setToRefundCurrency] = useState<string>()
+
+	const onSelectToRefundCurrency = async (symbol: any)=>{
+		setToRefundCurrency(symbol);
+
+		let contribution = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address, symbol);
+	  console.log(`contribution: ` + contribution);
+		setToRefundAmount(contribution);
+
+		let contributionUSD = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address, symbol);
+	  console.log(`contributionUSD: ` + contributionUSD);
+		setToRefundAmountUSD(contributionUSD);
+	}
+
+	async function refund() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY)
+			.then(await handleICOReceipt)
+			.then(await getBalancesRawICOMeWallet)
+			.then(await getBalancesUSDICOMeWallet)
+			.then(await getBalancesPaymentTokensMeWallet)
+			.then(await getBalancesCygasMeWallet)
+			.catch(handleError);
+	}
+
+	// refund
+	async function claim() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim()
+			.then(await handleICOReceipt)
+			.then(await getBalancesRawICOMeWallet)
+			.then(await getBalancesUSDICOMeWallet)
+			.then(await getBalancesPaymentTokensMeWallet)
+			.then(await getBalancesCygasMeWallet)
+			.catch(handleError);
+	}
+
+	// transfer
+	const [TO_TRANSFER_CURRENCY, setToTransferCurrency] = useState<string>('USDT')
+  const [TO_TRANSFER_AMOUNT_USD, setToTransferAmountUSD] = useState<string>('0')
+  const [TO_TRANSFER_AMOUNT, setToTransferAmount] = useState<string>('0')
+  const [TO_TRANSFER_ADDRESS, setToTransferAddress] = useState<string>('')
+
+	const onSelectToTransferCurrency = async (symbol: any)=>{
+		setToTransferCurrency(symbol);
+	}
+
 	async function transfer() {
 		console.log('transferring ', TO_TRANSFER_ADDRESS, TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY);
 
@@ -164,29 +216,33 @@ const Accounts: NextPage = () => {
 				to: TO_TRANSFER_ADDRESS,
 				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
 				gasLimit: 200000,
-			}).then(await handleICOReceipt).catch(handleError);
+			})
+			.then(await handleICOReceipt)
+			.then(await getBalancesRawICOMeWallet)
+			.then(await getBalancesUSDICOMeWallet)
+			.then(await getBalancesPaymentTokensMeWallet)
+			.then(await getBalancesCygasMeWallet)
+			.catch(handleError);
 
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
 
 		} else {
-			let currencyMap = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
+			let currencyMap = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
 			const signer = provider.getSigner();
 			let currencyAddress = currencyMap[0];
 			let currencyDecimals = currencyMap[3];
 			const currencyToken: Contract = new ethers.Contract(currencyAddress, CFG_ERC_20_ABI, signer);
 			console.log('currencyToken ', currencyToken);
-			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString()).then(await handleICOReceipt).catch(handleError);
+			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString())
+			.then(await handleICOReceipt)
+			.then(await getBalancesRawICOMeWallet)
+			.then(await getBalancesUSDICOMeWallet)
+			.then(await getBalancesPaymentTokensMeWallet)
+			.then(await getBalancesCygasMeWallet)
+			.catch(handleError);
 		}
 
-	}
-
-	const onSelectToInvestCurrency = async (symbol: any)=>{
-		setToInvestCurrency(symbol);
-	}
-
-	async function refund() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY).then(await handleICOReceipt).catch(handleError);
 	}
 
 	// *************************************************************************************************************************
