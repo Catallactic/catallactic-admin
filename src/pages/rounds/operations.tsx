@@ -42,7 +42,21 @@ const Operations: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	useEffect(() => {
 
+		if(!selectedCrypto)
+			return;
+
+		console.log('loadICOFeatures');
+		loadICOFeatures();
+
+		console.log('loadICOPaymentMethod');
+		loadICOPaymentMethod();
+
+		console.log('getBalancesPaymentMethodsICOWallet');
+		getBalancesPaymentMethodsICOWallet();
+
+	}, [])
 
 
 	// *************************************************************************************************************************
@@ -51,7 +65,10 @@ const Operations: NextPage = () => {
 
 	// crowdsale stage
 	async function setCrowdsaleStage(stage: number) {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage)
+			.then(await handleICOReceipt)
+			.then(await loadICOFeatures)
+			.catch(handleError);
 	}
 	async function reset() {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
