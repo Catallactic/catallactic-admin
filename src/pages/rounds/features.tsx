@@ -26,7 +26,7 @@ const RoundFeatures: NextPage = () => {
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
-		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
+		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_CURRENT_PROGRAM_ID, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
@@ -78,9 +78,9 @@ const RoundFeatures: NextPage = () => {
 		setMaxInvestment(ICO_MAX_INVESTMENT)
 		setWhitelistThreshold(ICO_WHITELIST_THRESHOLD)
 		setVestingSchedulePercentage(VESTING_SCHEDULE_PERCENTAGE)
-		setVestingScheduleCurrentId(VESTING_SCHEDULE_CURRENT_ID)
+		setVestingCurrentProgramId(VESTING_CURRENT_PROGRAM_ID)
 
-	}, [ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_SCHEDULE_CURRENT_ID])
+	}, [ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, VESTING_SCHEDULE_PERCENTAGE, VESTING_CURRENT_PROGRAM_ID])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -129,17 +129,15 @@ const RoundFeatures: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(X_VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
 	}
 
-	const [X_VESTING_SCHEDULE_CURRENT_ID, setVestingScheduleCurrentId] = useState<string>('');
+	const [X_VESTING_CURRENT_PROGRAM_ID, setVestingCurrentProgramId] = useState<string>('');
 	const onSelectCurrentVestingId = async (vestingId: any)=>{
 		console.log('onSelectCurrentVestingId', vestingId);
 
 		//let vesting = await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getVesting(vestingId);
 		//console.log('vesting', vesting);
-		setVestingScheduleCurrentId(vestingId);
+		setVestingCurrentProgramId(vestingId);
 		//setVestingCliffInDays(vesting[0]);
 	}
-
-	const [X_VESTING_ID, setVestingId] = useState<string>('');
 
 	async function createICO() {
 		// createICO
@@ -151,8 +149,8 @@ const RoundFeatures: NextPage = () => {
 		console.log(`ICO_MAX_TRANSFER: ` + X_ICO_MAX_TRANSFER);
 		console.log(`ICO_MIN_TRANSFER: ` + X_ICO_MIN_TRANSFER);
 		console.log(`VESTING_SCHEDULE_PERCENTAGE: ` + X_VESTING_SCHEDULE_PERCENTAGE);
-		console.log(`VESTING_ID: ` + X_VESTING_ID);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(X_ICO_PRICE, X_ICO_HARD_CAP * 10**6, X_ICO_SOFT_CAP * 10**6, X_ICO_WHITELIST_THRESHOLD * 10**6, X_ICO_MAX_INVESTMENT, X_ICO_MAX_TRANSFER, X_ICO_MIN_TRANSFER, X_VESTING_SCHEDULE_PERCENTAGE, X_VESTING_ID)
+		console.log(`X_VESTING_CURRENT_PROGRAM_ID: ` + X_VESTING_CURRENT_PROGRAM_ID);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(X_ICO_PRICE, X_ICO_HARD_CAP * 10**6, X_ICO_SOFT_CAP * 10**6, X_ICO_WHITELIST_THRESHOLD * 10**6, X_ICO_MAX_INVESTMENT, X_ICO_MAX_TRANSFER, X_ICO_MIN_TRANSFER, X_VESTING_SCHEDULE_PERCENTAGE, X_VESTING_CURRENT_PROGRAM_ID)
 			.then(await handleICOReceipt)
 			.then(await loadICOFeatures)
 			.catch(handleError);
@@ -268,13 +266,13 @@ const RoundFeatures: NextPage = () => {
 						<Col>
 							<Dropdown onSelect={onSelectCurrentVestingId}>
 								<Dropdown.Toggle className={"btn-lg text-black-50 w-100" + colorCSS} disabled={!CAN_TYPE}>
-									{X_VESTING_SCHEDULE_CURRENT_ID}
+									{X_VESTING_CURRENT_PROGRAM_ID}
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
 									{VESTING_IDS?.map(vestingId => {
 										return (
-											<Dropdown.Item as="button" key={vestingId} eventKey={vestingId} active={X_VESTING_SCHEDULE_CURRENT_ID == vestingId + ''}>
+											<Dropdown.Item as="button" key={vestingId} eventKey={vestingId} active={X_VESTING_CURRENT_PROGRAM_ID == vestingId + ''}>
 												{vestingId + ''}
 											</Dropdown.Item>
 										);
