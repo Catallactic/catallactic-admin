@@ -148,21 +148,30 @@ const Operations: NextPage = () => {
 		.catch(handleError);
 	}
 
-	const [X_WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
-	async function setTargetWalletAddress() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(X_WITHDRAW_TARGET_ADDRESS).then(await handleICOReceipt).catch(handleError);
-	}
-
 	const [X_VESTING_ADDRESS, setVestingAddress] = useState<string>()
 	async function setVestingTokenOnSC() {
 		console.log(`setting VESTING_ADDRESS: ` + X_VESTING_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(X_VESTING_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(X_VESTING_ADDRESS)
+			.then(await handleICOReceipt)
+			.then(await loadICOVestingAddress)
+			.catch(handleError);
 	}
 
 	const [X_TOKEN_ADDRESS, setTokenAddress] = useState<string>()
 	async function setTokenAddressOnSC() {
 		console.log(`setting token address: ` + X_TOKEN_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(X_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(X_TOKEN_ADDRESS)
+			.then(await handleICOReceipt)
+			.then(await loadTokenAddressOnCrowdsaleContract)
+			.catch(handleError);
+	}
+
+	const [X_WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
+	async function setTargetWalletAddress() {
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(X_WITHDRAW_TARGET_ADDRESS)
+			.then(await handleICOReceipt)
+			.then(await loadWithdrawTargetAddress)
+			.catch(handleError);
 	}
 
 	async function claimAll() {
@@ -293,7 +302,7 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame">Enter ERC-20 Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={TOKEN_ADDRESS} ></input></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={X_TOKEN_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 

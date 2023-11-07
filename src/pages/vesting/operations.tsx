@@ -97,16 +97,21 @@ const Operations: NextPage = () => {
 	}
 
 	// grantor
-	const [VESTING_GRANTOR, setVestinGrantor] = useState<string>('');
+	const [X_VESTING_GRANTOR, setVestinGrantor] = useState<string>('');
 	async function setVestinGrantorOnSC() {
-		console.log(`setting VESTING_GRANTOR: ` + VESTING_GRANTOR);
-		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(VESTING_GRANTOR).then(await handleICOReceipt).catch(handleError);
+		console.log(`setting X_VESTING_GRANTOR: ` + X_VESTING_GRANTOR);
+		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(X_VESTING_GRANTOR)
+			.then(await handleICOReceipt)
+			.catch(handleError);
 	}
 
 	// token adddress
 	async function setTokenAddressOnVestingSC() {
 		console.log(`setting X_VESTING_SCHEDULE_TOKEN_ADDRESS: ` + X_VESTING_SCHEDULE_TOKEN_ADDRESS);
-		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(X_VESTING_SCHEDULE_TOKEN_ADDRESS).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(X_VESTING_SCHEDULE_TOKEN_ADDRESS)
+			.then(await handleICOReceipt)
+			.then(await setVestingScheduleTokenAddress)
+			.catch(handleError);
 	}
 
 	// vesting schedules
@@ -182,7 +187,7 @@ const Operations: NextPage = () => {
 							<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
+							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
 							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
 						</Row>
 
@@ -209,7 +214,7 @@ const Operations: NextPage = () => {
 						<Row>
 							<Col>
 								<Dropdown onSelect={onSelectVestingSchedule}>
-									<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CAN_TYPE}>
+									<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CAN_TYPE || !VESTING_SCHEDULE_LIST || VESTING_SCHEDULE_LIST.length == 0}>
 										{ X_VESTING_SCHEDULE_ID }
 									</Dropdown.Toggle>
 
