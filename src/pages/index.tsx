@@ -1,6 +1,7 @@
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { NextPage } from 'next'
+import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { Col, Container, Dropdown, Form, Row } from 'react-bootstrap'
 import { useAccount, useNetwork } from 'wagmi'
@@ -70,7 +71,7 @@ const Login: NextPage = () => {
 
 				{ CAN_CREATE || CAN_MODIFY ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='/admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <Link href="/admin/cryptocommodities">this page</Link> to create one.</Form.Text></Col>
 				</Row>
 				}
 

@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi'
 import { KEY_ICON } from '../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { ethers } from 'ethers';
+import Link from 'next/link';
 
 declare let window:any
 
@@ -112,7 +113,7 @@ const ERC20Contract: NextPage = () => {
 
 				{ CAN_TYPE ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <a href='../admin/cryptocommodities'>this page</a> to create one.</Form.Text></Col>
+					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <Link href="/admin/cryptocommodities">this page</Link> to create one.</Form.Text></Col>
 				</Row>
 				}
 
