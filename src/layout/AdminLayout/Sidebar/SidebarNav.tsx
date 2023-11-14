@@ -153,7 +153,6 @@ export default function SidebarNav() {
 	return (
     <ul className="list-unstyled">
       <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small></SidebarNavItem>
-      <SidebarNavItem icon={faDroplet} href="/legacy">Legacy</SidebarNavItem>
 
       <SidebarNavTitle>Funding</SidebarNavTitle>
 
