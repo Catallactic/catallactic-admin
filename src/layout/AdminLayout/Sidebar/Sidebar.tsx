@@ -32,37 +32,27 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
       id="sidebar"
     >
       <div className="sidebar-brand d-none d-md-flex align-items-center justify-content-center">
-        <svg
-          className="sidebar-brand-full"
-          width="118"
-          height="46"
-        >
+
+        <svg className="sidebar-brand-full ms-auto" width="118" height="46">
           <title>CoreUI Logo</title>
           <use xlinkHref="/assets/brand/catallactic.svg#full" />
         </svg>
-        <svg
-          className="sidebar-brand-narrow d-none"
-          width="46"
-          height="46"
-        >
+
+        <svg className="sidebar-brand-narrow d-none ms-auto" width="46" height="46">
           <title>CoreUI Logo</title>
           <use xlinkHref="/assets/brand/coreui.svg#signet" />
         </svg>
+
+				<Button variant="link" className="sidebar-toggler d-none d-md-inline-block rounded-0 text-end pe-4 fw-bold shadow-none ms-auto" onClick={toggleIsNarrow} type="button" aria-label="sidebar toggler">
+					<FontAwesomeIcon className="sidebar-toggler-chevron" icon={faAngleLeft} fontSize={24} />
+				</Button>
+
       </div>
 
       <div className="sidebar-nav flex-fill">
         <SidebarNav />
       </div>
 
-      <Button
-        variant="link"
-        className="sidebar-toggler d-none d-md-inline-block rounded-0 text-end pe-4 fw-bold shadow-none"
-        onClick={toggleIsNarrow}
-        type="button"
-        aria-label="sidebar toggler"
-      >
-        <FontAwesomeIcon className="sidebar-toggler-chevron" icon={faAngleLeft} fontSize={24} />
-      </Button>
     </div>
   )
 }
