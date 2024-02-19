@@ -4,8 +4,8 @@
 .nav-link {
   --bs-nav-link-font-size: 1.2rem;
 }
-:root {
-	--sidebar-width: 18rem;
+.header .header-navbar {
+	min-height: 4rem;
 }
 .sidebar .sidebar-nav .nav-title {
 	font-size: 100%;

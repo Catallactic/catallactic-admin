@@ -90,11 +90,13 @@ export default function Header(props: HeaderProps) {
 
       </Container>
 
+			{/*}
       <div className="header-divider border-top my-2 mx-sm-n2" />
 
       <Container fluid>
         <Breadcrumb />
       </Container>
+			*/}
 
     </header>
   )
