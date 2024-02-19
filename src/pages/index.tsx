@@ -1,10 +1,21 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
-import { Col, Container, Dropdown, Form, Row } from 'react-bootstrap'
+import { Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
 import { useAccount, useNetwork } from 'wagmi'
+import {
+  faArrowDown,
+  faArrowUp,
+  faDownload,
+  faEllipsisVertical,
+  faMars,
+  faSearch,
+  faUsers,
+  faVenus,
+} from '@fortawesome/free-solid-svg-icons'
 
 const Login: NextPage = () => {
 
@@ -78,6 +89,7 @@ const Login: NextPage = () => {
 				<Row>
 					<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
 				</Row>
+
 				<Row>
 					<Col>
 						<Dropdown onSelect={onSelectCryptocommodity}>
@@ -97,6 +109,156 @@ const Login: NextPage = () => {
 						</Dropdown>
 					</Col>
 				</Row>
+
+				<div className="row mt-4">
+					<div className="col-sm-6 col-lg-3">
+						<Card text="white" className="mb-4 background-project">
+							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+								<div>
+									<div className="fs-4 fw-semibold">
+										26K
+										<span className="fs-6 ms-2 fw-normal">
+											(-12.4%
+											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
+											)
+										</span>
+									</div>
+									<div>Project</div>
+								</div>
+								<Dropdown align="end">
+									<DropdownToggle
+										as="button"
+										bsPrefix="btn"
+										className="btn-link rounded-0 text-white shadow-none p-0"
+										id="dropdown-chart1"
+									>
+										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+									</DropdownToggle>
+
+									<DropdownMenu>
+										<DropdownItem href="#/action-1">Action</DropdownItem>
+										<DropdownItem href="#/action-2">Another action</DropdownItem>
+										<DropdownItem href="#/action-3">Something else</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</CardBody>
+							<div className="mt-3 mx-3" style={{ height: '70px' }}>
+
+							</div>
+						</Card>
+					</div>
+
+					<div className="col-sm-6 col-lg-3">
+						<Card text="white" className="mb-4 background-holders">
+							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+								<div>
+									<div className="fs-4 fw-semibold">
+										$6.200
+										<span className="fs-6 ms-2 fw-normal">
+											(40.9%
+											<FontAwesomeIcon icon={faArrowUp} fixedWidth />
+											)
+										</span>
+									</div>
+									<div>Holders</div>
+								</div>
+								<Dropdown align="end">
+									<DropdownToggle
+										as="button"
+										bsPrefix="btn"
+										className="btn-link rounded-0 text-white shadow-none p-0"
+										id="dropdown-chart2"
+									>
+										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+									</DropdownToggle>
+
+									<DropdownMenu>
+										<DropdownItem href="#/action-1">Action</DropdownItem>
+										<DropdownItem href="#/action-2">Another action</DropdownItem>
+										<DropdownItem href="#/action-3">Something else</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</CardBody>
+							<div className="mt-3 mx-3" style={{ height: '70px' }}>
+
+							</div>
+						</Card>
+					</div>
+
+					<div className="col-sm-6 col-lg-3">
+						<Card text="white" className="mb-4 background-exchanges">
+							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+								<div>
+									<div className="fs-4 fw-semibold">
+										2.49%
+										<span className="fs-6 ms-2 fw-normal">
+											(84.7%
+											<FontAwesomeIcon icon={faArrowUp} fixedWidth />
+											)
+										</span>
+									</div>
+									<div>Exchanges</div>
+								</div>
+								<Dropdown align="end">
+									<DropdownToggle
+										as="button"
+										bsPrefix="btn"
+										className="btn-link rounded-0 text-white shadow-none p-0"
+										id="dropdown-chart3"
+									>
+										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+									</DropdownToggle>
+
+									<DropdownMenu>
+										<DropdownItem href="#/action-1">Action</DropdownItem>
+										<DropdownItem href="#/action-2">Another action</DropdownItem>
+										<DropdownItem href="#/action-3">Something else</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</CardBody>
+							<div className="mt-3 mx-3" style={{ height: '70px' }}>
+
+							</div>
+						</Card>
+					</div>
+
+					<div className="col-sm-6 col-lg-3">
+						<Card text="white" className="mb-4 background-defi">
+							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+								<div>
+									<div className="fs-4 fw-semibold">
+										44K
+										<span className="fs-6 ms-2 fw-normal">
+											(-23.6%
+											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
+											)
+										</span>
+									</div>
+									<div>DeFi Services</div>
+								</div>
+								<Dropdown align="end">
+									<DropdownToggle
+										as="button"
+										bsPrefix="btn"
+										className="btn-link rounded-0 text-white shadow-none p-0"
+										id="dropdown-chart4"
+									>
+										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+									</DropdownToggle>
+
+									<DropdownMenu>
+										<DropdownItem href="#/action-1">Action</DropdownItem>
+										<DropdownItem href="#/action-2">Another action</DropdownItem>
+										<DropdownItem href="#/action-3">Something else</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</CardBody>
+							<div className="mt-3 mx-3" style={{ height: '70px' }}>
+
+							</div>
+						</Card>
+					</div>
+				</div>
 
       </Container>
     </div>
