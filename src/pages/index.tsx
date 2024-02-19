@@ -77,7 +77,7 @@ const Login: NextPage = () => {
 	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
-    <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
+    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
 
 				{ CAN_CREATE || CAN_MODIFY ? '' :
@@ -87,7 +87,7 @@ const Login: NextPage = () => {
 				}
 
 				<Row>
-					<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame catatext">List of Cryptocommodities</Form.Text></div></Col>
 				</Row>
 
 				<Row>

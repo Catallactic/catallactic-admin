@@ -180,6 +180,12 @@ export default function SidebarNav() {
         <SidebarNavItem href="/erc20/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Exchanges" disabled={true}>
+        <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Dropdowns <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve" disabled={true}>
         <SidebarNavItem href="#">Buttons <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
