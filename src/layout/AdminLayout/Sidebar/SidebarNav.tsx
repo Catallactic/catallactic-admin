@@ -154,20 +154,20 @@ export default function SidebarNav() {
     <ul className="list-unstyled">
       <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small></SidebarNavItem>
 
-      <SidebarNavTitle>Funding</SidebarNavTitle>
+      <SidebarNavTitle>Fundraising</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
-        <SidebarNavItem href="/rounds/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/features">Create Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Manage Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/payments">Payments <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Operations <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/investors">Investors <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/rounds/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
-				<SidebarNavItem href="/vesting/features">Features <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-				<SidebarNavItem href="/vesting/operations">Operations <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+				<SidebarNavItem href="/vesting/features">Vesting Programs <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+				<SidebarNavItem href="/vesting/operations">Vesting Schedulers <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/vesting/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="/vesting/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
