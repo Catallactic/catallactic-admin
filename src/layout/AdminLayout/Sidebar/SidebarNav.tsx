@@ -154,38 +154,6 @@ export default function SidebarNav() {
     <ul className="list-unstyled">
       <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto">BETA</Badge></small></SidebarNavItem>
 
-      <SidebarNavTitle>Project</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
-        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
-        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavTitle>Fundraising</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
-        <SidebarNavItem href="/rounds/features">Create Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Manage Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/antiwhale">AntiWhale <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/payments">Payments <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/investors">Investors <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/rounds/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
-				<SidebarNavItem href="/vesting/features">Vesting Programs <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-				<SidebarNavItem href="/vesting/operations">Vesting Schedulers <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/vesting/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-        <SidebarNavItem href="/vesting/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
-      </SidebarNavGroup>
-
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity" disabled={false}>
@@ -214,13 +182,51 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Payments" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers" disabled={true}>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>Fundraising</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
+        <SidebarNavItem href="/rounds/features">Create Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Manage Round <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/antiwhale">AntiWhale <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/payments">Payments <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/investors">Investors <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/rounds/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
+				<SidebarNavItem href="/vesting/features">Vesting Programs <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+				<SidebarNavItem href="/vesting/operations">Vesting Schedulers <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/vesting/holders">Holders <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="/vesting/contract">Contract <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>Project</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
+        <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
         <SidebarNavItem href="#">Form Control <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Select <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios <SidebarNavIcon isSelected={selectedCrypto != undefined} /> </SidebarNavItem>
