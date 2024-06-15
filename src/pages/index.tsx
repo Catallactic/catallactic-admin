@@ -86,7 +86,7 @@ const Login: NextPage = () => {
 				</Row>
 				}
 
-				<Row>
+				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">List of Cryptocommodities</Form.Text></div></Col>
 				</Row>
 
@@ -110,6 +110,13 @@ const Login: NextPage = () => {
 					</Col>
 				</Row>
 
+				<Row className="mt-4 mb-2">
+					<Col><div><Form.Text className="color-frame catatext">Networks</Form.Text></div></Col>
+				</Row>
+
+				<Row className="mt-4 mb-2">
+					<Col><div><Form.Text className="color-frame catatext">Supply Allocations</Form.Text></div></Col>
+				</Row>
 				<div className="row mt-4">
 					<div className="col-sm-6 col-lg-3">
 						<Card text="white" className="mb-4 background-project">
