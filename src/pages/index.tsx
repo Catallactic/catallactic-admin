@@ -113,9 +113,21 @@ const Login: NextPage = () => {
 				*/}
 
 				<Row className="mt-4 mb-2">
+					<Col xs={4}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
+					<Col xs={4}><div><Form.Text className="color-frame catatext" dir="rtl">Address</Form.Text></div></Col>
+					<Col xs={4}><div><Form.Text className="color-frame catatext">Decimals</Form.Text></div></Col>						
+				</Row>
+
+				<Row className="mb-5">
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } ></input></Col>
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
+				</Row>
+
+				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Deployed Networks</Form.Text></div></Col>
 				</Row>
-				<div className="row mt-4">
+				<div className="row">
 					<div className="col-12">
 						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
@@ -152,7 +164,7 @@ const Login: NextPage = () => {
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Supply Allocations</Form.Text></div></Col>
 				</Row>
-				<div className="row mt-4">
+				<div className="row">
 					<div className="col-sm-6 col-lg-3">
 						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
@@ -305,7 +317,7 @@ const Login: NextPage = () => {
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Ongoing Fundraising</Form.Text></div></Col>
 				</Row>
-				<div className="row mt-4">
+				<div className="row">
 					<div className="col-12">
 						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
@@ -347,7 +359,7 @@ const Login: NextPage = () => {
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Pending Vesting Schedules</Form.Text></div></Col>
 				</Row>
-				<div className="row mt-4">
+				<div className="row">
 					<div className="col-12">
 						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
