@@ -233,8 +233,8 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO TGE
 							</div>
 						</Card>
 					</div>
