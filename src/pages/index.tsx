@@ -117,7 +117,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row mt-4">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-project">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -131,12 +131,7 @@ const Login: NextPage = () => {
 									<div>Project</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart1"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 text-white shadow-none p-0" id="dropdown-chart1">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -147,8 +142,8 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+									NO TOKEN GENERATION EVENT HAS BEEN EXECUTED
 							</div>
 						</Card>
 					</div>
@@ -159,7 +154,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row mt-4">
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-project">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -189,14 +184,14 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO TGE
 							</div>
 						</Card>
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-holders">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -233,7 +228,7 @@ const Login: NextPage = () => {
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-exchanges">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -263,14 +258,14 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO TGE
 							</div>
 						</Card>
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-defi">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -300,8 +295,8 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO TGE
 							</div>
 						</Card>
 					</div>
@@ -312,7 +307,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row mt-4">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-project">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -342,8 +337,8 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO FUNDRAISING ONGOING
 							</div>
 						</Card>
 					</div>
@@ -354,7 +349,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row mt-4">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-project">
+						<Card text="white" className="mb-4 background-disabled">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -384,8 +379,8 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3" style={{ height: '70px' }}>
-
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO CURRENT VESTING SCHEDULES
 							</div>
 						</Card>
 					</div>
