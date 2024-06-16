@@ -180,22 +180,22 @@ const Environment: NextPage = () => {
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
 						<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
-						<Col xs={6}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
+						<Col xs={7}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 					</Row>
 					<Row className="mt-2" >
-								<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={'Diamond'} ></input></Col>
+								<Col xs={3}><input className="form-control form-control-lg border-0" disabled={ true } value={'Diamond'} ></input></Col>
 								<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
-								<Col xs={5}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+								<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
 								<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => handleShowFunctions('Diamond')}>...</Button></Col>
 							</Row>
 					{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 						return (
 							<Row className="mt-2" >
-								<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+								<Col xs={3}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 								<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-								<Col xs={5}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} dir="rtl" ></input></Col>
+								<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][1] : ''} dir="rtl" ></input></Col>
 								<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => handleShowFunctions(item)}>...</Button></Col>
 							</Row>
 						);
