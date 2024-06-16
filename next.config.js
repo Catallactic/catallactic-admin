@@ -3,6 +3,7 @@
  */
 const nextConfig = {
 	reactStrictMode: true,
+	output: 'export',
 	//swcMinify: false,			// https://github.com/vercel/next.js/discussions/39425
 	/*env: {
 		METAMASK_CHAINS: [
