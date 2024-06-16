@@ -67,23 +67,22 @@ export default function Header(props: HeaderProps) {
           <HeaderFeaturedNav />
         </div>
 
-				<Dropdown onSelect={onSelectCryptocommodity}>
-					<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-						{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME }
-					</Dropdown.Toggle>
-
-					<Dropdown.Menu className="w-100">
-						{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-							return (
-								<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-									{item}
-								</Dropdown.Item>
-							);
-						})}
-					</Dropdown.Menu>
-				</Dropdown>
-
         <div className="header-nav ms-auto">
+					<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+						<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+							{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
+						</Dropdown.Toggle>
+
+						<Dropdown.Menu className="w-100">
+							{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+								return (
+									<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+										{item}
+									</Dropdown.Item>
+								);
+							})}
+						</Dropdown.Menu>
+					</Dropdown>
 					<button type="button" className="btn btn-primary m-2" onClick={() => open()}>{ isDisconnected || !address ? 'Connect User' : truncateEthAddress(address) }</button>
       		<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{isDisconnected ? 'Connect Chain' : chain?.name}</button>
 				</div>
