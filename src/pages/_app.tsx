@@ -9,6 +9,8 @@ import { goerli, hardhat, polygonMumbai } from 'wagmi/chains'
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
 
+import { merlinTestnet } from 'config/networks/merlin_testnet';
+
 import { ContractsContext, useContractContextHook } from 'hooks/useContractContextHook'
 
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -39,8 +41,7 @@ const metadata = {
   url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
-
-const chains = [polygonMumbai, goerli, sepolia, hardhat]
+const chains = [merlinTestnet, polygonMumbai, hardhat]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 // 3. Create modal
