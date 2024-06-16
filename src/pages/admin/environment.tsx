@@ -140,24 +140,24 @@ const Environment: NextPage = () => {
 					<Row>
 						<Col xs={4}><div><Form.Text className="color-frame">Symbol</Form.Text></div></Col>
 						<Col xs={4}><div><Form.Text className="color-frame" dir="rtl">Address</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame">Price Feed Address</Form.Text></div></Col>						
 					</Row>
 
 					<Row>
 						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 					</Row>
 
 					<Row>
-						<Col xs={4}><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame">Ref</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame">Initial Price (uUSD)</Form.Text></div></Col>
 						<Col xs={4}><div><Form.Text className="color-frame">Dynamic Price (uUSD)</Form.Text></div></Col>
 					</Row>
 
 					<Row>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ isDisconnected } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 
