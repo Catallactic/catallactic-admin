@@ -10,6 +10,7 @@ import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
 
 import { merlinTestnet } from 'config/networks/merlin_testnet';
+import { citreaDevnet } from 'config/networks/citrea_devnet';
 
 import { ContractsContext, useContractContextHook } from 'hooks/useContractContextHook'
 
@@ -41,7 +42,7 @@ const metadata = {
   url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
-const chains = [merlinTestnet, polygonMumbai, hardhat]
+const chains = [citreaDevnet, merlinTestnet, polygonMumbai, hardhat]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 // 3. Create modal
