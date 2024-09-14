@@ -357,7 +357,8 @@ export function useCrowdsaleHook() {
 			} else {
 				console.log('Token code for ', paymentSymbols[i]);
 				const provider = new ethers.providers.Web3Provider(window.ethereum)
-				const signer = provider.getSigner();
+				window.ethereum.enable()
+				const signer = provider.getSigner()
 				const paymentToken: Contract = new ethers.Contract(method[0], CFG_ERC_20_ABI, signer);
 				let balance = await paymentToken.balanceOf(address);
 				console.log('Token balance ', paymentSymbols[i], Number(balance));

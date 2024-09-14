@@ -4,6 +4,10 @@
 const nextConfig = {
 	reactStrictMode: true,
 	output: 'export',
+  webpack: (config) => {
+    config.externals.push('pino-pretty', 'encoding');
+    return config;
+  },
 	//swcMinify: false,			// https://github.com/vercel/next.js/discussions/39425
 	/*env: {
 		METAMASK_CHAINS: [

@@ -1,4 +1,6 @@
 
+"use client";
+
 import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook';
@@ -8,7 +10,7 @@ import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
 import { useAccount } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
 import Link from 'next/link';

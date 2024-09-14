@@ -1,3 +1,4 @@
+"use client";
 
 import { Contract, ethers } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
@@ -10,7 +11,7 @@ import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bo
 
 import { useAccount } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 
 declare let window:any
@@ -23,7 +24,7 @@ const Accounts: NextPage = () => {
 
 	const { address, isConnecting, isDisconnected } = useAccount()
 
-	const CFG_ERC_20_ABI = require('../../abi/ERC20Facet.json');
+	const CFG_ERC_20_ABI = require('../../../abi/ERC20Facet.json');
 
 
 
@@ -112,6 +113,7 @@ const Accounts: NextPage = () => {
 			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
 
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			window.ethereum.enable()
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
 				from: address,
@@ -143,6 +145,7 @@ const Accounts: NextPage = () => {
 			let paymentTokenAddress: string = amountToken[0];
 			console.log('paymentTokenAddress: ', paymentTokenAddress);
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			window.ethereum.enable()
 			const signer = provider.getSigner();
 			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
 			await paymentToken?.approve(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
@@ -210,6 +213,7 @@ const Accounts: NextPage = () => {
 
 		if(TO_TRANSFER_CURRENCY == 'COIN') {
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			window.ethereum.enable()
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
 				from: address,
@@ -229,6 +233,7 @@ const Accounts: NextPage = () => {
 		} else {
 			let currencyMap = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getPaymentToken(TO_TRANSFER_CURRENCY);
 			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			window.ethereum.enable()
 			const signer = provider.getSigner();
 			let currencyAddress = currencyMap[0];
 			let currencyDecimals = currencyMap[3];

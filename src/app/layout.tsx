@@ -1,4 +1,5 @@
-// src/pages/_app.tsx
+"use client";
+
 import type { AppProps } from 'next/app'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -48,7 +49,11 @@ const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 // 3. Create modal
 createWeb3Modal({ wagmiConfig, projectId, chains })
 
-function MyApp({ Component, pageProps }: AppProps) {
+function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
 
 	const contractsContextDefaultValue = useContractContextHook();
 
@@ -56,13 +61,17 @@ function MyApp({ Component, pageProps }: AppProps) {
 		<ErrorBoundary fallback={<div>Something went wrong</div>}>
 			<WagmiConfig config={wagmiConfig}>
 				<ContractsContext.Provider value={contractsContextDefaultValue} >
-					<AdminLayout>
-						<Component {...pageProps} />
-					</AdminLayout>
+					<html lang="en">
+						<body>
+							<AdminLayout>
+								{children}
+							</AdminLayout>
+						</body>
+					</html>
 				</ContractsContext.Provider>
 			</WagmiConfig>
 		</ErrorBoundary>
   )
 }
 
-export default MyApp
+export default RootLayout

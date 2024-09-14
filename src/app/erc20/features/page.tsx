@@ -1,3 +1,4 @@
+"use client";
 
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';

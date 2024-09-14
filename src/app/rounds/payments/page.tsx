@@ -1,3 +1,4 @@
+"use client";
 
 import { Contract } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
@@ -9,7 +10,7 @@ import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
 import { useAccount, useNetwork } from 'wagmi'
 
-import { truncateEthAddress, KEY_ICON } from '../../config/config'
+import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
 

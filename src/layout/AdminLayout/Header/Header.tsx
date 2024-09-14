@@ -25,7 +25,11 @@ export default function Header(props: HeaderProps) {
 	// 4. Use modal hook
 	const { open } = useWeb3Modal()
 	const { chain } = useNetwork()
-	const { address, isDisconnected } = useAccount()
+	const { address, isDisconnected } = useAccount({
+    onConnect() {
+      console.log("connecting...");
+    },
+  });
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 

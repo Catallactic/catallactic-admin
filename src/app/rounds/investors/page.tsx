@@ -1,3 +1,4 @@
+"use client";
 
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';

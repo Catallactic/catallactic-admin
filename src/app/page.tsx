@@ -1,3 +1,5 @@
+"use client";
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'

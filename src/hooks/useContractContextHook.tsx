@@ -1,3 +1,5 @@
+"use client";
+
 import { Contract, ethers } from "ethers";
 import { createContext, useState } from "react";
 
@@ -19,7 +21,8 @@ export function useContractContextHook() {
 		console.log("createEnvContracts", chainId);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const signer = provider.getSigner();
+		window.ethereum.enable()
+		const signer = provider.getSigner()
 		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == chainId; })?.factory_address || '';
 		console.log("factory_address: " + factory_address);
 
@@ -47,7 +50,8 @@ export function useContractContextHook() {
 		console.log("updateContracts: " + cryptocommodityName);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
-		const signer = provider.getSigner();
+		window.ethereum.enable()
+		const signer = provider.getSigner()
 
 		let cryptocommodityAddress = await envContracts.FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
 		let selectedCryptoObject = {} as Cryptocommodity;

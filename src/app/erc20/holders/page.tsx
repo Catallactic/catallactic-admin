@@ -1,3 +1,4 @@
+"use client";
 
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
@@ -8,7 +9,7 @@ import { useResponseHook } from 'hooks/useResponseHook'
 
 import { useAccount } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
 

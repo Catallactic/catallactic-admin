@@ -1,3 +1,4 @@
+"use client";
 
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { NextPage } from 'next'
@@ -6,7 +7,7 @@ import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootst
 
 import { useAccount, useNetwork } from 'wagmi'
 
-import { truncateEthAddress, KEY_ICON } from '../../config/config'
+import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 import { useResponseHook } from 'hooks/useResponseHook';
 import { ContractsContext } from 'hooks/useContractContextHook';
 

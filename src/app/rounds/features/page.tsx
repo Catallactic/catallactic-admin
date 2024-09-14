@@ -1,3 +1,5 @@
+"use client";
+
 import { NextPage } from 'next'
 import { Button, Col, Container, Form, Row, } from 'react-bootstrap'
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -9,7 +11,7 @@ import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { useResponseHook } from 'hooks/useResponseHook'
 import { ContractsContext } from 'hooks/useContractContextHook';
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON } from '../../../config/config'
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,3 +1,4 @@
+"use client";
 
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
@@ -5,7 +6,7 @@ import { Button, Col, Container, Dropdown, Form, ListGroup, Row } from 'react-bo
 
 import { useAccount, useNetwork } from 'wagmi'
 
-import { KEY_ICON, getSelectors, removeSelectors, FacetCutAction} from '../../config/config'
+import { KEY_ICON, getSelectors, removeSelectors, FacetCutAction} from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useDiamonsLoupeHook } from 'hooks/useDiamonsLoupeHook';

@@ -1,3 +1,5 @@
+"use client";
+
 import { ethers } from 'ethers';
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';

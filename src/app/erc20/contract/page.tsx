@@ -1,4 +1,6 @@
 
+"use client";
+
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
@@ -8,7 +10,7 @@ import { useResponseHook } from 'hooks/useResponseHook'
 
 import { useAccount } from 'wagmi'
 
-import { KEY_ICON } from '../../config/config'
+import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { ethers } from 'ethers';
 import Link from 'next/link';
