@@ -20,7 +20,7 @@ const AntiwhaleFeatures: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -46,11 +46,13 @@ const AntiwhaleFeatures: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+		if(!isConnected)
+			return;
 
 		console.log('loadERC20Features');
 		loadAntiWhale();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 

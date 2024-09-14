@@ -12,7 +12,7 @@ declare let window:any
 
 export function useCrowdsaleHook() {
 
-	const { address } = useAccount()
+	const { address, connector } = useAccount()
 
 	const { envContracts, contracts } = useContext(ContractsContext);
 

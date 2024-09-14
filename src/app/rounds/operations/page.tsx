@@ -21,7 +21,7 @@ const Operations: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -62,6 +62,9 @@ const Operations: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 
+		if(!isConnected)
+			return;
+
 		if(!selectedCrypto)
 			return;
 
@@ -89,7 +92,7 @@ const Operations: NextPage = () => {
 		console.log('getBalancesCygasICOWallet');
 		getBalancesCygasICOWallet();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 		setVestingAddress(VESTING_ADDRESS);

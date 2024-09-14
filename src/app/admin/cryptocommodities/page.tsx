@@ -4,7 +4,7 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, ListGroup, Row } from 'react-bootstrap';
 
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { KEY_ICON, getSelectors, removeSelectors, FacetCutAction} from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -19,9 +19,7 @@ const Cryptomcommodities: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { chain } = useNetwork()
-
-	const { isDisconnected } = useAccount()
+	const { chain, isDisconnected, isConnected} = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -40,6 +38,9 @@ const Cryptomcommodities: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+		if(!isConnected)
+			return;
+
 		console.log('createEnvContracts');
 		createEnvContracts(chain?.id ? chain.id : 0);
 
@@ -49,7 +50,7 @@ const Cryptomcommodities: NextPage = () => {
 			loadCryptocommodityFacets();
 		}
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 		console.log('loading Your Cryptocommodities');

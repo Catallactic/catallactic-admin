@@ -18,7 +18,7 @@ const ERC20Features: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -52,14 +52,16 @@ const ERC20Features: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-
+		if(!isConnected)
+			return;
+		
 		if(!selectedCrypto)
 			return;
 
 		console.log('loadERC20Features');
 		loadERC20Features();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 

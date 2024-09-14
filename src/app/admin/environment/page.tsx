@@ -5,7 +5,7 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootstrap';
 
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 import { useResponseHook } from 'hooks/useResponseHook';
@@ -16,9 +16,7 @@ const Environment: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { chain } = useNetwork()
-
-	const { isDisconnected } = useAccount()
+	const {chain,  isConnected, isDisconnected } = useAccount()
 
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
@@ -35,6 +33,8 @@ const Environment: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+		if(!isConnected)
+			return;
 
 		console.log('createEnvContracts');
 		createEnvContracts(chain?.id ? chain.id : 0);
@@ -45,7 +45,7 @@ const Environment: NextPage = () => {
 		console.log('loadFacets');
 		loadFacets();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 

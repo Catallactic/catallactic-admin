@@ -22,7 +22,7 @@ const Accounts: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 
-	const { address, isConnecting, isDisconnected } = useAccount()
+	const { address, isConnected, isDisconnected } = useAccount()
 
 	const CFG_ERC_20_ABI = require('../../../abi/ERC20Facet.json');
 
@@ -65,12 +65,15 @@ const Accounts: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+		if(!isConnected)
+			return;
+
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
 		console.log('loadERC20Features');
 		loadICOPaymentMethod();
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 		getBalancesRawICOMeWallet();

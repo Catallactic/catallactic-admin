@@ -18,7 +18,7 @@ const Operations: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -57,6 +57,9 @@ const Operations: NextPage = () => {
 
 	useEffect(() => {
 
+		if(!isConnected)
+			return;
+
 		console.log('loadBlockchainDatetime');
 		loadBlockchainDatetime();
 
@@ -66,7 +69,7 @@ const Operations: NextPage = () => {
 		console.log('loadVestingScheduleList');
 		loadVestingScheduleList();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 		setChainTimeInMs(METAMASK_CHAIN_TIME_IN_MS)

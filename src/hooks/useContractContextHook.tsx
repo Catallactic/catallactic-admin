@@ -18,7 +18,6 @@ export function useContractContextHook() {
 	// ******************************************* createEnvContracts *******************************************
 	// **********************************************************************************************************
   const createEnvContracts = async (chainId: number) => {
-		console.log("createEnvContracts", chainId);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		window.ethereum.enable()
@@ -36,7 +35,8 @@ export function useContractContextHook() {
 	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
 
 	async function loadYourCryptocommodities() {
-		console.log("fetching cryptocommodities for user");
+		console.log("fetching cryptocommodities for user2");
+		console.log("envContracts.FACTORY_CONTRACT", envContracts.FACTORY_CONTRACT);
 		let cryptocommodities = await envContracts.FACTORY_CONTRACT?.getCryptocommodities();
 		console.log("cryptocommodities: " + cryptocommodities);
 		setCryptocommodities(cryptocommodities);

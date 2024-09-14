@@ -2,15 +2,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import { Button, Container, Dropdown } from 'react-bootstrap'
-import Breadcrumb from '../Breadcrumb/Breadcrumb'
 import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
 
 import { truncateEthAddress } from '../../../config/config'
 
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 
-import { useNetwork } from 'wagmi'
-import { useAccount } from 'wagmi'
+import { useAccount, useAccountEffect, useConnect, useDisconnect } from 'wagmi'
 import { useContext, useEffect } from 'react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 
@@ -22,25 +20,32 @@ type HeaderProps = {
 export default function Header(props: HeaderProps) {
   const { toggleSidebar, toggleSidebarMd } = props
 
-	// 4. Use modal hook
 	const { open } = useWeb3Modal()
-	const { chain } = useNetwork()
-	const { address, isDisconnected } = useAccount({
-    onConnect() {
-      console.log("connecting...");
-    },
-  });
+	const { connectors, connect, status, error } = useConnect();
+	const { disconnect } = useDisconnect();
+	const { chain, address, isConnected, isDisconnected, isConnecting } = useAccount()
+	useAccountEffect({ 
+		onConnect(data) {
+			console.log('connected', data)
+
+			if (!chain?.id) {
+				console.log('No chainId found. Aborting loadYourCryptocommodities.')
+				return;
+			}
+	
+			createEnvContracts(chain?.id ? chain.id : 0);
+	
+			console.log('loadYourCryptocommodities');
+			loadYourCryptocommodities();
+		},
+		onDisconnect() {
+			console.log('disconnected')
+
+			window.location.reload();
+		},
+	})
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
-
-	useEffect(() => {
-		console.log('createEnvContracts');
-		createEnvContracts(chain?.id ? chain.id : 0);
-
-		console.log('loadYourCryptocommodities');
-		loadYourCryptocommodities();
-	}, [])
-
 
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
@@ -72,23 +77,51 @@ export default function Header(props: HeaderProps) {
         </div>
 
         <div className="header-nav ms-auto">
-					<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
-						<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-							{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
-						</Dropdown.Toggle>
+	
+					{/* https://github.com/wevm/wagmi/issues/4256 */}
+					{/* https://stackblitz.com/edit/new-wagmi-qem9ah?file=src%2FApp.tsx */}
+					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
+					{isDisconnected && connectors.filter(connector => connector.id === 'injected').map((connector) => (
+          	<button
+							key={connector.uid}
+							onClick={() => connect({ connector })}
+							type="button"
+							className="btn btn-primary m-2" 
+						>
+							Connect
+						</button>
+					))}
 
-						<Dropdown.Menu className="w-100">
-							{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-								return (
-									<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-										{item}
-									</Dropdown.Item>
-								);
-							})}
-						</Dropdown.Menu>
-					</Dropdown>
-					<button type="button" className="btn btn-primary m-2" onClick={() => open()}>{ isDisconnected || !address ? 'Connect User' : truncateEthAddress(address) }</button>
-      		<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{isDisconnected ? 'Connect Chain' : chain?.name}</button>
+					{isConnecting ?
+						<>
+							<button type="button" className="btn btn-primary m-2" onClick={() => disconnect()}>Connecting</button>
+						</>
+					: '' }
+
+					{isConnected ?
+						<>
+							<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+								<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+
+							<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Account' })}>{ !address ? 'Connect User' : truncateEthAddress(address) }</button>
+							<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{ !chain ? 'Connect Chain' : chain?.name}</button>
+							<button type="button" className="btn btn-primary m-2" onClick={() => disconnect()}>Disconnect</button>
+						</>
+					: '' }
+
 				</div>
 
       </Container>

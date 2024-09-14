@@ -7,7 +7,7 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import {
   faArrowDown,
   faArrowUp,
@@ -21,8 +21,8 @@ import {
 
 const Login: NextPage = () => {
 
-	const { chain } = useNetwork()
-	const { address, isDisconnected } = useAccount()
+	const { chainId, chain, address, isConnected } = useAccount()
+	const account = useAccount();
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -46,10 +46,18 @@ const Login: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log('createEnvContracts');
-		createEnvContracts(chain?.id ? chain.id : 0);
+		console.log('createEnvContracts1');
+		console.log(chain);
+		console.log(account);
+		console.log(account.chainId);
+		if (!chain?.id) {
+			console.log('No chainId found. Aborting loadYourCryptocommodities.')
+			return;
+		}
 
-		console.log('loadYourCryptocommodities');
+		createEnvContracts(chain.id);
+
+		console.log(' ');
 		loadYourCryptocommodities();
 	}, [])
 
@@ -70,13 +78,13 @@ const Login: NextPage = () => {
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isConnected: ` + isConnected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(isConnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(isConnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(isConnected && selectedCrypto != undefined);
+	}, [isConnected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
     <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">

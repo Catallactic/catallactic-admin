@@ -8,7 +8,7 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -19,9 +19,7 @@ const Payments: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { chain } = useNetwork()
-
-	const { isDisconnected } = useAccount()
+	const { chain, isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -58,7 +56,10 @@ const Payments: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 
-		console.log('createEnvContracts');
+		if(!isConnected)
+			return;
+
+		console.log('createEnvContracts3');
 		createEnvContracts(chain?.id ? chain.id : 0);
 
 		console.log('loadFactoryPaymentMethod');
@@ -67,7 +68,7 @@ const Payments: NextPage = () => {
 		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 

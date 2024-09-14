@@ -24,7 +24,7 @@ const RoundFeatures: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -60,6 +60,9 @@ const RoundFeatures: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 
+		if(!isConnected)
+			return;
+
 		if(!selectedCrypto)
 			return;
 
@@ -69,7 +72,7 @@ const RoundFeatures: NextPage = () => {
 		console.log('loadVestingPrograms');
 		loadVestingPrograms();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 

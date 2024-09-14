@@ -4,7 +4,7 @@ import { NextPage } from 'next'
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useResponseHook } from 'hooks/useResponseHook';
 import { useVestingHook } from 'hooks/useVestingHook';
@@ -19,7 +19,7 @@ const Features: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { isDisconnected } = useAccount()
+	const { isDisconnected, isConnected } = useAccount()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -55,10 +55,13 @@ const Features: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 
+		if(!isConnected)
+			return;
+
 		console.log('loadVestingPrograms');
 		loadVestingPrograms();
 
-	}, [])
+	}, [isConnected])
 
 	useEffect(() => {
 
