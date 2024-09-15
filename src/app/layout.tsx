@@ -14,19 +14,7 @@ import '../styles/globals.scss'
 import '../styles/_app.css';
 import { supportedChains } from 'config/config';
 
-/*declare let window:any
-window.ethereum.on('accountsChanged', (accounts: any) => {
-	window.location.reload();
-});
-window.ethereum.on('disconnect', (accounts: any) => {
-	window.location.reload();
-});
-const setListener = provider => {
-	provider.on("chainChanged", _ => window.location.reload());
-};
-window.ethereum.on('chainChanged', (chainId: any) => {
-	window.location.reload();
-});*/
+declare var window: any
 
 const web3Onboard = init({
 	// This javascript object is unordered meaning props do not require a certain order
@@ -65,6 +53,21 @@ function RootLayout({
   children: React.ReactNode
 }) {
 
+	// reload if changes
+	/*useEffect(() => {
+
+		window.ethereum.on('accountsChanged', (accounts: any) => {
+			window.location.reload();
+		});
+		window.ethereum.on('disconnect', (accounts: any) => {
+			window.location.reload();
+		});
+		window.ethereum.on('chainChanged', (chainId: any) => {
+			window.location.reload();
+		});
+
+	}, []);*/
+
 	const contractsContextDefaultValue = useContractContextHook();
 
   return (
@@ -75,7 +78,7 @@ function RootLayout({
 					<html lang="en">
 					<head>
 						<title>Catallactic DAppmin - Tokenization Platform</title>
-					  <link rel="icon" type="image/x-icon" href="/public/favicon.ico"></link>
+					  <link rel="icon" type="image/x-icon" href="/favicon.ico"></link>
 					</head>
 						<body>
 							<AdminLayout>
