@@ -2,21 +2,14 @@
 
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
-
-import { merlinTestnet } from 'config/networks/merlin_testnet';
-import { citreaDevnet } from 'config/networks/citrea_devnet';
-import { hardhat } from 'config/networks/hardhat';
 
 import { ContractsContext, useContractContextHook } from 'hooks/useContractContextHook'
 
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import '../styles/globals.scss'
 import '../styles/_app.css';
-import { WagmiProvider, createConfig, http } from 'wagmi';
 
 import injectedModule from '@web3-onboard/injected-wallets'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
@@ -56,16 +49,7 @@ const supportedChains = [
 	},
 ];
 
-const queryClient = new QueryClient()
-const wagmiConfig = createConfig({
-  chains: [citreaDevnet, merlinTestnet, hardhat],
-  transports: {
-    [citreaDevnet.id]: http(),
-    [merlinTestnet.id]: http(),
-    [hardhat.id]: http(),
-  },
-})
-;
+
 const wallets = injectedModule()
 const web3Onboard = init({
 	// This javascript object is unordered meaning props do not require a certain order
@@ -109,8 +93,7 @@ function RootLayout({
   return (
 		<Web3OnboardProvider web3Onboard={web3Onboard}>
 			<ErrorBoundary fallback={<div>Something went wrong</div>}>
-				<WagmiProvider config={wagmiConfig}>
-					<QueryClientProvider client={queryClient}>
+
 						<ContractsContext.Provider value={contractsContextDefaultValue} >
 
 								<html lang="en">
@@ -122,8 +105,7 @@ function RootLayout({
 								</html>
 
 						</ContractsContext.Provider>
-					</QueryClientProvider>
-				</WagmiProvider>
+
 			</ErrorBoundary>
 		</Web3OnboardProvider>
   )

@@ -7,7 +7,6 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
-import { useAccount } from 'wagmi'
 import {
   faArrowDown,
   faArrowUp,
@@ -18,12 +17,16 @@ import {
   faUsers,
   faVenus,
 } from '@fortawesome/free-solid-svg-icons'
+import { useWallets } from '@web3-onboard/react';
 
 const Login: NextPage = () => {
 
-	const { chainId, chain, address, isConnected } = useAccount()
-	const account = useAccount();
-
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
+	const [connectedAddress, setConnectedAddress] = useState('')
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -46,20 +49,26 @@ const Login: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log('createEnvContracts1');
-		console.log(chain);
-		console.log(account);
-		console.log(account.chainId);
-		if (!chain?.id) {
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			setConnectedAddress('')
+			//window.location.reload();
+			return;
+		}
+
+		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
+		if (chainId) {
 			console.log('No chainId found. Aborting loadYourCryptocommodities.')
 			return;
 		}
 
-		createEnvContracts(chain.id);
+		createEnvContracts(chainId);
 
 		console.log(' ');
 		loadYourCryptocommodities();
-	}, [])
+	}, [connectedWallets])
 
 
 	// *************************************************************************************************************************
@@ -78,13 +87,13 @@ const Login: NextPage = () => {
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
 	useEffect(() => {
-		console.log(`isConnected: ` + isConnected);
+		console.log(`isConnected: ` + connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(isConnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(isConnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(isConnected && selectedCrypto != undefined);
-	}, [isConnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
     <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">

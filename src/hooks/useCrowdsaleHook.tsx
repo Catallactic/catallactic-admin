@@ -5,15 +5,13 @@ import { useContext, useState } from 'react';
 
 const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
-import { useAccount } from 'wagmi'
 import { ContractsContext } from './useContractContextHook';
+import { useWallets } from '@web3-onboard/react';
 
 declare let window:any
 
 export function useCrowdsaleHook() {
-
-	const { address, connector } = useAccount()
-
+	const connectedWallets = useWallets()
 	const { envContracts, contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
@@ -242,6 +240,7 @@ export function useCrowdsaleHook() {
 	const [PAYMENT_METHODS_SEARCH_ADDRESS, setPaymentMethodsSearchAddress] = useState<string>('')
 
 	async function getBalancesRawICOMeWallet() {
+		const address = connectedWallets[0].accounts[0].address;
 		const mapBalances: MapType = await getInvestorInvestedRawInICOMap(address!);
 		console.log('Updating InvestorInvestedRawInICOMe ', mapBalances);
 		setBalancesRawICOMeWallet(mapBalances);
@@ -268,6 +267,7 @@ export function useCrowdsaleHook() {
 	}
 
 	async function getBalancesUSDICOMeWallet() {
+		const address = connectedWallets[0].accounts[0].address;
 		const mapBalances: MapType = await getInvestorInvestedUSDInICOMap(address!);
 		console.log('Updating InvestorInvestedUSDInICOMe ', mapBalances);
 		setBalancesUSDICOMeWallet(mapBalances);
@@ -310,6 +310,7 @@ export function useCrowdsaleHook() {
 	const [ICO_TARGET_WALLET, setTargetWallet] = useState<string | undefined>()
 
 	async function getBalancesPaymentTokensMeWallet() {
+		const address = connectedWallets[0].accounts[0].address;
 		const mapBalances: MapType = await getPaymentTokensBalancesMap(address!);
 		console.log('Updating BALANCES_PAYMENT_TOKENS_ME_WALLET ', mapBalances);
 		setBalancesPaymentTokensMeWallet(mapBalances);
