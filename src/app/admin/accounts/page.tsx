@@ -11,7 +11,7 @@ import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bo
 
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 
 declare let window:any
 
@@ -21,8 +21,8 @@ const Accounts: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
 	const [connectedAddress, setConnectedAddress] = useState('')
+	const [{ connectedChain }] = useSetChain()
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -64,12 +64,10 @@ const Accounts: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
+
+		if (!connectedChain) {
+			console.log('No chainId found. Aborting..')
 			setConnectedAddress('')
-			//window.location.reload();
 			return;
 		}
 
@@ -269,14 +267,14 @@ const Accounts: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connected);
+		console.log(`isDisconnected: ` + !connectedChain);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connected && selectedCrypto != undefined);
-		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -366,9 +364,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connected} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
+									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connectedChain} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 									<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => invest()}>Invest</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => invest()}>Invest</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -403,7 +401,7 @@ const Accounts: NextPage = () => {
 									</Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
+									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -415,7 +413,7 @@ const Accounts: NextPage = () => {
 
 								<Row className="mb-3"></Row>
 								<Row>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => claim()}>Claim</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => claim()}>Claim</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -467,9 +465,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connected} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connectedChain} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => transfer()}>Transfer</Button></Col>
+									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => transfer()}>Transfer</Button></Col>
 								</Row>
 							</Form.Group>
 

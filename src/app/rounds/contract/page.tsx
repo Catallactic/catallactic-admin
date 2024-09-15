@@ -10,7 +10,7 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 
 const ICOContract: NextPage = () => {
 
@@ -18,7 +18,7 @@ const ICOContract: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
+	const [{ connectedChain }] = useSetChain()
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const [SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT, setSelectedCryptocommodityCrowdsaleContract] = useState<Contract>()
@@ -55,15 +55,7 @@ const ICOContract: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
-			return;
-		}
-	}, [connectedWallets])
+
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -94,14 +86,14 @@ const ICOContract: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connected);
+		console.log(`isDisconnected: ` + !connectedChain);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connected && selectedCrypto != undefined);
-		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -178,7 +170,7 @@ const ICOContract: NextPage = () => {
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
 					</Row>
 					<Row className="mb-3"></Row>
-					{connected ?
+					{connectedChain ?
 					<Row>
 						<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
 					</Row>

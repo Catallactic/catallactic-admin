@@ -7,7 +7,7 @@ import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootst
 
 import { useResponseHook } from 'hooks/useResponseHook';
 import { ContractsContext } from 'hooks/useContractContextHook';
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 
 import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 
@@ -17,8 +17,7 @@ const Environment: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
-	
+	const [{ connectedChain }] = useSetChain()
 	const { createEnvContracts, envContracts } = useContext(ContractsContext);
 
 	const { 
@@ -33,11 +32,9 @@ const Environment: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
+
+		if (!connectedChain) {
+			console.log('No chainId found. Aborting..')
 			return;
 		}
 
@@ -125,7 +122,7 @@ const Environment: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!connected || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -150,9 +147,9 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connected } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connected } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connected } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 					</Row>
 
 					<Row>
@@ -162,16 +159,16 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connected } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connected } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteFactoryPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => saveFactoryPaymentMethod()}>{KEY_ICON()} Save</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_FACTORY_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelFactoryPaymentMethod()}>Cancel</Button></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>

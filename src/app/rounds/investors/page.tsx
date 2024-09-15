@@ -1,6 +1,6 @@
 "use client";
 
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
@@ -16,7 +16,7 @@ const Investors: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
+	const [{ connectedChain }] = useSetChain()
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -50,15 +50,7 @@ const Investors: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
-			return;
-		}
-	}, [connectedWallets])
+
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -75,14 +67,14 @@ const Investors: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connected);
+		console.log(`isDisconnected: ` + !connectedChain);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connected && selectedCrypto != undefined);
-		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -115,7 +107,7 @@ const Investors: NextPage = () => {
 							<tbody>
 								{ICO_INVESTORS_LIST?.map((item, index) => (
 									<tr key={index}>
-										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
+										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={()=>{ setPaymentMethodsSearchAddress(item); }}> </Button></td>
 										<td>{item}</td>
 										<td id={"weiContributedByValue" + (index+1) }></td>
 									</tr>

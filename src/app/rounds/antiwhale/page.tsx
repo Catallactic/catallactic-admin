@@ -11,7 +11,7 @@ import { useResponseHook } from 'hooks/useResponseHook'
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 
 const AntiwhaleFeatures: NextPage = () => {
 
@@ -19,7 +19,7 @@ const AntiwhaleFeatures: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
+	const [{ connectedChain }] = useSetChain()
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -44,11 +44,9 @@ const AntiwhaleFeatures: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
+
+		if (!connectedChain) {
+			console.log('No chainId found. Aborting..')
 			return;
 		}
 
@@ -134,14 +132,14 @@ const AntiwhaleFeatures: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connected);
+		console.log(`isDisconnected: ` + !connectedChain);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connected && selectedCrypto != undefined);
-		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 

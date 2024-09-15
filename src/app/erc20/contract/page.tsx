@@ -12,7 +12,7 @@ import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { ethers } from 'ethers';
 import Link from 'next/link';
-import { useWallets } from '@web3-onboard/react';
+import { useSetChain, useWallets } from '@web3-onboard/react';
 
 declare let window:any
 
@@ -22,7 +22,7 @@ const ERC20Contract: NextPage = () => {
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
+	const [{ connectedChain }] = useSetChain()
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -46,16 +46,7 @@ const ERC20Contract: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
-			return;
-		}
 
-	}, [connectedWallets])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -105,14 +96,14 @@ const ERC20Contract: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connected);
+		console.log(`isDisconnected: ` + !connectedChain);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connected && selectedCrypto != undefined);
-		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -134,15 +125,15 @@ const ERC20Contract: NextPage = () => {
 						<Col><div><Form.Text className="">Token Contract Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} value={TOKEN_ADDRESS || ''}></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connected} onClick={connectTokenContract}>Connect</Button></Col>
+						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connectedChain != undefined} value={TOKEN_ADDRESS || ''}></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connectedChain != undefined} onClick={connectTokenContract}>Connect</Button></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Token Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={TOKEN_OWNER} disabled={connected}></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={connected} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={TOKEN_OWNER} disabled={connectedChain != undefined}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={connectedChain != undefined} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 				</Form.Group>
 

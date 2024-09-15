@@ -4,10 +4,9 @@ import { Button, Container, Dropdown } from 'react-bootstrap'
 import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
 import Link from 'next/link'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
+import { useConnectWallet, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
-import { useConnectWallet } from '@web3-onboard/react'
-import { useWallets } from '@web3-onboard/react'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -18,30 +17,17 @@ export default function Header(props: HeaderProps) {
 	const { toggleSidebar, toggleSidebarMd } = props
 
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
+	const [{ connectedChain }] = useSetChain()
 	const connectedWallets = useWallets()
-	const [connected, setConnected] = useState(false)
 
 	useEffect(() => {
-		console.log("Num connected Wallets: " + connectedWallets.length)
-		setConnected(connectedWallets.length > 0);
-		if (connectedWallets.length == 0) {
-			console.log('disconnected')
-			//window.location.reload();
+		
+		if (!connectedChain) {
+			console.log('No chainId found. Aborting..')
 			return;
 		}
 
-		console.log(connectedWallets)
-		console.log(connectedWallets.at(0))
-		console.log(connectedWallets.at(0)?.chains[0].id)
-
-		if (!connectedWallets.at(0)?.chains[0].id) {
-			console.log('No chainId found. Aborting loadYourCryptocommodities.')
-			return;
-		}
-
-		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
-
-		createEnvContracts(chainId ? chainId : 0);
+		createEnvContracts(Number(connectedChain?.id) ? Number(connectedChain?.id) : 0);
 
 		console.log('loadYourCryptocommodities');
 		loadYourCryptocommodities();
@@ -83,7 +69,7 @@ export default function Header(props: HeaderProps) {
         <div className="header-nav ms-auto">
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
-					{connected ?
+					{connectedChain ?
 						<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
 							<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
