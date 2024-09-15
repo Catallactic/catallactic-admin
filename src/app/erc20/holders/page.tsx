@@ -7,11 +7,10 @@ import { Accordion, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook'
 
-import { useAccount } from 'wagmi'
-
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
+import { useWallets } from '@web3-onboard/react';
 
 declare let window:any
 
@@ -20,8 +19,8 @@ const ERC20Holders: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { isDisconnected } = useAccount()
-
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -45,9 +44,15 @@ const ERC20Holders: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-
-
-
+	useEffect(() => {
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			//window.location.reload();
+			return;
+		}
+	}, [connectedWallets])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -93,14 +98,14 @@ const ERC20Holders: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -122,12 +127,12 @@ const ERC20Holders: NextPage = () => {
 							<Col><div><Form.Text className="">Enter Investor Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col><input id="balanceInvestor" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!isDisconnected}></input></Col>
+							<Col><input id="balanceInvestor" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected}></input></Col>
 						</Row>
 						<Row className="mb-3"></Row>
 						<Row>
 							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE ? Number(INVESTOR_BALANCE) / 10**18 : 0}></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!isDisconnected} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connected} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
 						</Row>
 					</Form.Group>
 
@@ -140,18 +145,18 @@ const ERC20Holders: NextPage = () => {
 							<Col><div><Form.Text className="">Allowance From Investor Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!isDisconnected} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
+							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
 						</Row>
 						<Row>
 							<Col><div><Form.Text className="">Allowance to Investor Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!isDisconnected} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
+							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
 						</Row>
 						<Row className="mb-3"></Row>
 						<Row>
 							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!isDisconnected} onClick={getAllowance}>Allowance</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connected} onClick={getAllowance}>Allowance</Button></Col>
 						</Row>
 					</Form.Group>
 

@@ -9,10 +9,9 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Accordion, Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
-import { useAccount } from 'wagmi'
-
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
+import { useWallets } from '@web3-onboard/react';
 
 declare let window:any
 
@@ -21,12 +20,13 @@ const Accounts: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
+	const [connectedAddress, setConnectedAddress] = useState('')
 
-	const { address, isConnected, isDisconnected } = useAccount()
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const CFG_ERC_20_ABI = require('../../../abi/ERC20Facet.json');
-
-
 
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
@@ -59,28 +59,36 @@ const Accounts: NextPage = () => {
 
 	const { handleICOReceipt, handleError } = useResponseHook()
 
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		if(!isConnected)
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			setConnectedAddress('')
+			//window.location.reload();
 			return;
+		}
+
+		setConnectedAddress(connectedWallets[0].accounts[0].address)
 
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
 		console.log('loadERC20Features');
 		loadICOPaymentMethod();
-	}, [isConnected])
+
+	}, [connectedWallets])
 
 	useEffect(() => {
 		getBalancesRawICOMeWallet();
 		getBalancesUSDICOMeWallet();
 		getBalancesPaymentTokensMeWallet();
 		getBalancesCygasMeWallet();
-	}, [ICO_PAYMENT_METHODS])
+	}, [ICO_PAYMENT_METHODS])	
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -119,7 +127,7 @@ const Accounts: NextPage = () => {
 			window.ethereum.enable()
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
-				from: address,
+				from: connectedAddress,
 				to: contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
 				value: ethers.utils.parseEther(amountToInvest.toString()),
 				gasLimit: 1000000,
@@ -171,11 +179,11 @@ const Accounts: NextPage = () => {
 	const onSelectToRefundCurrency = async (symbol: any)=>{
 		setToRefundCurrency(symbol);
 
-		let contribution = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(address, symbol);
+		let contribution = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(connectedAddress, symbol);
 	  console.log(`contribution: ` + contribution);
 		setToRefundAmount(contribution);
 
-		let contributionUSD = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(address, symbol);
+		let contributionUSD = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(connectedAddress, symbol);
 	  console.log(`contributionUSD: ` + contributionUSD);
 		setToRefundAmountUSD(contributionUSD);
 	}
@@ -219,7 +227,7 @@ const Accounts: NextPage = () => {
 			window.ethereum.enable()
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
-				from: address,
+				from: connectedAddress,
 				to: TO_TRANSFER_ADDRESS,
 				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
 				gasLimit: 200000,
@@ -261,14 +269,14 @@ const Accounts: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -284,7 +292,7 @@ const Accounts: NextPage = () => {
 						<Col><div><Form.Text className="">Connected to Metamask Account</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={address} disabled={true}></input></Col>
+						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={connectedAddress} disabled={true}></input></Col>
 					</Row>
 				</Form.Group>
 
@@ -358,9 +366,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
+									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connected} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 									<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => invest()}>Invest</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => invest()}>Invest</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -395,7 +403,7 @@ const Accounts: NextPage = () => {
 									</Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
+									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -407,7 +415,7 @@ const Accounts: NextPage = () => {
 
 								<Row className="mb-3"></Row>
 								<Row>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => claim()}>Claim</Button></Col>
+									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => claim()}>Claim</Button></Col>
 								</Row>
 							</Form.Group>
 
@@ -459,9 +467,9 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={isDisconnected} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connected} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => transfer()}>Transfer</Button></Col>
+									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => transfer()}>Transfer</Button></Col>
 								</Row>
 							</Form.Group>
 

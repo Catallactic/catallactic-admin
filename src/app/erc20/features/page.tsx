@@ -3,23 +3,21 @@
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import Link from 'next/link';
 
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
-
-import { useAccount } from 'wagmi'
-
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
 import { useResponseHook } from 'hooks/useResponseHook';
-import Link from 'next/link';
+import { useWallets } from '@web3-onboard/react';
 
 const ERC20Features: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { isDisconnected, isConnected } = useAccount()
-
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -52,8 +50,13 @@ const ERC20Features: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		if(!isConnected)
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			//window.location.reload();
 			return;
+		}
 		
 		if(!selectedCrypto)
 			return;
@@ -61,7 +64,7 @@ const ERC20Features: NextPage = () => {
 		console.log('loadERC20Features');
 		loadERC20Features();
 
-	}, [isConnected])
+	}, [connectedWallets])
 
 	useEffect(() => {
 
@@ -95,14 +98,14 @@ const ERC20Features: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 

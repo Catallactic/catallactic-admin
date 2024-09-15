@@ -3,11 +3,10 @@
 import { Contract } from 'ethers';
 import { useContext, useState } from 'react';
 import { ContractsContext } from './useContractContextHook';
-import { useAccount } from 'wagmi';
+import { useWallets } from '@web3-onboard/react';
 
 export function useERC20Hook() {
-
-	const { address } = useAccount()
+	const connectedWallets = useWallets()
 
 	const { contracts } = useContext(ContractsContext);
 
@@ -50,6 +49,7 @@ export function useERC20Hook() {
 
 
 	async function getBalancesCygasMeWallet() {
+		const address = connectedWallets[0].accounts[0].address;
 		const balance: string = await getTokenBalanceOf(address!);
 		setBalancesCygasMeWallet(balance);
 	}

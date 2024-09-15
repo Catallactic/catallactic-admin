@@ -8,19 +8,18 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 
-import { useAccount } from 'wagmi'
-
 import { truncateEthAddress, KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import Link from 'next/link';
+import { useWallets } from '@web3-onboard/react';
 
 const Payments: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { chain, isDisconnected, isConnected } = useAccount()
-
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const [FACTORY_CONTRACT, setFactoryContract] = useState<Contract>()
@@ -55,12 +54,16 @@ const Payments: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-
-		if(!isConnected)
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			//window.location.reload();
 			return;
+		}
 
-		console.log('createEnvContracts3');
-		createEnvContracts(chain?.id ? chain.id : 0);
+		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
+		createEnvContracts(chainId ? chainId : 0);
 
 		console.log('loadFactoryPaymentMethod');
 		loadFactoryPaymentMethod();
@@ -68,7 +71,7 @@ const Payments: NextPage = () => {
 		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
 
-	}, [isConnected])
+	}, [connectedWallets])
 
 	useEffect(() => {
 
@@ -113,7 +116,7 @@ const Payments: NextPage = () => {
 	async function saveICOPaymentMethod() {
 		console.log('FACTORY_PAYMENT_SYMBOL_SYMBOL', X_FACTORY_PAYMENT_SYMBOL_SYMBOL);
 
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
 
@@ -183,14 +186,14 @@ const Payments: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 

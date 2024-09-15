@@ -5,8 +5,6 @@ import { Button, Col, Container, Form, Row, } from 'react-bootstrap'
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useContext, useEffect, useState } from 'react'
 
-import { useAccount } from 'wagmi'
-
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { useResponseHook } from 'hooks/useResponseHook'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -17,15 +15,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useVestingHook } from 'hooks/useVestingHook';
 import Link from 'next/link';
+import { useWallets } from '@web3-onboard/react';
 
 const RoundFeatures: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-
-	const { isDisconnected, isConnected } = useAccount()
-
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -59,9 +57,13 @@ const RoundFeatures: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-
-		if(!isConnected)
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			//window.location.reload();
 			return;
+		}
 
 		if(!selectedCrypto)
 			return;
@@ -72,7 +74,7 @@ const RoundFeatures: NextPage = () => {
 		console.log('loadVestingPrograms');
 		loadVestingPrograms();
 
-	}, [isConnected])
+	}, [connectedWallets])
 
 	useEffect(() => {
 
@@ -170,14 +172,14 @@ const RoundFeatures: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + isDisconnected);
+		console.log(`isDisconnected: ` + !connected);
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(!isDisconnected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(!isDisconnected && selectedCrypto != undefined);
-		setColorCSS(!isDisconnected && selectedCrypto != undefined ? ' bg-yellow' : '');
-	}, [isDisconnected, selectedCrypto, ICO_CURRENT_STAGE])
+		setCanCreate(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(connected && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanType(connected && selectedCrypto != undefined);
+		setColorCSS(connected && selectedCrypto != undefined ? ' bg-yellow' : '');
+	}, [connected, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
 
@@ -200,21 +202,21 @@ const RoundFeatures: NextPage = () => {
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_PRICE != 0 ? X_ICO_PRICE : ''} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_SOFT_CAP != 0 ? X_ICO_SOFT_CAP : ''} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_HARD_CAP != 0 ? X_ICO_HARD_CAP : ''} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setICOHardCapOnSC()}> {KEY_ICON()} HardCap</Button></Col> : '' }
 					</Row>
 				</Form.Group>
 
@@ -228,28 +230,28 @@ const RoundFeatures: NextPage = () => {
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MIN_TRANSFER != 0 ? X_ICO_MIN_TRANSFER / 10**6 : ''}  onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE} ></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Maximum Transfer (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MAX_TRANSFER != 0 ? X_ICO_MAX_TRANSFER / 10**6 : ''} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE}></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Maximum Investment (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MAX_INVESTMENT != 0 ? X_ICO_MAX_INVESTMENT / 10**6 : ''} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE}></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={isDisconnected} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connected} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_WHITELIST_THRESHOLD != 0 ? X_ICO_WHITELIST_THRESHOLD : ''} disabled={!CAN_TYPE} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={isDisconnected} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setWhitelistThresholdOnSC()} disabled={!connected} > {KEY_ICON()} Whitelist Threshold</Button></Col> : '' }
 					</Row>
 				</Form.Group>
 
@@ -263,7 +265,7 @@ const RoundFeatures: NextPage = () => {
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_SCHEDULE_PERCENTAGE != 0 ? X_VESTING_SCHEDULE_PERCENTAGE : ''} disabled={!CAN_TYPE} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
-						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={isDisconnected} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
+						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={!connected} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="color-frame">Vesting Program</Form.Text></div></Col>

@@ -4,8 +4,6 @@ import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, ListGroup, Row } from 'react-bootstrap';
 
-import { useAccount } from 'wagmi'
-
 import { KEY_ICON, getSelectors, removeSelectors, FacetCutAction} from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
@@ -13,14 +11,15 @@ import { useDiamonsLoupeHook } from 'hooks/useDiamonsLoupeHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
+import { useWallets } from '@web3-onboard/react';
 
 const Cryptomcommodities: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
-	const { chain, isDisconnected, isConnected} = useAccount()
-
+	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -38,11 +37,17 @@ const Cryptomcommodities: NextPage = () => {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
-		if(!isConnected)
+		console.log("Num connected Wallets: " + connectedWallets.length)
+		setConnected(connectedWallets.length > 0);
+		if (connectedWallets.length == 0) {
+			console.log('disconnected')
+			//window.location.reload();
 			return;
+		}
 
+		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
 		console.log('createEnvContracts');
-		createEnvContracts(chain?.id ? chain.id : 0);
+		createEnvContracts(chainId ? chainId : 0);
 
 		if(selectedCrypto) {
 			selectCrypto(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME);
@@ -50,7 +55,7 @@ const Cryptomcommodities: NextPage = () => {
 			loadCryptocommodityFacets();
 		}
 
-	}, [isConnected])
+	}, [connectedWallets])
 
 	useEffect(() => {
 		console.log('loading Your Cryptocommodities');
@@ -178,8 +183,8 @@ const Cryptomcommodities: NextPage = () => {
 				</Row>
 
 				<Row>
-					<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ isDisconnected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
-					{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ isDisconnected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
+					<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
+					{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connected || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
 				</Row>
 
 				<Row className="mb-3"></Row>
@@ -226,14 +231,14 @@ const Cryptomcommodities: NextPage = () => {
 				</Row>
 				<Row>
 					{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
-					{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
+					{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
 				</Row>
 
 				<Row className="mb-3"></Row>
 				<Row>
-					{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ isDisconnected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
+					{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connected || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
 				</Row>
 
 				</Form.Group>
