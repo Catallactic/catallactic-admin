@@ -22,7 +22,6 @@
     "@web3-onboard/core": "^2.22.3",
     "@web3-onboard/injected-wallets": "^2.11.2",
     "@web3-onboard/react": "^2.9.3",
-    "@web3modal/wagmi": "^5.1.8",
     "axios": "^1.6.0",
     "bootstrap": "^5.3.2",
     "ethers": "^5.7.2",
