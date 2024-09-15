@@ -1,16 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import Link from 'next/link'
 import { Button, Container, Dropdown } from 'react-bootstrap'
 import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
+import Link from 'next/link'
 
-import { truncateEthAddress } from '../../../config/config'
-
-import { useAccount, useAccountEffect, useConnect, useDisconnect } from 'wagmi'
 import { useContext, useEffect } from 'react'
 import { ContractsContext } from 'hooks/useContractContextHook'
-
 import { useConnectWallet } from '@web3-onboard/react'
+import { useWallets } from '@web3-onboard/react'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -18,30 +15,37 @@ type HeaderProps = {
 }
 
 export default function Header(props: HeaderProps) {
-  const { toggleSidebar, toggleSidebarMd } = props
+	const { toggleSidebar, toggleSidebarMd } = props
 
-	const { connectors, status, error } = useConnect();
-	const { chain, address, isConnected, isDisconnected, isConnecting } = useAccount()
-	useAccountEffect({ 
-		onConnect(data) {
-			console.log('connected', data)
+	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
+	const connectedWallets = useWallets()
 
-			if (!chain?.id) {
-				console.log('No chainId found. Aborting loadYourCryptocommodities.')
-				return;
-			}
-	
-			createEnvContracts(chain?.id ? chain.id : 0);
-	
-			console.log('loadYourCryptocommodities');
-			loadYourCryptocommodities();
-		},
-		onDisconnect() {
+	useEffect(() => {
+		console.log("Num connected Wallets: " + connectedWallets.length)
+
+		if (connectedWallets.length == 0) {
 			console.log('disconnected')
+			//window.location.reload();
+			return;
+		}
 
-			window.location.reload();
-		},
-	})
+		console.log(connectedWallets)
+		console.log(connectedWallets.at(0))
+		console.log(connectedWallets.at(0)?.chains[0].id)
+
+		if (!connectedWallets.at(0)?.chains[0].id) {
+			console.log('No chainId found. Aborting loadYourCryptocommodities.')
+			return;
+		}
+
+		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
+
+		createEnvContracts(chainId ? chainId : 0);
+
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
+
+	}, [connectedWallets])
 
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
@@ -50,7 +54,6 @@ export default function Header(props: HeaderProps) {
 		await selectCrypto(cryptocommodityName);
 	}
 
-	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
   return (
 

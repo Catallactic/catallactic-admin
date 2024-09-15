@@ -3,14 +3,13 @@
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { hardhat, mainnet, polygonMumbai, sepolia } from 'viem/chains'
-import { coinbaseWallet, injected, walletConnect, metaMask } from 'wagmi/connectors';
 
 import { AdminLayout } from 'layout'
 import { SimpleLayout } from 'layout/SimpleLayout';
 
 import { merlinTestnet } from 'config/networks/merlin_testnet';
 import { citreaDevnet } from 'config/networks/citrea_devnet';
+import { hardhat } from 'config/networks/hardhat';
 
 import { ContractsContext, useContractContextHook } from 'hooks/useContractContextHook'
 
@@ -20,7 +19,7 @@ import '../styles/_app.css';
 import { WagmiProvider, createConfig, http } from 'wagmi';
 
 import injectedModule from '@web3-onboard/injected-wallets'
-import { useConnectWallet, init, Web3OnboardProvider } from '@web3-onboard/react'
+import { init, Web3OnboardProvider } from '@web3-onboard/react'
 
 /*declare let window:any
 window.ethereum.on('accountsChanged', (accounts: any) => {
@@ -36,13 +35,34 @@ window.ethereum.on('chainChanged', (chainId: any) => {
 	window.location.reload();
 });*/
 
+const supportedChains = [
+	{
+		id: 62298,
+		token: 'cBTC',
+		label: 'Citrea Devnet',
+		rpcUrl: 'https://rpc.devnet.citrea.xyz'
+	},
+	{
+		id: 686868,
+		token: 'BTC',
+		label: 'Merlin Testnet',
+		rpcUrl: 'https://testnet-rpc.merlinchain.io'
+	},
+	{
+		id: 31_337,
+		token: 'ETH',
+		label: 'Hardhat',
+		rpcUrl: 'http://127.0.0.1:8545'
+	},
+];
 
 const queryClient = new QueryClient()
 const wagmiConfig = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [citreaDevnet, merlinTestnet, hardhat],
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [citreaDevnet.id]: http(),
+    [merlinTestnet.id]: http(),
+    [hardhat.id]: http(),
   },
 })
 ;
@@ -50,32 +70,12 @@ const wallets = injectedModule()
 const web3Onboard = init({
 	// This javascript object is unordered meaning props do not require a certain order
 	wallets: [wallets],
-	chains: [
-		{
-			id: 42161,
-			token: 'ARB-ETH',
-			label: 'Arbitrum One',
-			rpcUrl: 'https://rpc.ankr.com/arbitrum'
-		},
-		{
-			id: '0xa4ba',
-			token: 'ARB',
-			label: 'Arbitrum Nova',
-			rpcUrl: 'https://nova.arbitrum.io/rpc'
-		},
-		{
-			id: '0x2105',
-			token: 'ETH',
-			label: 'Base',
-			rpcUrl: 'https://mainnet.base.org'
-		},
-	],
+	chains: supportedChains,
 	appMetadata: {
 		name: 'Token Swap',
 		description: 'Swap tokens for other tokens',
 		recommendedInjectedWallets: [
-			{ name: 'MetaMask', url: 'https://metamask.io' },
-			{ name: 'Coinbase', url: 'https://wallet.coinbase.com/' }
+			{ name: 'MetaMask', url: 'https://metamask.io' }
 		]
 	},
 	accountCenter: {
@@ -90,6 +90,12 @@ const web3Onboard = init({
 			minimal: true
 		}
 	},
+})
+
+const wallets2 = web3Onboard.state.select('wallets')
+wallets2.subscribe(wallet => {
+	console.log("Changed wallet" + wallet)
+	console.log(wallet)
 })
 
 function RootLayout({
