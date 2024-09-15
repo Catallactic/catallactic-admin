@@ -4,7 +4,7 @@ import { Button, Container, Dropdown } from 'react-bootstrap'
 import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
 import Link from 'next/link'
 
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useConnectWallet } from '@web3-onboard/react'
 import { useWallets } from '@web3-onboard/react'
@@ -19,10 +19,11 @@ export default function Header(props: HeaderProps) {
 
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 	const connectedWallets = useWallets()
+	const [connected, setConnected] = useState(false)
 
 	useEffect(() => {
 		console.log("Num connected Wallets: " + connectedWallets.length)
-
+		setConnected(connectedWallets.length > 0);
 		if (connectedWallets.length == 0) {
 			console.log('disconnected')
 			//window.location.reload();
@@ -82,22 +83,23 @@ export default function Header(props: HeaderProps) {
         <div className="header-nav ms-auto">
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
+					{connected ?
+						<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+							<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
+							</Dropdown.Toggle>
 
-					<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
-						<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-							{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
-						</Dropdown.Toggle>
-
-						<Dropdown.Menu className="w-100">
-							{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-								return (
-									<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-										{item}
-									</Dropdown.Item>
-								);
-							})}
-						</Dropdown.Menu>
-					</Dropdown>
+							<Dropdown.Menu className="w-100">
+								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+									return (
+										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+											{item}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						</Dropdown>
+					: '' }
 
 					<button type="button" className="btn btn-primary m-2" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Disconnect' : 'Connect'}
