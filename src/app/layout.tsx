@@ -92,24 +92,17 @@ const web3Onboard = init({
 	},
 	accountCenter: {
 		desktop: {
-			position: 'topRight',
+			position: 'bottomRight',
 			enabled: true,
-			minimal: false
+			minimal: true
 		},
 		mobile: {
-			position: 'topRight',
+			position: 'bottomRight',
 			enabled: true,
 			minimal: true
 		}
 	},
-  /*{containerElements: {
-    accountCenter: '#onboard-container'
-  }}*/
 })
-
-
-
-
 
 function RootLayout({
   children,
