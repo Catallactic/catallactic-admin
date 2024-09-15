@@ -12,6 +12,8 @@ import { useAccount, useAccountEffect, useConnect, useDisconnect } from 'wagmi'
 import { useContext, useEffect } from 'react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 
+import { useConnectWallet } from '@web3-onboard/react'
+
 type HeaderProps = {
   toggleSidebar: () => void;
   toggleSidebarMd: () => void;
@@ -21,8 +23,7 @@ export default function Header(props: HeaderProps) {
   const { toggleSidebar, toggleSidebarMd } = props
 
 	const { open } = useWeb3Modal()
-	const { connectors, connect, status, error } = useConnect();
-	const { disconnect } = useDisconnect();
+	const { connectors, status, error } = useConnect();
 	const { chain, address, isConnected, isDisconnected, isConnecting } = useAccount()
 	useAccountEffect({ 
 		onConnect(data) {
@@ -51,6 +52,11 @@ export default function Header(props: HeaderProps) {
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 		await selectCrypto(cryptocommodityName);
 	}
+
+
+
+
+	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
   return (
 
@@ -81,6 +87,11 @@ export default function Header(props: HeaderProps) {
 					{/* https://github.com/wevm/wagmi/issues/4256 */}
 					{/* https://stackblitz.com/edit/new-wagmi-qem9ah?file=src%2FApp.tsx */}
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
+
+
+					<>
+
+{/*
 					{isDisconnected && connectors.filter(connector => connector.id === 'injected').map((connector) => (
           	<button
 							key={connector.uid}
@@ -97,30 +108,35 @@ export default function Header(props: HeaderProps) {
 							<button type="button" className="btn btn-primary m-2" onClick={() => disconnect()}>Connecting</button>
 						</>
 					: '' }
+*/}
 
-					{isConnected ?
-						<>
-							<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
-								<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
-								</Dropdown.Toggle>
 
-								<Dropdown.Menu className="w-100">
-									{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-												{item}
-											</Dropdown.Item>
-										);
-									})}
-								</Dropdown.Menu>
-							</Dropdown>
 
-							<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Account' })}>{ !address ? 'Connect User' : truncateEthAddress(address) }</button>
-							<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{ !chain ? 'Connect Chain' : chain?.name}</button>
-							<button type="button" className="btn btn-primary m-2" onClick={() => disconnect()}>Disconnect</button>
-						</>
-					: '' }
+						<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+							<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu className="w-100">
+								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+									return (
+										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+											{item}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						</Dropdown>
+{/*}
+						<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Account' })}>{ !address ? 'Connect User' : truncateEthAddress(address) }</button>
+						<button type="button" className="btn btn-primary m-2" onClick={() => open({ view: 'Networks' })}>{ !chain ? 'Connect Chain' : chain?.name}</button>
+						<button type="button" className="btn btn-primary m-2" >Disconnect</button>
+*/}
+					</>
+
+					<button type="button" className="btn btn-primary m-2" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+						{connecting ? 'Connecting' : wallet ? 'Disconnect' : 'Connect'}
+					</button>
 
 				</div>
 

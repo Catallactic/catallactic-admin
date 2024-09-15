@@ -21,6 +21,9 @@ import '../styles/globals.scss'
 import '../styles/_app.css';
 import { WagmiProvider } from 'wagmi';
 
+import injectedModule from '@web3-onboard/injected-wallets'
+import { useConnectWallet, init, Web3OnboardProvider } from '@web3-onboard/react'
+
 /*declare let window:any
 window.ethereum.on('accountsChanged', (accounts: any) => {
 	window.location.reload();
@@ -52,6 +55,62 @@ const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 // 3. Create modal
 createWeb3Modal({ wagmiConfig, projectId })
 
+
+
+
+const wallets = injectedModule()
+const web3Onboard = init({
+	// This javascript object is unordered meaning props do not require a certain order
+	wallets: [wallets],
+	chains: [
+		{
+			id: 42161,
+			token: 'ARB-ETH',
+			label: 'Arbitrum One',
+			rpcUrl: 'https://rpc.ankr.com/arbitrum'
+		},
+		{
+			id: '0xa4ba',
+			token: 'ARB',
+			label: 'Arbitrum Nova',
+			rpcUrl: 'https://nova.arbitrum.io/rpc'
+		},
+		{
+			id: '0x2105',
+			token: 'ETH',
+			label: 'Base',
+			rpcUrl: 'https://mainnet.base.org'
+		},
+	],
+	appMetadata: {
+		name: 'Token Swap',
+		description: 'Swap tokens for other tokens',
+		recommendedInjectedWallets: [
+			{ name: 'MetaMask', url: 'https://metamask.io' },
+			{ name: 'Coinbase', url: 'https://wallet.coinbase.com/' }
+		]
+	},
+	accountCenter: {
+		desktop: {
+			position: 'topRight',
+			enabled: true,
+			minimal: false
+		},
+		mobile: {
+			position: 'topRight',
+			enabled: true,
+			minimal: true
+		}
+	},
+  /*{containerElements: {
+    accountCenter: '#onboard-container'
+  }}*/
+})
+
+
+
+
+
 function RootLayout({
   children,
 }: {
@@ -61,21 +120,25 @@ function RootLayout({
 	const contractsContextDefaultValue = useContractContextHook();
 
   return (
-		<ErrorBoundary fallback={<div>Something went wrong</div>}>
-			<WagmiProvider config={wagmiConfig}>
-				<QueryClientProvider client={queryClient}>
-					<ContractsContext.Provider value={contractsContextDefaultValue} >
-						<html lang="en">
-							<body>
-								<AdminLayout>
-									{children}
-								</AdminLayout>
-							</body>
-						</html>
-					</ContractsContext.Provider>
-				</QueryClientProvider>
-			</WagmiProvider>
-		</ErrorBoundary>
+		<Web3OnboardProvider web3Onboard={web3Onboard}>
+			<ErrorBoundary fallback={<div>Something went wrong</div>}>
+				<WagmiProvider config={wagmiConfig}>
+					<QueryClientProvider client={queryClient}>
+						<ContractsContext.Provider value={contractsContextDefaultValue} >
+
+								<html lang="en">
+									<body>
+										<AdminLayout>
+											{children}
+										</AdminLayout>
+									</body>
+								</html>
+
+						</ContractsContext.Provider>
+					</QueryClientProvider>
+				</WagmiProvider>
+			</ErrorBoundary>
+		</Web3OnboardProvider>
   )
 }
 
