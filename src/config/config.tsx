@@ -59,6 +59,27 @@ export const getMETAMASK_CHAINS = function() {
 	return METAMASK_CHAINS;
 }
 
+export const supportedChains = [
+	{
+		id: 62_298,
+		token: 'cBTC',
+		label: 'Citrea Devnet',
+		rpcUrl: 'https://rpc.devnet.citrea.xyz'
+	},
+	{
+		id: 686_868,
+		token: 'BTC',
+		label: 'Merlin Testnet',
+		rpcUrl: 'https://testnet-rpc.merlinchain.io'
+	},
+	{
+		id: 31_337,
+		token: 'ETH',
+		label: 'Hardhat',
+		rpcUrl: 'http://127.0.0.1:8545'
+	},
+];
+
 export const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
 export const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../abi/Diamond.json');
 export const CFG_DIAMOND_CUT_ABI = require('../abi/DiamondCutFacet.json');
@@ -67,3 +88,4 @@ export const CFG_COMMON_ABI = require('../abi/CommonFacet.json');
 export const CFG_CROWDSALE_ABI = require('../abi/CrowdsaleFacet.json');
 export const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
 export const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
+

@@ -105,32 +105,6 @@ const Login: NextPage = () => {
 				</Row>
 				}
 
-				{/* 
-				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">List of Cryptocommodities</Form.Text></div></Col>
-				</Row>
-
-				<Row>
-					<Col>
-						<Dropdown onSelect={onSelectCryptocommodity}>
-							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME }
-							</Dropdown.Toggle>
-
-							<Dropdown.Menu className="w-100">
-								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-									return (
-										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-											{item}
-										</Dropdown.Item>
-									);
-								})}
-							</Dropdown.Menu>
-						</Dropdown>
-					</Col>
-				</Row>
-				*/}
-
 				<Row className="mt-4 mb-2">
 					<Col xs={4}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
 					<Col xs={4}><div><Form.Text className="color-frame catatext" dir="rtl">Address</Form.Text></div></Col>
