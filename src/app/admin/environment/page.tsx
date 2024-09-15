@@ -125,7 +125,7 @@ const Environment: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!connected || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
