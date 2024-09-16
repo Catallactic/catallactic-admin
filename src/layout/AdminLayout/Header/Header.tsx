@@ -69,7 +69,7 @@ export default function Header(props: HeaderProps) {
         <div className="header-nav ms-auto">
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
-					{connectedChain ?
+					{wallet ?
 						<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
 							<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
@@ -87,8 +87,8 @@ export default function Header(props: HeaderProps) {
 						</Dropdown>
 					: '' }
 
-					<button type="button" className="btn btn-primary m-2" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
-						{connecting ? 'Connecting' : wallet ? 'Disconnect' : 'Connect'}
+					<button type="button" style={ connecting ? { backgroundColor:'#FFA500' } : wallet ? { backgroundColor:'#008000' } : { backgroundColor:'#dc3545' }} className="btn m-2 text-white text-uppercase fw-bolder" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
 					</button>
 
 				</div>
