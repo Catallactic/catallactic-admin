@@ -5,6 +5,7 @@ import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ContractsContext } from './useContractContextHook';
 import { ethers } from 'ethers';
+import { LOG_METHODS } from 'config/config';
 
 declare let window:any
 
@@ -18,9 +19,11 @@ export function useVestingHook() {
 	const [METAMASK_CHAIN_TIME_IN_MS, setChainTimeInMs] = useState<number>(0);
 
 	async function loadBlockchainDatetime() {
+		console.log('%c loadBlockchainDatetime', LOG_METHODS);
+
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const blockTimestamp = (await provider.getBlock("latest")).timestamp;
-		console.log('blockTimestamp: ', blockTimestamp);
+		console.log('%c blockTimestamp', LOG_METHODS, blockTimestamp);
 		setChainTimeInMs(blockTimestamp * 1000) ;
 	}
 
@@ -29,13 +32,15 @@ export function useVestingHook() {
 	// **********************************************************************************************************
 	const [VESTING_IDS, setVestingIds] = useState([]);
 	async function loadVestingPrograms() {
+		console.log('%c loadVestingPrograms', LOG_METHODS);
+
 		// vesting
 		let vestingIds = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingIds();
-		console.log(`vestingIds: ` + vestingIds);
+		console.log('%c vestingIds', LOG_METHODS, vestingIds);
 		setVestingIds(vestingIds);
 
 		let tokenAddressInVestingContract = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
-		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
+		console.log('%c tokenAddressInVestingContract', LOG_METHODS, tokenAddressInVestingContract);
 		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
 	}
 
@@ -49,16 +54,16 @@ export function useVestingHook() {
 	const [VESTING_NUM_SLIDES, setVestingNumSlides] = useState<number>(0);
 
 	const onSelectVestingId = async (vestingId: any)=>{
-		console.log('onSelectVestingId', vestingId);
+		console.log('%c onSelectVestingId', LOG_METHODS, vestingId);
 
 		let vesting = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVesting(vestingId);
-		console.log('vesting', vesting);
-		console.log('vesting[0])', vesting[0]);
+		console.log('%c vesting', LOG_METHODS, vesting);
+
 		let vestingStartInMillis = parseInt(vesting[0]) * 1000;
-		console.log('vestingStartInMillis: ', vestingStartInMillis);
+		console.log('%c vestingStartInMillis', LOG_METHODS, vestingStartInMillis);
 		var dateFormat = new Date(vestingStartInMillis);
-		console.log('dateFormat: ', dateFormat);
-		console.log(dateFormat.toISOString().slice(0, 16));
+		console.log('%c dateFormat', LOG_METHODS, dateFormat);
+		console.log('%c dateFormat', LOG_METHODS, dateFormat.toISOString().slice(0, 16));
 
 		setVestingId(vestingId);
 		setVestingStartMillis(dateFormat.toISOString().slice(0, 16));
@@ -77,10 +82,10 @@ export function useVestingHook() {
 	const [VESTING_SCHEDULE_RELEASED_AMOUNT, setVestingScheduleReleasedAmount] = useState<number>(0);
 
 	const onSelectVestingSchedule = async (vestingScheduleId: any)=>{
-		console.log('onSelectVestingSchedule', vestingScheduleId);
+		console.log('%c onSelectVestingSchedule', LOG_METHODS, vestingScheduleId);
 
 		let vestingSchedule = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedule(vestingScheduleId);
-		console.log('vestingSchedule', vestingSchedule);
+		console.log('%c vestingSchedule', LOG_METHODS, vestingSchedule);
 
 		setVestingScheduleId(vestingScheduleId);
 		setVestingScheduleHolder(vestingSchedule[0]);
@@ -95,8 +100,10 @@ export function useVestingHook() {
 	const [VESTING_SCHEDULE_LIST, setVestingScheduleList] = useState<[]>()
 
 	async function loadVestingScheduleList() {
+		console.log('%c loadVestingScheduleList', LOG_METHODS);
+
 		let vestingScheduleList = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getVestingSchedulesIds();
-		console.log(`VESTING_SCHEDULE_LIST: ` + vestingScheduleList);
+		console.log('%c vestingScheduleList', LOG_METHODS, vestingScheduleList);
 		setVestingScheduleList(vestingScheduleList);
 	}
 
@@ -106,8 +113,10 @@ export function useVestingHook() {
 	const [VESTING_SCHEDULE_TOKEN_ADDRESS, setVestingScheduleTokenAddress] = useState<string>()
 
 	async function loadVestingScheduleTokenAddress() {
+		console.log('%c loadVestingScheduleTokenAddress', LOG_METHODS);
+
 		let tokenAddressInVestingContract = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.getTokenAddress();
-		console.log(`tokenAddressInVestingContract: ` + tokenAddressInVestingContract);
+		console.log('%c tokenAddressInVestingContract', LOG_METHODS, tokenAddressInVestingContract);
 		setVestingScheduleTokenAddress(tokenAddressInVestingContract);
 	}
 
@@ -115,9 +124,10 @@ export function useVestingHook() {
 	// ********************************************** computeVesting ********************************************
 	// **********************************************************************************************************
 	async function computeVesting() {
-		console.log('computeVesting', VESTING_SCHEDULE_ID);
+		console.log('%c computeVesting', LOG_METHODS);
+
 		let releseableAmount = await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.computeReleasableAmount(VESTING_SCHEDULE_ID);
-		console.log('releseableAmount', releseableAmount);
+		console.log('%c releseableAmount', LOG_METHODS, releseableAmount);
 		setVestingScheduleReleasedAmount(releseableAmount);
 	}
 
@@ -125,7 +135,7 @@ export function useVestingHook() {
 	// ********************************************** releaseVesting ********************************************
 	// **********************************************************************************************************
 	async function releaseVesting() {
-		console.log('releaseVesting', VESTING_SCHEDULE_ID);
+		console.log('%c releaseVesting', LOG_METHODS, VESTING_SCHEDULE_ID);
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.release(VESTING_SCHEDULE_ID);
 	}
 
@@ -133,15 +143,14 @@ export function useVestingHook() {
 	// ************************************** TX Processing ******************************************
 	// ***********************************************************************************************
 	async function handleICOReceipt(tx:any) {
-		console.log('handle tx');
-		console.log(tx);
+		console.log('%c handleICOReceipt', LOG_METHODS, tx);
+		console.log('%c Transaction hash', LOG_METHODS, tx.hash);
 
 		// process transaction
-		console.log(`Transaction hash: ${tx.hash}`);
 		const receipt = await tx.wait();
-		console.log(receipt);
-	  console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-		console.log(`Gas used: ${receipt.gasUsed.toString()}`);
+		console.log('%c Transaction receipt', LOG_METHODS, receipt);
+		console.log('%c Transaction confirmed in block', LOG_METHODS, receipt.blockNumber);
+		console.log('%c Gas used', LOG_METHODS, receipt.gasUsed.toString());
 
 		//parseError(err.message,);
 		let msg = 'GasUsed: ' + receipt.gasUsed;
@@ -158,10 +167,7 @@ export function useVestingHook() {
 
 	}
 	function handleError(err:any) {
-		console.log('Ohhhh nooo');
-		console.log(err);
-		console.log(err.code);
-		console.log('err.message: ' + err.message);
+		console.error('Ohhhh nooo', err, err.code, err.message);
 
 		//parseError(err.message,);
 		toast.error(parseError(err.message), {

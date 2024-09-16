@@ -2,7 +2,7 @@
 
 import { useContext, useState } from 'react';
 import { ContractsContext } from './useContractContextHook';
-import { MapType } from 'config/config';
+import { LOG_METHODS, MapType } from 'config/config';
 import { ethers } from 'ethers';
 
 import { getMETAMASK_CHAINS, CFG_FACTORY_ABI,CFG_SELECTED_CRYPTOCOMMODITIY_ABI, CFG_DIAMOND_CUT_ABI, CFG_DIAMOND_LOUPE_ABI, CFG_COMMON_ABI, CFG_CROWDSALE_ABI, CFG_VESTING_ABI, CFG_ERC_20_ABI } from '../config/config'
@@ -18,22 +18,19 @@ export function useFactoryHook() {
 	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
 
 	async function loadFacets() {
+		console.log('%c LoadFacets', LOG_METHODS);
+
 		// get read only - payment methods
 		let facetTypes = await envContracts.FACTORY_CONTRACT?.getFacetTypes();
+		console.log("%c FacetTypes: ", LOG_METHODS, facetTypes);
 		setFactoryFacetTypes(facetTypes);
-		console.log("facetTypes: " + facetTypes);
-		console.log(facetTypes);
 
 		const map: MapType = {};
 		for (var i = 0; i < facetTypes.length; i++) {
-			console.log("facetType: " + facetTypes[i]);
 			let facetType = await envContracts.FACTORY_CONTRACT?.getFacetVersions(facetTypes[i]);
-			console.log("facetType: " + facetType);
-			console.log(facetType);
 			map[facetTypes[i]] = facetType[0];
 		}
-		console.log(map);
-		console.log("facetTypes: " + map);
+		console.log("%c FactoryFacets: ", LOG_METHODS, map);
 		setFactoryFacets(map);
 	}
 
@@ -44,23 +41,19 @@ export function useFactoryHook() {
 	const [FACTORY_PAYMENT_METHODS, setFactoryPaymentMethods] = useState<MapType>({})
 
 	async function loadFactoryPaymentMethod() {
+		console.log('%c loadFactoryPaymentMethod', LOG_METHODS);
+
 		// get read only - payment methods
 		let paymentSymbols = await envContracts.FACTORY_CONTRACT?.getPaymentSymbols();
+		console.log("%c PaymentSymbols: ", LOG_METHODS, paymentSymbols);
 		setFactoryPaymentSymbols(paymentSymbols);
-		console.log("paymentSymbols: " + paymentSymbols);
-		console.log(paymentSymbols);
 
 		const map: MapType = {};
 		for (var i = 0; i < paymentSymbols.length; i++) {
-			console.log("paymentSymbol: " + paymentSymbols[i]);
 			let method = await envContracts.FACTORY_CONTRACT?.getPaymentToken(paymentSymbols[i]);
-			console.log("getPaymentTokenData: " + method);
-			console.log(method);
 			map[paymentSymbols[i]] = method;
 		}
-		console.log(map);
-		console.log("FACTORY_PAYMENT_METHODS: " + map);
-		//console.log("FACTORY_PAYMENT_METHODS44: " + map['USDT'][4]);
+		console.log("%c FactoryPaymentMethods: ", LOG_METHODS, map);
 		setFactoryPaymentMethods(map);
 	}
 
@@ -75,10 +68,10 @@ export function useFactoryHook() {
 	const [FACTORY_PAYMENT_SYMBOL_DYN_PRICE, setFactoryPaymentSymbolDynPrice] = useState<any | undefined>()
 
 	const onFactorySelectPaymentMethod = async (symbol: any)=>{
-		console.log('selectPaymentMethod', symbol);
+		console.log('%c onFactorySelectPaymentMethod', LOG_METHODS, symbol);
 
 		let paymentMethod = await await envContracts.FACTORY_CONTRACT?.getPaymentToken(symbol);
-		console.log('paymentMethod', paymentMethod);
+		console.log('%c paymentMethod', LOG_METHODS, paymentMethod);
 		setFactoryPaymentSymbolSymbol(symbol);
 		setFactoryPaymentSymbolAddress(paymentMethod[0]);
 		setFactoryPaymentSymbolRef(paymentMethod[1]);
@@ -103,7 +96,7 @@ export function useFactoryHook() {
 	const [INTERFACE_MODAL, setInterfaceModal] = useState<ethers.utils.Interface>();
 
 	async function handleShowFunctions(facet: string) {
-		console.log(facet);
+		console.log('%c handleShowFunctions', LOG_METHODS, facet);
 
 		let facetInterface: ethers.utils.Interface = new ethers.utils.Interface(CFG_SELECTED_CRYPTOCOMMODITIY_ABI);
 		if(facet == 'DiamondCutFacet') facetInterface = new ethers.utils.Interface(CFG_DIAMOND_CUT_ABI)!;
@@ -112,8 +105,7 @@ export function useFactoryHook() {
 		else if(facet == 'CrowdsaleFacet') facetInterface = new ethers.utils.Interface(CFG_CROWDSALE_ABI)!;
 		else if(facet == 'VestingFacet') facetInterface = new ethers.utils.Interface(CFG_VESTING_ABI)!;
 		else if(facet == 'ERC20Facet') facetInterface = new ethers.utils.Interface(CFG_ERC_20_ABI)!;
-		console.log(facetInterface);
-		console.log(facetInterface.functions);
+		console.log('%c facetInterface', LOG_METHODS, facetInterface);
 
 		setInterfaceModal(facetInterface);
 

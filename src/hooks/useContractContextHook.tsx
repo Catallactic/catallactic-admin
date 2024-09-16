@@ -3,7 +3,7 @@
 import { Contract, ethers } from "ethers";
 import { createContext, useState } from "react";
 
-import { getMETAMASK_CHAINS, CFG_FACTORY_ABI,CFG_SELECTED_CRYPTOCOMMODITIY_ABI, CFG_DIAMOND_CUT_ABI, CFG_DIAMOND_LOUPE_ABI, CFG_COMMON_ABI, CFG_CROWDSALE_ABI, CFG_VESTING_ABI, CFG_ERC_20_ABI } from '../config/config'
+import { getMETAMASK_CHAINS, CFG_FACTORY_ABI,CFG_SELECTED_CRYPTOCOMMODITIY_ABI, CFG_DIAMOND_CUT_ABI, CFG_DIAMOND_LOUPE_ABI, CFG_COMMON_ABI, CFG_CROWDSALE_ABI, CFG_VESTING_ABI, CFG_ERC_20_ABI, LOG_METHODS } from '../config/config'
 
 declare let window:any
 
@@ -18,14 +18,14 @@ export function useContractContextHook() {
 	// ******************************************* createEnvContracts *******************************************
 	// **********************************************************************************************************
   const createEnvContracts = async (chainId: number) => {
+		console.log('%c createEnvContracts', LOG_METHODS, chainId);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		window.ethereum.enable()
 		const signer = provider.getSigner()
 		const factory_address: string = getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == chainId; })?.factory_address || '';
-		console.log("factory_address: " + factory_address);
-
 		envContracts.FACTORY_CONTRACT = new ethers.Contract(factory_address, CFG_FACTORY_ABI, signer);
+		console.log('%c EnvContract', LOG_METHODS, envContracts);
 		setEnvContract(envContracts);
 	}
 
@@ -35,10 +35,10 @@ export function useContractContextHook() {
 	const [CRYPTOCOMMODITIES, setCryptocommodities] = useState([]);
 
 	async function loadYourCryptocommodities() {
-		console.log("fetching cryptocommodities for user2");
-		console.log("envContracts.FACTORY_CONTRACT", envContracts.FACTORY_CONTRACT);
+		console.log('%c loadYourCryptocommodities', LOG_METHODS);
+
 		let cryptocommodities = await envContracts.FACTORY_CONTRACT?.getCryptocommodities();
-		console.log("cryptocommodities: " + cryptocommodities);
+		console.log('%c cryptocommodities', LOG_METHODS, cryptocommodities);
 		setCryptocommodities(cryptocommodities);
 	}
 
@@ -46,17 +46,16 @@ export function useContractContextHook() {
 	// ******************************************* selectCrypto *************************************************
 	// **********************************************************************************************************
   const selectCrypto = async (cryptocommodityName: string) => {
-
-		console.log("updateContracts: " + cryptocommodityName);
+		console.log('%c selectCrypto', LOG_METHODS, cryptocommodityName);
 
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		window.ethereum.enable()
 		const signer = provider.getSigner()
-
 		let cryptocommodityAddress = await envContracts.FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
 		let selectedCryptoObject = {} as Cryptocommodity;
 		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_NAME = cryptocommodityName;
 		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_ADDRESS = cryptocommodityAddress;
+		console.log('%c SelectedCryptocommodity', LOG_METHODS, selectedCryptoObject);
 		setSelectedCryptocommodity(selectedCryptoObject);
 
 		contracts.SELECTED_CRYPTOCOMMODITY_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
@@ -66,13 +65,12 @@ export function useContractContextHook() {
 		contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_CROWDSALE_ABI, signer);
 		contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_VESTING_ABI, signer);
 		contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_ERC_20_ABI, signer);
+		console.log('%c Contracts', LOG_METHODS, contracts);
 		setContracts(contracts);
-
-		console.log("updated");
-
   };
 
   const unselectCrypto = async () => {
+		console.log('%c unselectCrypto', LOG_METHODS);
 		setSelectedCryptocommodity(undefined);
 		setContracts(({} as any) as CryptoContracts);
 	}

@@ -1,19 +1,19 @@
 "use client";
 
+import { LOG_METHODS } from 'config/config';
 import { toast } from 'react-toastify';
 
 export function useResponseHook() {
 
 	async function handleICOReceipt(tx:any) {
-		console.log('handle tx');
-		console.log(tx);
+		console.log('%c handleICOReceipt', LOG_METHODS, tx);
 
 		// process transaction
-		console.log(`Transaction hash: ${tx.hash}`);
+		console.log('%c Transaction hash', LOG_METHODS, tx.hash);
 		const receipt = await tx.wait();
 		console.log(receipt);
-	  console.log(`Transaction confirmed in block ${receipt.blockNumber}`);
-		console.log(`Gas used: ${receipt.gasUsed.toString()}`);
+	  console.log('%c Transaction confirmed in block', LOG_METHODS, receipt.blockNumber);
+		console.log('%c Gas used', LOG_METHODS, receipt.gasUsed.toString());
 
 		//parseError(err.message,);
 		let msg = 'GasUsed: ' + receipt.gasUsed;
@@ -33,10 +33,8 @@ export function useResponseHook() {
 	}
 
 	function handleError(err:any) {
-		console.log('Ohhhh nooo');
-		console.log(err);
-		console.log(err.code);
-		console.log('err.message: ' + err.message);
+		console.error('Ohhhh nooo', err, err.code);
+		console.error('err.message: ' + err.message);
 
 		//parseError(err.message,);
 		toast.error(parseError(err.message), {
