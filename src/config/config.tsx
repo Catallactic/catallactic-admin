@@ -89,4 +89,4 @@ export const CFG_CROWDSALE_ABI = require('../abi/CrowdsaleFacet.json');
 export const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
 export const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
-export const LOG_METHODS = 'color: #006400';
+export const LOG_METHODS = 'color: #8B0000';
