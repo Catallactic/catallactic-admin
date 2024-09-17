@@ -7,8 +7,8 @@ const Holders: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				<div>Holders</div>
 

@@ -109,8 +109,8 @@ const ERC20Holders: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -118,8 +118,8 @@ const ERC20Holders: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 						<Row>
 							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Balance</div></div></Col>
 						</Row>
@@ -136,29 +136,31 @@ const ERC20Holders: NextPage = () => {
 						</Row>
 					</Form.Group>
 
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Allowance</div></div></Col>
+					</Row>
+					<Row>
+						<Col><div><Form.Text className="">Allowance From Investor Address</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
+					</Row>
+					<Row>
+						<Col><div><Form.Text className="">Allowance to Investor Address</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
+					</Row>
 					<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Investors Allowance</div></div></Col>
-						</Row>
-						<Row>
-							<Col><div><Form.Text className="">Allowance From Investor Address</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
-						</Row>
-						<Row>
-							<Col><div><Form.Text className="">Allowance to Investor Address</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connected} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
-						</Row>
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connected} onClick={getAllowance}>Allowance</Button></Col>
-						</Row>
-					</Form.Group>
+					<Row>
+						<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connected} onClick={getAllowance}>Allowance</Button></Col>
+					</Row>
+				</Form.Group>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

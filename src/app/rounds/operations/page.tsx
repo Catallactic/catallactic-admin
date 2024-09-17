@@ -216,8 +216,8 @@ const Operations: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -225,8 +225,8 @@ const Operations: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><Form.Text className="">Current ICO Stage</Form.Text></div></Col>
 					</Row>
@@ -240,8 +240,8 @@ const Operations: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refunds</div></div></Col>
 					</Row>
@@ -276,8 +276,8 @@ const Operations: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20 to Investors</div></div></Col>
@@ -316,8 +316,8 @@ const Operations: NextPage = () => {
 					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw to Wallets</div></div></Col>
 					</Row>
@@ -338,7 +338,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToWitdrawCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0">
 									{WITHDRAW_CURRENCY}
 								</Dropdown.Toggle>
 
@@ -362,6 +362,8 @@ const Operations: NextPage = () => {
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
 					</Row>
 				</Form.Group>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

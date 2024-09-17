@@ -107,11 +107,11 @@ const Environment: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
 					</Row>
@@ -122,7 +122,7 @@ const Environment: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -175,8 +175,8 @@ const Environment: NextPage = () => {
 
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Behaviours</div></div></Col>
 					</Row>
@@ -206,6 +206,7 @@ const Environment: NextPage = () => {
 
 				</Form.Group>
 
+				<Row className="m-4"></Row>
 				<Modal show={SHOW_FUNCTIONS} onHide={() => showFunctionsModal(false)}>
 					<Modal.Header closeButton>
 						<Modal.Title>Modal heading</Modal.Title>

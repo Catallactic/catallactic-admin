@@ -195,8 +195,8 @@ const Payments: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -205,7 +205,7 @@ const Payments: NextPage = () => {
 				}
 
 				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
 					</Row>
@@ -217,7 +217,7 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col xs={8}>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0">
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -242,7 +242,7 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onICOSelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!ICO_PAYMENT_SYMBOLS}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!ICO_PAYMENT_SYMBOLS}>
 									{ X_ICO_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -312,8 +312,8 @@ const Payments: NextPage = () => {
 
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Receive Address</div></div></Col>
 					</Row>
@@ -324,8 +324,8 @@ const Payments: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Dynamic Prices</div></div></Col>
 					</Row>
@@ -335,8 +335,8 @@ const Payments: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 					</Row>
@@ -356,6 +356,7 @@ const Payments: NextPage = () => {
 					</Row>
 				</Form.Group>
 
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

@@ -146,8 +146,8 @@ const Operations: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -155,124 +155,126 @@ const Operations: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Time</div></div></Col>
-						</Row>
-
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><div><Form.Text className="color-frame">Current Chain Time</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame border-0 text-center" disabled={ true } value={new Date(X_METAMASK_CHAIN_TIME_IN_MS).toLocaleString()} ></input></Col>
-						</Row>
-
-						<Row className="mb-3"></Row>
-						<Row>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60)}>+HOUR</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*1)}>+DAY</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
-						</Row>
-
-					</Form.Group>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Time</div></div></Col>
+					</Row>
 
 					<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Config</div></div></Col>
-						</Row>
-
-						<Row>
-							<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
-						</Row>
-
-						<Row>
-							<Col><div><Form.Text className="">Enter Token Address</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_SCHEDULE_TOKEN_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
-						</Row>
-
-					</Form.Group>
+					<Row>
+						<Col><div><Form.Text className="color-frame">Current Chain Time</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame border-0 text-center" disabled={ true } value={new Date(X_METAMASK_CHAIN_TIME_IN_MS).toLocaleString()} ></input></Col>
+					</Row>
 
 					<Row className="mb-3"></Row>
-					<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+					<Row>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60)}>+HOUR</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*1)}>+DAY</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*7)}>+WEEK</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*30)}>+MONTH</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain } onClick={() => increaseTime(60*60*24*365)}>+YEAR</Button></Col>
+					</Row>
 
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Schedules</div></div></Col>
-						</Row>
+				</Form.Group>
 
-						<Row>
-							<Col><div><Form.Text className="color-frame">List of Vesting Schedules</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col>
-								<Dropdown onSelect={onSelectVestingSchedule}>
-									<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CAN_TYPE || !VESTING_SCHEDULE_LIST || VESTING_SCHEDULE_LIST.length == 0}>
-										{ X_VESTING_SCHEDULE_ID }
-									</Dropdown.Toggle>
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 
-									<Dropdown.Menu className="w-100">
-										{VESTING_SCHEDULE_LIST?.map((item: any, index: any) => {
-											return (
-												<Dropdown.Item as="button" key={index} eventKey={item} active={X_VESTING_SCHEDULE_ID == item}>
-													{item + ''}
-												</Dropdown.Item>
-											);
-										})}
-									</Dropdown.Menu>
-								</Dropdown>
-							</Col>
-						</Row>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Config</div></div></Col>
+					</Row>
 
-						<Row>
-							<Col><div><Form.Text className="color-frame">Holder</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_HOLDER} ></input></Col>
-						</Row>
+					<Row>
+						<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
+					</Row>
 
-						<Row>
-							<Col><div><Form.Text className="color-frame">Vesting Schedule Id</Form.Text></div></Col>
-							<Col><div><Form.Text className="color-frame">Vesting Program Id</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_ID ? X_VESTING_SCHEDULE_ID : '' }></input></Col>
-							<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_PROGRAM_ID ? X_VESTING_SCHEDULE_PROGRAM_ID : '' } ></input></Col>
-						</Row>
+					<Row>
+						<Col><div><Form.Text className="">Enter Token Address</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_SCHEDULE_TOKEN_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTokenAddressOnVestingSC()}>Set as Token Address</Button></Col>
+					</Row>
 
-						<Row>
-							<Col><div><Form.Text className="color-frame">Total Amount</Form.Text></div></Col>
-							<Col><div><Form.Text className="color-frame">Released Amount</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_AMOUNT ? X_VESTING_SCHEDULE_AMOUNT / 10**18 : '' }></input></Col>
-							<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_RELEASED_AMOUNT ? X_VESTING_SCHEDULE_RELEASED_AMOUNT : '' } dir="rtl" ></input></Col>
-						</Row>
+				</Form.Group>
 
-						<Row>
-							<Col xs={6}><div><Form.Text className="color-frame">Releseable Amount</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col xs={6}><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={ X_VESTING_SCHEDULE_RELEASED_AMOUNT } ></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => computeVesting()}>Compute</Button></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => releaseVesting()}>Release</Button></Col>
-						</Row>
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 
-						<Row className="mb-3"></Row>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Schedules</div></div></Col>
+					</Row>
 
-					</Form.Group>
+					<Row>
+						<Col><div><Form.Text className="color-frame">List of Vesting Schedules</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col>
+							<Dropdown onSelect={onSelectVestingSchedule}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!CAN_TYPE || !VESTING_SCHEDULE_LIST || VESTING_SCHEDULE_LIST.length == 0}>
+									{ X_VESTING_SCHEDULE_ID }
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{VESTING_SCHEDULE_LIST?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={X_VESTING_SCHEDULE_ID == item}>
+												{item + ''}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+					</Row>
+
+					<Row>
+						<Col><div><Form.Text className="color-frame">Holder</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_HOLDER} ></input></Col>
+					</Row>
+
+					<Row>
+						<Col><div><Form.Text className="color-frame">Vesting Schedule Id</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Vesting Program Id</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_ID ? X_VESTING_SCHEDULE_ID : '' }></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_PROGRAM_ID ? X_VESTING_SCHEDULE_PROGRAM_ID : '' } ></input></Col>
+					</Row>
+
+					<Row>
+						<Col><div><Form.Text className="color-frame">Total Amount</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Released Amount</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_AMOUNT ? X_VESTING_SCHEDULE_AMOUNT / 10**18 : '' }></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_RELEASED_AMOUNT ? X_VESTING_SCHEDULE_RELEASED_AMOUNT : '' } dir="rtl" ></input></Col>
+					</Row>
+
+					<Row>
+						<Col xs={6}><div><Form.Text className="color-frame">Releseable Amount</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={6}><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={ X_VESTING_SCHEDULE_RELEASED_AMOUNT } ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => computeVesting()}>Compute</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => releaseVesting()}>Release</Button></Col>
+					</Row>
+
+					<Row className="mb-3"></Row>
+
+				</Form.Group>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

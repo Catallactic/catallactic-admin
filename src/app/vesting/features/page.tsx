@@ -155,8 +155,8 @@ const Features: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -164,8 +164,8 @@ const Features: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Programs</div></div></Col>
 					</Row>
@@ -173,7 +173,7 @@ const Features: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectVestingId}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!VESTING_IDS || VESTING_IDS.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!VESTING_IDS || VESTING_IDS.length == 0}>
 									{ X_VESTING_ID }
 								</Dropdown.Toggle>
 
@@ -220,6 +220,8 @@ const Features: NextPage = () => {
 					</Row>
 
 				</Form.Group>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

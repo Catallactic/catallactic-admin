@@ -78,8 +78,8 @@ const Investors: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
 				{ CAN_TYPE ? '' :
 				<Row>
@@ -87,8 +87,8 @@ const Investors: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallets</div></div></Col>
 					</Row>
@@ -117,8 +117,8 @@ const Investors: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 					</Row>
@@ -162,6 +162,8 @@ const Investors: NextPage = () => {
 					</Row>
 
 				</Form.Group>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

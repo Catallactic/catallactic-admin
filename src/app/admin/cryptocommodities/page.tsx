@@ -142,106 +142,109 @@ const Cryptomcommodities: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-				<Row>
-					<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
-				</Row>
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 
-				<Row>
-					<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
-				</Row>
-				<Row>
-					<Col>
-						<Dropdown onSelect={onSelectCryptocommodity}>
-							<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME }
-							</Dropdown.Toggle>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
+					</Row>
 
-							<Dropdown.Menu className="w-100">
-								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+					<Row>
+						<Col><div><Form.Text className="color-frame">List of Cryptocommodities</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col>
+							<Dropdown onSelect={onSelectCryptocommodity}>
+								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME }
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+					</Row>
+
+					<Row className="mb-3"></Row>
+					<Row>
+						<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
+						{ selectedCrypto ? <Col xs={8} ><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
+					</Row>
+
+					<Row>
+						<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
+						{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
+					</Row>
+
+					<Row className="mb-3"></Row>
+					{ selectedCrypto ? 
+					<Row>
+						<Col>
+							<Row>
+								<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
+								<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
+								<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
+							</Row>
+						</Col>
+					</Row>
+						: '' }
+					{ selectedCrypto ? 
+					<Row>
+						<Col>
+							<ListGroup onSelect={onSelectFacet}>
+								{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 									return (
-										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-											{item}
-										</Dropdown.Item>
+										<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
+											<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
+											<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
+
+											{ item == 'DiamondCutFacet' ?
+												<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
+											: SELECTED_CRYPTOCOMMODITY_FACETS && FACTORY_FACETS[item] && FACTORY_FACETS[item][1] && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
+												<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
+											:
+												<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
+											}
+										</Row>
+
 									);
 								})}
-							</Dropdown.Menu>
-						</Dropdown>
-					</Col>
-				</Row>
+							</ListGroup>
+						</Col>
+					</Row>
+						: '' }
 
-				<Row className="mb-3"></Row>
-				<Row>
-					<Col><div><Form.Text className="color-frame">Name</Form.Text></div></Col>
-					{ selectedCrypto ? <Col xs={8} ><div><Form.Text className="color-frame">Address</Form.Text></div></Col> : '' }
-				</Row>
+					<Row className="mb-3"></Row>
+					<Row>
+						{ selectedCrypto ? <Col><div><Form.Text className="color-frame">Storage</Form.Text></div></Col> : '' }
+					</Row>
+					<Row>
+						{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
+						{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
+					</Row>
 
-				<Row>
-					<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
-					{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
-				</Row>
-
-				<Row className="mb-3"></Row>
-				{ selectedCrypto ? 
-				<Row>
-					<Col>
-						<Row>
-							<Col xs={4}><div><Form.Text className="color-frame">Behaviour</Form.Text></div></Col>
-							<Col xs={2}><div><Form.Text className="color-frame">Version</Form.Text></div></Col>
-							<Col xs={3}><div><Form.Text className="color-frame">Status</Form.Text></div></Col>
-						</Row>
-					</Col>
-				</Row>
-					: '' }
-				{ selectedCrypto ? 
-				<Row>
-					<Col>
-						<ListGroup onSelect={onSelectFacet}>
-							{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
-								return (
-									<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
-										<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
-										<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
-
-										{ item == 'DiamondCutFacet' ?
-											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true} >Installed</Button></Col>
-										: SELECTED_CRYPTOCOMMODITY_FACETS && FACTORY_FACETS[item] && FACTORY_FACETS[item][1] && SELECTED_CRYPTOCOMMODITY_FACETS.filter(function(elem:any) { return elem[0] == FACTORY_FACETS[item][1] }).length > 0 ?
-											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => uninstallFacet(item)}>Uninstall</Button></Col>
-										:
-											<Col xs={6}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => installFacet(item)}>Install</Button></Col>
-										}
-									</Row>
-
-								);
-							})}
-						</ListGroup>
-					</Col>
-				</Row>
-					: '' }
-
-				<Row className="mb-3"></Row>
-				<Row>
-					{ selectedCrypto ? <Col><div><Form.Text className="color-frame">Storage</Form.Text></div></Col> : '' }
-				</Row>
-				<Row>
-					{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
-					{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
-				</Row>
-
-				<Row className="mb-3"></Row>
-				<Row>
-					{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
-					{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
-				</Row>
+					<Row className="mb-3"></Row>
+					<Row>
+						{ selectedCrypto ? <Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => unselectCryptocommodity()}>Cancel</Button></Col> : '' }
+						{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => findCryptocommodity()}>{KEY_ICON()} Find</Button></Col> : '' }
+						{ !selectedCrypto ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button></Col> : '' }
+					</Row>
 
 				</Form.Group>
 
-			</Container>
+				<Row className="m-4"></Row>
+
+		</Container>
 		</div>
 
 	);

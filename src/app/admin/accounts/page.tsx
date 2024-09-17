@@ -278,11 +278,11 @@ const Accounts: NextPage = () => {
 
   return (
 
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
-      <Container>
+    <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
+      <Container className='mw-100'>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
 					</Row>
@@ -294,8 +294,8 @@ const Accounts: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
-				<Form.Group className="p-3 border border-dark rounded bg-light-grey">
+				<Row className="m-4"></Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 					</Row>
@@ -328,7 +328,7 @@ const Accounts: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				<Row className="mb-3"></Row>
+				<Row className="m-4"></Row>
 				<Accordion className="mb-3 bg-semitransparent border rounded-3">
 					<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
 						<Accordion.Header>
@@ -349,7 +349,7 @@ const Accounts: NextPage = () => {
 								<Row>
 									<Col>
 										<Dropdown onSelect={onSelectToInvestCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+											<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0">
 												{TO_INVEST_CURRENCY}
 											</Dropdown.Toggle>
 
@@ -421,6 +421,7 @@ const Accounts: NextPage = () => {
 					</Accordion.Item>
 				</Accordion>
 
+				<Row className="m-4"></Row>
 				<Accordion className="mb-3 bg-semitransparent border rounded-3">
 					<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
 						<Accordion.Header>
@@ -474,6 +475,8 @@ const Accounts: NextPage = () => {
 						</Accordion.Body>
 					</Accordion.Item>
 				</Accordion>
+
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

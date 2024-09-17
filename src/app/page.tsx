@@ -94,8 +94,10 @@ const Login: NextPage = () => {
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
-    <div className="bg-light d-flex flex-row align-items-center dark:bg-transparent">
+    <div className="bg-group rounded-5 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>
+
+				<Row className="m-4"></Row>
 
 				{ CAN_CREATE || CAN_MODIFY ? '' :
 				<Row>
@@ -388,6 +390,8 @@ const Login: NextPage = () => {
 						</Card>
 					</div>
 				</div>
+
+				<Row className="m-4"></Row>
 
       </Container>
     </div>
