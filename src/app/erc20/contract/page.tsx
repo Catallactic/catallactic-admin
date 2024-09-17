@@ -102,7 +102,7 @@ const ERC20Contract: NextPage = () => {
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-yellow' : '');
+		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -125,14 +125,14 @@ const ERC20Contract: NextPage = () => {
 						<Col><div><Form.Text className="">Token Contract Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={connectedChain != undefined} value={TOKEN_ADDRESS || ''}></input></Col>
+						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={connectedChain != undefined} value={TOKEN_ADDRESS || ''}></input></Col>
 						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connectedChain != undefined} onClick={connectTokenContract}>Connect</Button></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Token Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-yellow color-frame border-0" value={TOKEN_OWNER} disabled={connectedChain != undefined}></input></Col>
+						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-edited color-frame border-0" value={TOKEN_OWNER} disabled={connectedChain != undefined}></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={connectedChain != undefined} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 				</Form.Group>

@@ -122,7 +122,7 @@ const Environment: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -147,9 +147,9 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolSymbol(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_SYMBOL ? X_FACTORY_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-edited color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolAddress(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-edited color-frame border-0 text-center" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolRef(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_FACTORY_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 					</Row>
 
 					<Row>
@@ -159,8 +159,8 @@ const Environment: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
-						<Col xs={4}><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolDecimals(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_DECIMALS ? X_FACTORY_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
+						<Col xs={4}><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={ !connectedChain } onChange={event => setFactoryPaymentSymbolPrice(event.target.value)} value={X_FACTORY_PAYMENT_SYMBOL_PRICE ? X_FACTORY_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_FACTORY_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 

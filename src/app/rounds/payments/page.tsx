@@ -190,7 +190,7 @@ const Payments: NextPage = () => {
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -217,7 +217,7 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col xs={8}>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0">
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0">
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -242,7 +242,7 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onICOSelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!ICO_PAYMENT_SYMBOLS}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!ICO_PAYMENT_SYMBOLS}>
 									{ X_ICO_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -345,7 +345,7 @@ const Payments: NextPage = () => {
 						<Col><div><Form.Text className="">Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={8}><input className="form-control form-control-lg color-frame bg-yellow text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
+						<Col xs={8}><input className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
 						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
 					</Row>
 					<Row>

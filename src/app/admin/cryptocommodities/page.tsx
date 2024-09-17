@@ -158,7 +158,7 @@ const Cryptomcommodities: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectCryptocommodity}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME }
 								</Dropdown.Toggle>
 
@@ -182,8 +182,8 @@ const Cryptomcommodities: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
-						{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-yellow border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
+						<Col><input className="form-control form-control-lg bg-edited border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_NAME} onChange={(event) => setSelectedCryptocommodityName(event.target.value)} ></input></Col>
+						{ selectedCrypto ? <Col xs={8} ><input className="form-control form-control-lg bg-edited border-0" disabled={ !connectedChain || selectedCrypto != undefined } value={X_SELECTED_CRYPTOCOMMODITY_ADDRESS} onChange={(event) => setSelectedCryptocommodityAddress(event.target.value)}  ></input></Col> : '' }
 					</Row>
 
 					<Row className="mb-3"></Row>
@@ -229,7 +229,7 @@ const Cryptomcommodities: NextPage = () => {
 						{ selectedCrypto ? <Col><div><Form.Text className="color-frame">Storage</Form.Text></div></Col> : '' }
 					</Row>
 					<Row>
-						{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-yellow color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
+						{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-edited color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
 						{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
 					</Row>
 

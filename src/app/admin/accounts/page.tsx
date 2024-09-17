@@ -273,7 +273,7 @@ const Accounts: NextPage = () => {
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-yellow' : '');
+		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -349,7 +349,7 @@ const Accounts: NextPage = () => {
 								<Row>
 									<Col>
 										<Dropdown onSelect={onSelectToInvestCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0">
+											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0">
 												{TO_INVEST_CURRENCY}
 											</Dropdown.Toggle>
 
@@ -364,7 +364,7 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col><input className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connectedChain} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
+									<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 									<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
 									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => invest()}>Invest</Button></Col>
 								</Row>
@@ -384,7 +384,7 @@ const Accounts: NextPage = () => {
 								<Row>
 									<Col xs={3}>
 										<Dropdown onSelect={onSelectToRefundCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100">
 												{TO_REFUND_CURRENCY}
 											</Dropdown.Toggle>
 
@@ -438,7 +438,7 @@ const Accounts: NextPage = () => {
 									<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
 								</Row>
 								<Row>
-									<Col><input type="email" className="form-control form-control-lg color-frame bg-yellow text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
+									<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
 								</Row>
 
 								<Row className="mb-3"></Row>
@@ -451,7 +451,7 @@ const Accounts: NextPage = () => {
 								<Row>
 									<Col xs={3}>
 										<Dropdown onSelect={onSelectToTransferCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100">
+											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100">
 												{TO_TRANSFER_CURRENCY}
 											</Dropdown.Toggle>
 
@@ -466,7 +466,7 @@ const Accounts: NextPage = () => {
 											</Dropdown.Menu>
 										</Dropdown>
 									</Col>
-									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-yellow color-frame border-0" disabled={!connectedChain} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
 									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
 									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => transfer()}>Transfer</Button></Col>
 								</Row>

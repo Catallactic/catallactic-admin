@@ -102,7 +102,7 @@ const ERC20Features: NextPage = () => {
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -125,19 +125,19 @@ const ERC20Features: NextPage = () => {
 						<Col><div><Form.Text className="">Token Name</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
+						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Token Symbol</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
+						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Token Supply</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-yellow') } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
+						<Col><input type="number" className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
 					</Row>
 
 					{ !X_TOKEN_INITIALIZED ? <Row className="mb-3"></Row> : '' }

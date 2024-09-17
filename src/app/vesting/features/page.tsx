@@ -150,7 +150,7 @@ const Features: NextPage = () => {
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-yellow' : '');
+		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -173,7 +173,7 @@ const Features: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectVestingId}>
-								<Dropdown.Toggle className="btn-lg bg-yellow text-black-50 w-100 border-0" disabled={!VESTING_IDS || VESTING_IDS.length == 0}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!VESTING_IDS || VESTING_IDS.length == 0}>
 									{ X_VESTING_ID }
 								</Dropdown.Toggle>
 
