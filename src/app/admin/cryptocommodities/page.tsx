@@ -63,6 +63,13 @@ const Cryptomcommodities: NextPage = () => {
 	useEffect(() => {
 		setSelectedCryptocommodityName(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME!);
 		setSelectedCryptocommodityAddress(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS!);
+
+		// fetch additional data for Cryptocommodity
+		const fetchData = async () => {
+			await loadFacets();
+			await loadCryptocommodityFacets();
+		}
+		fetchData();
 	}, [selectedCrypto])
 
 	// *************************************************************************************************************************
@@ -75,6 +82,18 @@ const Cryptomcommodities: NextPage = () => {
 
 	const [SELECTED_CRYPTOCOMMODITY_STORAGE, setCryptocommodityStorage] = useState<string>('');
 
+	// handle Cryptocommodity
+	async function findCryptocommodity() {
+		onSelectCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME);
+	}
+	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
+		console.log('onSelectCryptocommodity', cryptocommodityName);
+		await selectCrypto(cryptocommodityName);
+	}
+	async function unselectCryptocommodity() {
+		console.log("unselectCryptocommodity");
+		await unselectCrypto();
+	}
 	async function saveCryptocommodity() {
 		await envContracts.FACTORY_CONTRACT?.createCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME)
 			.then(await handleICOReceipt)
@@ -82,20 +101,7 @@ const Cryptomcommodities: NextPage = () => {
 			.catch(handleError);
 	}
 
-	async function findCryptocommodity() {
-		onSelectCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME);
-	}
-	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
-		console.log('onSelectCryptocommodity', cryptocommodityName);
-		await selectCrypto(cryptocommodityName);
-		await loadFacets();
-		await loadCryptocommodityFacets();
-	}
-	async function unselectCryptocommodity() {
-		console.log("unselectCryptocommodity");
-		await unselectCrypto();
-	}
-
+	// handle Facets
 	const onSelectFacet = async (facetName: any, pp: any)=>{
 		console.log('onSelectFacet', facetName);
 		console.log('onSelectFacet', pp);
