@@ -171,7 +171,7 @@ export default function SidebarNav() {
 
 	return (
     <ul className="list-unstyled">
-      <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto">ALPHA</Badge></small></SidebarNavItem>
+      <SidebarNavItem icon={faGauge} href="/"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto bg-disconnected">ALPHA</Badge></small></SidebarNavItem>
 
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 

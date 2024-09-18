@@ -87,7 +87,7 @@ export default function Header(props: HeaderProps) {
 						</Dropdown>
 					: '' }
 
-					<button type="button" style={ connecting ? { backgroundColor:'#CC6600' } : wallet ? { backgroundColor:'#666600' } : { backgroundColor:'#B594CB' }} className="btn m-2 text-white text-uppercase fw-bolder" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
 					</button>
 
