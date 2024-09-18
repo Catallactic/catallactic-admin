@@ -29,7 +29,7 @@ const Cryptomcommodities: NextPage = () => {
 		selectCrypto, unselectCrypto, selectedCrypto, contracts 
 	} = useContext(ContractsContext);
 	const { 
-		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
+		loadFactoryFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 	} = useFactoryHook();	
 	const { 
 		loadCryptocommodityFacets, SELECTED_CRYPTOCOMMODITY_FACETS,
@@ -52,7 +52,7 @@ const Cryptomcommodities: NextPage = () => {
 
 		if(selectedCrypto) {
 			selectCrypto(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME);
-			loadFacets();
+			loadFactoryFacets();
 			loadCryptocommodityFacets();
 		}
 
@@ -69,7 +69,7 @@ const Cryptomcommodities: NextPage = () => {
 
 		// fetch additional data for Cryptocommodity
 		const fetchData = async () => {
-			await loadFacets();
+			await loadFactoryFacets();
 			await loadCryptocommodityFacets();
 		}
 		fetchData();
@@ -113,7 +113,6 @@ const Cryptomcommodities: NextPage = () => {
 
 		//let contract = await ethers.getContractAt('DiamondLoupeFacet', FACTORY_FACETS[facetName][1]);
 	}
-
 	async function installFacet(facetName: string) {
 		console.log("installFacet ", facetName);
 
@@ -143,6 +142,7 @@ const Cryptomcommodities: NextPage = () => {
 		console.log("uninstallFacet ", facetName);
 	}
 
+	// handle Storage
 	async function setStorage() {
 		console.log("SELECTED_CRYPTOCOMMODITY_STORAGE", SELECTED_CRYPTOCOMMODITY_STORAGE);
 		let storage = keccak256(toUtf8Bytes(SELECTED_CRYPTOCOMMODITY_STORAGE));

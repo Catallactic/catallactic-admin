@@ -12,17 +12,17 @@ export function useFactoryHook() {
 	const { envContracts, contracts } = useContext(ContractsContext);
 
 	// **********************************************************************************************************
-	// ************************************************ loadFacets **********************************************
+	// ************************************************ loadFactoryFacets ***************************************
 	// **********************************************************************************************************
 	const [FACTORY_FACET_TYPES, setFactoryFacetTypes] = useState([]);
 	const [FACTORY_FACETS, setFactoryFacets] = useState<MapType>({})
 
-	async function loadFacets() {
-		console.log('%c LoadFacets', LOG_METHODS);
+	async function loadFactoryFacets() {
+		console.log('%c loadFactoryFacets', LOG_METHODS);
 
 		// get read only - payment methods
 		let facetTypes = await envContracts.FACTORY_CONTRACT?.getFacetTypes();
-		console.log("%c FacetTypes: ", LOG_METHODS, facetTypes);
+		console.log("%c FactoryFacetTypes: ", LOG_METHODS, facetTypes);
 		setFactoryFacetTypes(facetTypes);
 
 		const map: MapType = {};
@@ -113,7 +113,7 @@ export function useFactoryHook() {
 	}
 
 	return { 
-		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
+		loadFactoryFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 		onFactorySelectPaymentMethod, FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOL_DECIMALS, FACTORY_PAYMENT_SYMBOL_ADDRESS, FACTORY_PAYMENT_SYMBOL_PRICE, FACTORY_PAYMENT_SYMBOL_REF, FACTORY_PAYMENT_SYMBOL_DYN_PRICE,
 		handleShowFunctions, showFunctionsModal, SHOW_FUNCTIONS, INTERFACE_MODAL,

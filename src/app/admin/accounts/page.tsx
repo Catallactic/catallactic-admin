@@ -47,7 +47,7 @@ const Accounts: NextPage = () => {
 		isBlacklisted,
 	} = useCrowdsaleHook();
 	const { 
-		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
+		loadFactoryFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, FACTORY_PAYMENT_METHODS,
 	} = useFactoryHook();
 	const { 
