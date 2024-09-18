@@ -77,8 +77,9 @@ function RootLayout({
 
 					<html lang="en">
 					<head>
-						<title>Catallactic DAppmin - Tokenization Platform</title>
+						<title>Catallactic Tokenization Platform</title>
 					  <link rel="icon" type="image/x-icon" href="/favicon.ico"></link>
+        		<meta name="description" content="Catallactic" />
 					</head>
 						<body>
 							<AdminLayout>

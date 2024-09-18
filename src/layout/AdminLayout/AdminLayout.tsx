@@ -47,11 +47,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
 
   return (
     <>
-      <Head>
-        <title>Catallactic dAppmin Demo</title>
-        <meta name="description" content="Catallactic" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
       <div ref={ref} className="position-absolute w-100" />
 
@@ -68,6 +63,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       </div>
 
       <SidebarOverlay isShowSidebar={isShowSidebar} toggleSidebar={toggleIsShowSidebar} />
+			
     </>
   )
 }
