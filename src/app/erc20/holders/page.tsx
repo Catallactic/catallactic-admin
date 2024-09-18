@@ -19,10 +19,16 @@ const ERC20Holders: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
@@ -38,7 +44,6 @@ const ERC20Holders: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
-
 	const { handleICOReceipt, handleError } = useResponseHook()
 
 	// *************************************************************************************************************************

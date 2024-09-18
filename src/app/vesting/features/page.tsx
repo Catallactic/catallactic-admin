@@ -18,11 +18,17 @@ const Features: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
 	const [connectedAddress, setConnectedAddress] = useState('')
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
@@ -38,7 +44,6 @@ const Features: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
-
 	const { 
 		loadVestingPrograms, VESTING_IDS,
 		onSelectVestingId, VESTING_ID, VESTING_START_MILLIS, VESTING_CLIFF_DAYS, VESTING_DURATION_DAYS, VESTING_NUM_SLIDES,
@@ -47,7 +52,6 @@ const Features: NextPage = () => {
 		computeVesting, 
 		releaseVesting, 
 	} = useVestingHook();
-
 	const { handleICOReceipt, handleError } = useResponseHook()
 	
 	// *************************************************************************************************************************

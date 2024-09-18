@@ -16,10 +16,16 @@ const Operations: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
@@ -35,7 +41,6 @@ const Operations: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
-
 	const { 
 		loadBlockchainDatetime, METAMASK_CHAIN_TIME_IN_MS,
 		loadVestingPrograms, VESTING_IDS,
@@ -46,7 +51,6 @@ const Operations: NextPage = () => {
 		computeVesting, 
 		releaseVesting,
 	} = useVestingHook();
-
 	const { handleICOReceipt, handleError } = useResponseHook()
 	
 	// *************************************************************************************************************************

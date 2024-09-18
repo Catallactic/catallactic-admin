@@ -18,19 +18,22 @@ const Cryptomcommodities: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 	} = useFactoryHook();	
-
 	const { 
-		loadCryptocommodityFacets, 
-		SELECTED_CRYPTOCOMMODITY_FACETS,
+		loadCryptocommodityFacets, SELECTED_CRYPTOCOMMODITY_FACETS,
 	} = useDiamonsLoupeHook();
-
 	const { handleICOReceipt, handleError } = useResponseHook()
 
 	// *************************************************************************************************************************

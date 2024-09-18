@@ -16,10 +16,16 @@ const Environment: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const { createEnvContracts, envContracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadFacets, FACTORY_FACET_TYPES, FACTORY_FACETS,
 		loadFactoryPaymentMethod, FACTORY_PAYMENT_SYMBOLS, 
