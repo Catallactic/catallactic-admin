@@ -121,7 +121,7 @@ const Payments: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS)
 			.then(await handleICOReceipt)
 			.then(await loadICOPaymentMethod)
-			.catch(handleError);
+			.catch(await handleError);
 
 		cancelICOPaymentMethod();
 	}
@@ -132,7 +132,7 @@ const Payments: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.deletePaymentToken(X_ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(X_ICO_PAYMENT_SYMBOL_SYMBOL))
 			.then(await handleICOReceipt)
 			.then(await loadICOPaymentMethod)
-			.catch(handleError);
+			.catch(await handleError);
 
 		cancelICOPaymentMethod();
 	}
@@ -150,7 +150,7 @@ const Payments: NextPage = () => {
 	// ico dynamic price
 	const [DYNAMIC_PRICE, setDynamicPrice] = useState<boolean>()
 	async function setDynamicPriceSC(event:any) {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setDynamicPrice(event.target.checked).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	// receive address

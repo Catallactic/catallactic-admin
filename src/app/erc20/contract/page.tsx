@@ -84,7 +84,9 @@ const ERC20Contract: NextPage = () => {
 			var value = element.value;
 	
 			// process transaction
-			await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transferOwnership(value).then(await handleICOReceipt).catch(handleError);
+			await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transferOwnership(value)
+				.then(await handleICOReceipt)
+				.catch(await handleError);
 		}
 	
 

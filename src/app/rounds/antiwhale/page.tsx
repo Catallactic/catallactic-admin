@@ -84,12 +84,12 @@ const AntiwhaleFeatures: NextPage = () => {
 			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.whitelistUser(ICO_USER_TO_WHITELIST)
 				.then(await handleICOReceipt)
 				.then(await loadAntiWhale)
-				.catch(handleError);
+				.catch(await handleError);
 		} else {
 			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unwhitelistUser(ICO_USER_TO_WHITELIST)
 				.then(await handleICOReceipt)
 				.then(await loadAntiWhale)
-				.catch(handleError);
+				.catch(await handleError);
 		}
 
 	}
@@ -108,12 +108,12 @@ const AntiwhaleFeatures: NextPage = () => {
 			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.blacklistUser(user)
 				.then(await handleICOReceipt)
 				.then(await loadAntiWhale)
-				.catch(handleError);
+				.catch(await handleError);
 		} else {
 			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.unblacklistUser(user)
 				.then(await handleICOReceipt)
 				.then(await loadAntiWhale)
-				.catch(handleError);
+				.catch(await handleError);
 		}
 	}
 

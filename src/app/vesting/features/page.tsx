@@ -108,7 +108,7 @@ const Features: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, X_VESTING_NUM_SLIDES)
 			.then(await handleICOReceipt)
 			.then(await loadVestingPrograms)
-			.catch(handleError);
+			.catch(await handleError);
 
 		cancelVesting();
 	}

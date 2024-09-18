@@ -32,7 +32,7 @@ export function useResponseHook() {
 		return tx;
 	}
 
-	function handleError(err:any) {
+	async function handleError(err:any) {
 		console.error('Ohhhh nooo', err, err.code);
 		console.error('err.message: ' + err.message);
 

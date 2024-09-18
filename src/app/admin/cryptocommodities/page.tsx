@@ -95,10 +95,11 @@ const Cryptomcommodities: NextPage = () => {
 		await unselectCrypto();
 	}
 	async function saveCryptocommodity() {
-		await envContracts.FACTORY_CONTRACT?.createCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME)
+		console.log('saveCryptocommodity', X_SELECTED_CRYPTOCOMMODITY_NAME);
+		envContracts.FACTORY_CONTRACT?.createCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME)
 			.then(await handleICOReceipt)
 			.then(await loadYourCryptocommodities)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// handle Facets

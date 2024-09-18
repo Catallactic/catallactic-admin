@@ -85,7 +85,7 @@ const ERC20Features: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.initialize(X_TOKEN_NAME, X_TOKEN_SYMBOL, BigInt(X_TOKEN_SUPPLY!) * BigInt(10**18))
 			.then(await handleICOReceipt)
 			.then(await loadERC20Features)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// *************************************************************************************************************************

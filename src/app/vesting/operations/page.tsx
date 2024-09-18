@@ -107,7 +107,7 @@ const Operations: NextPage = () => {
 		console.log(`setting X_VESTING_GRANTOR: ` + X_VESTING_GRANTOR);
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.addGrantor(X_VESTING_GRANTOR)
 			.then(await handleICOReceipt)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// token adddress
@@ -116,7 +116,7 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.setTokenAddress(X_VESTING_SCHEDULE_TOKEN_ADDRESS)
 			.then(await handleICOReceipt)
 			.then(await setVestingScheduleTokenAddress)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// vesting schedules

@@ -141,7 +141,7 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
-				.catch(handleError);
+				.catch(await handleError);
 
 		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
 			// N/A
@@ -164,7 +164,7 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
-				.catch(handleError);
+				.catch(await handleError);
 		}
 
 	}
@@ -193,7 +193,7 @@ const Accounts: NextPage = () => {
 			.then(await getBalancesUSDICOMeWallet)
 			.then(await getBalancesPaymentTokensMeWallet)
 			.then(await getBalancesCygasMeWallet)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// refund
@@ -204,7 +204,7 @@ const Accounts: NextPage = () => {
 			.then(await getBalancesUSDICOMeWallet)
 			.then(await getBalancesPaymentTokensMeWallet)
 			.then(await getBalancesCygasMeWallet)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// transfer
@@ -235,7 +235,7 @@ const Accounts: NextPage = () => {
 			.then(await getBalancesUSDICOMeWallet)
 			.then(await getBalancesPaymentTokensMeWallet)
 			.then(await getBalancesCygasMeWallet)
-			.catch(handleError);
+			.catch(await handleError);
 
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
 
@@ -254,7 +254,7 @@ const Accounts: NextPage = () => {
 			.then(await getBalancesUSDICOMeWallet)
 			.then(await getBalancesPaymentTokensMeWallet)
 			.then(await getBalancesCygasMeWallet)
-			.catch(handleError);
+			.catch(await handleError);
 		}
 
 	}

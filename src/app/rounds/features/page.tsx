@@ -94,45 +94,45 @@ const RoundFeatures: NextPage = () => {
   const [X_ICO_HARD_CAP, setICOHardCap] = useState<number>(0)
 	async function setICOHardCapOnSC() {
 		console.log(`X_ICO_HARD_CAP: ` + X_ICO_HARD_CAP);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(X_ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setHardCapuUSD(X_ICO_HARD_CAP * 10**6).then(await handleICOReceipt).catch(await handleError);
 	}
 
   const [X_ICO_SOFT_CAP, setICOSoftCap] = useState<number>(0)
 	async function setICOSoftCapOnSC() {
 		console.log(`X_ICO_SOFT_CAP: ` + X_ICO_SOFT_CAP);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(X_ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setSoftCapuUSD(X_ICO_SOFT_CAP * 10**6).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_ICO_PRICE, setICOPrice] = useState<number>(0)
 	async function setICOSPriceOnSC() {
 		console.log(`X_ICO_PRICE: ` + X_ICO_PRICE);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(X_ICO_PRICE).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPriceuUSD(X_ICO_PRICE).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_ICO_MIN_TRANSFER, setMinTransfer] = useState<number>(0)
 	async function setMinTransferOnSC() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(X_ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMinuUSDTransfer(X_ICO_MIN_TRANSFER).then(await handleICOReceipt).catch(await handleError);
 	}
 
   const [X_ICO_MAX_TRANSFER, setMaxTransfer] = useState<number>(0)
 	async function setMaxTransferOnSC() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(X_ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDTransfer(X_ICO_MAX_TRANSFER).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_ICO_MAX_INVESTMENT, setMaxInvestment] = useState<number>(0)
 	async function setMaxInvestmentOnSC() {
 		console.log('ICO_MAX_INVESTMENT ' + X_ICO_MAX_INVESTMENT);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(X_ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setMaxuUSDInvestment(X_ICO_MAX_INVESTMENT).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_ICO_WHITELIST_THRESHOLD, setWhitelistThreshold] = useState<number>(0);
 	async function setWhitelistThresholdOnSC() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(X_ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setWhitelistuUSDThreshold(Number(X_ICO_WHITELIST_THRESHOLD) * 10**6).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_VESTING_SCHEDULE_PERCENTAGE, setVestingSchedulePercentage] = useState<number>(0);
 	async function setPercentVestedOnSC() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(X_VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setPercentVested(X_VESTING_SCHEDULE_PERCENTAGE).then(await handleICOReceipt).catch(await handleError);
 	}
 
 	const [X_VESTING_CURRENT_PROGRAM_ID, setVestingCurrentProgramId] = useState<string>('');
@@ -159,7 +159,7 @@ const RoundFeatures: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.createCrowdsale(X_ICO_PRICE, X_ICO_HARD_CAP * 10**6, X_ICO_SOFT_CAP * 10**6, X_ICO_WHITELIST_THRESHOLD * 10**6, X_ICO_MAX_INVESTMENT, X_ICO_MAX_TRANSFER, X_ICO_MIN_TRANSFER, X_VESTING_SCHEDULE_PERCENTAGE, X_VESTING_CURRENT_PROGRAM_ID)
 			.then(await handleICOReceipt)
 			.then(await loadICOFeatures)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	// *************************************************************************************************************************

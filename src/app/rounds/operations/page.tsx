@@ -114,10 +114,12 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setCrowdsaleStage(stage)
 			.then(await handleICOReceipt)
 			.then(await loadICOFeatures)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 	async function reset() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset().then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.reset()
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
 	// refund	
@@ -137,7 +139,9 @@ const Operations: NextPage = () => {
 	}
 
 	async function refundAll() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refundAll(TO_REFUND_ALL_CURRENCY)
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
 
@@ -151,7 +155,7 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_TOKEN_CONTRACT?.transfer(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, amountRequiredCATokens - amountCurrentCATokens)
 		.then(await handleICOReceipt)
 		.then(await getBalancesCygasICOWallet)
-		.catch(handleError);
+		.catch(await handleError);
 	}
 
 	const [X_VESTING_ADDRESS, setVestingAddress] = useState<string>()
@@ -160,7 +164,7 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setVestingAddress(X_VESTING_ADDRESS)
 			.then(await handleICOReceipt)
 			.then(await loadICOVestingAddress)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	const [X_TOKEN_ADDRESS, setTokenAddress] = useState<string>()
@@ -169,7 +173,7 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTokenAddress(X_TOKEN_ADDRESS)
 			.then(await handleICOReceipt)
 			.then(await loadTokenAddressOnCrowdsaleContract)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	const [X_WITHDRAW_TARGET_ADDRESS, setWithdrawTargetAddress] = useState<string>('')
@@ -177,11 +181,13 @@ const Operations: NextPage = () => {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.setTargetWalletAddress(X_WITHDRAW_TARGET_ADDRESS)
 			.then(await handleICOReceipt)
 			.then(await loadWithdrawTargetAddress)
-			.catch(handleError);
+			.catch(await handleError);
 	}
 
 	async function claimAll() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll().then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claimAll()
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
 	// withdraw
@@ -194,7 +200,9 @@ const Operations: NextPage = () => {
 	async function withdrawICO() {
 		console.log(`WITHDRAW_CURRENCY: ` + WITHDRAW_CURRENCY);
 		console.log(`WITHDRAW_PERCENTAGE: ` + WITHDRAW_PERCENTAGE);
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE).then(await handleICOReceipt).catch(handleError);
+		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.withdraw(WITHDRAW_CURRENCY, WITHDRAW_PERCENTAGE)
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
 	// *************************************************************************************************************************

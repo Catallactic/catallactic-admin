@@ -63,10 +63,14 @@ const ICOContract: NextPage = () => {
 
 	// ICO Owner
 	async function setNewICOOwner() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.transferOwnership(ICO_PENDING_OWNER).then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.transferOwnership(ICO_PENDING_OWNER)
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 	async function acceptNewICOOwner() {
-		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.acceptOwnership().then(await handleICOReceipt).catch(handleError);
+		await SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.acceptOwnership()
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
 	var METAMASK_CHAINS:any;

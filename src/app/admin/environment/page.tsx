@@ -79,7 +79,7 @@ const Environment: NextPage = () => {
 		await envContracts.FACTORY_CONTRACT?.setPaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, X_FACTORY_PAYMENT_SYMBOL_ADDRESS, X_FACTORY_PAYMENT_SYMBOL_REF, X_FACTORY_PAYMENT_SYMBOL_PRICE, X_FACTORY_PAYMENT_SYMBOL_DECIMALS)
 			.then(await handleICOReceipt)
 			.then(await loadFactoryPaymentMethod)
-			.catch(handleError);
+			.catch(await handleError);
 
 		cancelFactoryPaymentMethod();
 	}
@@ -90,7 +90,7 @@ const Environment: NextPage = () => {
 		await envContracts.FACTORY_CONTRACT?.deletePaymentToken(X_FACTORY_PAYMENT_SYMBOL_SYMBOL, FACTORY_PAYMENT_SYMBOLS.indexOf(X_FACTORY_PAYMENT_SYMBOL_SYMBOL))
 			.then(await handleICOReceipt)
 			.then(await loadFactoryPaymentMethod)
-			.catch(handleError);
+			.catch(await handleError);
 
 		cancelFactoryPaymentMethod();
 	}
