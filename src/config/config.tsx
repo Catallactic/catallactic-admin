@@ -80,6 +80,8 @@ export const supportedChains = [
 	},
 ];
 
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 export const CFG_FACTORY_ABI = require('../abi/CryptocommoditiesFactory.json');
 export const CFG_SELECTED_CRYPTOCOMMODITIY_ABI = require('../abi/Diamond.json');
 export const CFG_DIAMOND_CUT_ABI = require('../abi/DiamondCutFacet.json');

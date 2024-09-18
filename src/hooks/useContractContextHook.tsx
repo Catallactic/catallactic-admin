@@ -3,7 +3,7 @@
 import { Contract, ethers } from "ethers";
 import { createContext, useState } from "react";
 
-import { getMETAMASK_CHAINS, CFG_FACTORY_ABI,CFG_SELECTED_CRYPTOCOMMODITIY_ABI, CFG_DIAMOND_CUT_ABI, CFG_DIAMOND_LOUPE_ABI, CFG_COMMON_ABI, CFG_CROWDSALE_ABI, CFG_VESTING_ABI, CFG_ERC_20_ABI, LOG_METHODS } from '../config/config'
+import { getMETAMASK_CHAINS, CFG_FACTORY_ABI,CFG_SELECTED_CRYPTOCOMMODITIY_ABI, CFG_DIAMOND_CUT_ABI, CFG_DIAMOND_LOUPE_ABI, CFG_COMMON_ABI, CFG_CROWDSALE_ABI, CFG_VESTING_ABI, CFG_ERC_20_ABI, LOG_METHODS, ZERO_ADDRESS } from '../config/config'
 
 declare let window:any
 
@@ -52,12 +52,19 @@ export function useContractContextHook() {
 		window.ethereum.enable()
 		const signer = provider.getSigner()
 		let cryptocommodityAddress = await envContracts.FACTORY_CONTRACT?.getCryptocommodity(cryptocommodityName);
+		if (cryptocommodityAddress === ZERO_ADDRESS) {
+			console.log('%c No Cryptocommodity found', LOG_METHODS);
+			return;
+		}
+
+		// Cryptocommodity exists
 		let selectedCryptoObject = {} as Cryptocommodity;
 		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_NAME = cryptocommodityName;
 		selectedCryptoObject.SELECTED_CRYPTOCOMMODITY_ADDRESS = cryptocommodityAddress;
 		console.log('%c SelectedCryptocommodity', LOG_METHODS, selectedCryptoObject);
 		setSelectedCryptocommodity(selectedCryptoObject);
 
+		// get contracts for Cryptocommodity
 		contracts.SELECTED_CRYPTOCOMMODITY_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_SELECTED_CRYPTOCOMMODITIY_ABI, signer);
 		contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_CUT_ABI, signer);
 		contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_LOUPE_CONTRACT = new ethers.Contract(cryptocommodityAddress, CFG_DIAMOND_LOUPE_ABI, signer);
