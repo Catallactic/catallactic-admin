@@ -5,7 +5,7 @@ import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
 import Link from 'next/link'
 
 import { useContext, useEffect } from 'react'
-import { useConnectWallet, useSetChain, useWallets } from '@web3-onboard/react'
+import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 
 type HeaderProps = {
@@ -14,12 +14,24 @@ type HeaderProps = {
 }
 
 export default function Header(props: HeaderProps) {
+
+	// *************************************************************************************************************************
+	// ******************************************************** Read Data ******************************************************
+	// *************************************************************************************************************************
 	const { toggleSidebar, toggleSidebarMd } = props
 
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 	const [{ connectedChain }] = useSetChain()
 	const connectedWallets = useWallets()
+	// https://github.com/blocknative/web3-onboard/issues/1666
+	// https://github.com/blocknative/react-demo/blob/4bf91352edf35e42415989d3997688b529a4a4cf/src/App.js#L31
+	// const [notifications, customNotification, updateNotify] = useNotifications()
 
+	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+
+	// *************************************************************************************************************************
+	// ******************************************************* Load Data *******************************************************
+	// *************************************************************************************************************************
 	useEffect(() => {
 		
 		if (!connectedChain) {
@@ -34,13 +46,31 @@ export default function Header(props: HeaderProps) {
 
 	}, [connectedWallets])
 
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
+	/*useEffect(() => {
 
+		const wallets = web3Onboard.state.select('wallets')
+		wallets.subscribe(wallet => {
+			console.log("Changed wallet" + wallet)
+			console.log(wallet)
+
+			const { update, dismiss } = customNotification({
+				eventCode: 'dbUpdate',
+				type: 'hint',
+				message: 'Custom hint notification created by the dapp',
+				onClick: () => window.open(`https://www.blocknative.com`)
+			})
+
+		})
+
+	}, []);*/
+	
+	// *************************************************************************************************************************
+	// ******************************************************** Update Data ****************************************************
+	// *************************************************************************************************************************
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 		await selectCrypto(cryptocommodityName);
 	}
-
 
   return (
 
@@ -58,7 +88,7 @@ export default function Header(props: HeaderProps) {
         <Link href="/" className="header-brand d-md-none">
           <svg width="80" height="46">
             <title>Catallactic Logo</title>
-            <use xlinkHref="/assets/brand/catallactic.svg#full" />
+            <use xlinkHref="assets/brand/catallactic.svg#full" />
           </svg>
         </Link>
 

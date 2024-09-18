@@ -35,12 +35,12 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
 
         <svg className="sidebar-brand-full ms-auto" width="118" height="46">
           <title>CoreUI Logo</title>
-          <use xlinkHref="/assets/brand/catallactic.svg#full" />
+          <use xlinkHref="assets/brand/catallactic.svg#full" />
         </svg>
 
         <svg className="sidebar-brand-narrow d-none ms-auto" width="46" height="46">
           <title>CoreUI Logo</title>
-          <use xlinkHref="/assets/brand/coreui.svg#signet" />
+          <use xlinkHref="assets/brand/coreui.svg#signet" />
         </svg>
 
 				<Button variant="link" className="sidebar-toggler bg-header d-none d-md-inline-block rounded-0 text-end pe-4 fw-bold shadow-none ms-auto" onClick={toggleIsNarrow} type="button" aria-label="sidebar toggler">
