@@ -112,9 +112,9 @@ const Login: NextPage = () => {
 				</Row>
 
 				<Row className="mb-5">
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } ></input></Col>
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled text-white fw-bolder" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } ></input></Col>
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
 				</Row>
 
 				<Row className="mt-4 mb-2">
@@ -122,7 +122,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -136,7 +136,7 @@ const Login: NextPage = () => {
 									<div>Project</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 text-white shadow-none p-0" id="dropdown-chart1">
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -159,7 +159,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row">
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -173,12 +173,7 @@ const Login: NextPage = () => {
 									<div>Project</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart1"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -196,7 +191,7 @@ const Login: NextPage = () => {
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -210,12 +205,7 @@ const Login: NextPage = () => {
 									<div>Holders</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart2"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart2">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -233,7 +223,7 @@ const Login: NextPage = () => {
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -247,12 +237,7 @@ const Login: NextPage = () => {
 									<div>Exchanges</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart3"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart3">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -270,7 +255,7 @@ const Login: NextPage = () => {
 					</div>
 
 					<div className="col-sm-6 col-lg-3">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -284,12 +269,7 @@ const Login: NextPage = () => {
 									<div>DeFi Services</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart4"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart4">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -312,7 +292,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -326,12 +306,7 @@ const Login: NextPage = () => {
 									<div>Project</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart1"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 
@@ -354,7 +329,7 @@ const Login: NextPage = () => {
 				</Row>
 				<div className="row">
 					<div className="col-12">
-						<Card text="white" className="mb-4 background-disabled">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
 							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
 								<div>
 									<div className="fs-4 fw-semibold">
@@ -368,12 +343,7 @@ const Login: NextPage = () => {
 									<div>Project</div>
 								</div>
 								<Dropdown align="end">
-									<DropdownToggle
-										as="button"
-										bsPrefix="btn"
-										className="btn-link rounded-0 text-white shadow-none p-0"
-										id="dropdown-chart1"
-									>
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
 										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
 									</DropdownToggle>
 

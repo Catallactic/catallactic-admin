@@ -195,22 +195,31 @@ const RoundFeatures: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Main Features</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Price (uUSD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_PRICE != 0 ? X_ICO_PRICE : ''} onChange={(event) => setICOPrice(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setICOSPriceOnSC()}> {KEY_ICON()} ICO Price</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Soft Cap (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Soft Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_SOFT_CAP != 0 ? X_ICO_SOFT_CAP : ''} onChange={(event) => setICOSoftCap(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setICOSoftCapOnSC()}> {KEY_ICON()} SoftCap</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Hard Cap (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Hard Cap (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_HARD_CAP != 0 ? X_ICO_HARD_CAP : ''} onChange={(event) => setICOHardCap(Number(event.target.value))} disabled={!CAN_TYPE} ></input></Col>
@@ -223,29 +232,41 @@ const RoundFeatures: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Volumes</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Minimum Transfer (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Minimum Transfer (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MIN_TRANSFER != 0 ? X_ICO_MIN_TRANSFER / 10**6 : ''}  onChange={(event) => setMinTransfer(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE} ></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setMinTransferOnSC()}> {KEY_ICON()} Min Transfer</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Maximum Transfer (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Maximum Transfer (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MAX_TRANSFER != 0 ? X_ICO_MAX_TRANSFER / 10**6 : ''} onChange={(event) => setMaxTransfer(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE}></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setMaxTransferOnSC()}> {KEY_ICON()} Max Transfer</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Maximum Investment (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Maximum Investment (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_MAX_INVESTMENT != 0 ? X_ICO_MAX_INVESTMENT / 10**6 : ''} onChange={(event) => setMaxInvestment(Number(event.target.value) * 10**6)} disabled={!CAN_TYPE}></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setMaxInvestmentOnSC()}> {KEY_ICON()} Max Investment</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Whitelist Threshold (USD)</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Whitelist Threshold (USD)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_ICO_WHITELIST_THRESHOLD != 0 ? X_ICO_WHITELIST_THRESHOLD : ''} disabled={!CAN_TYPE} onChange={ (event) => setWhitelistThreshold(Number(event.target.value)) }></input></Col>
@@ -258,20 +279,26 @@ const RoundFeatures: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Vested Percentage</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Vested Percentage</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_SCHEDULE_PERCENTAGE != 0 ? X_VESTING_SCHEDULE_PERCENTAGE : ''} disabled={!CAN_TYPE} onChange={ (event) => setVestingSchedulePercentage(Number(event.target.value)) }></input></Col>
 						{ CAN_MODIFY ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => setPercentVestedOnSC()} disabled={!connectedChain} > {KEY_ICON()} Percent Vested</Button></Col> : '' }
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Vesting Program</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Vesting Program</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectCurrentVestingId}>
-								<Dropdown.Toggle className={"btn-lg text-black-50 w-100" + colorCSS} disabled={!CAN_TYPE}>
+								<Dropdown.Toggle className={"btn-lg bg-edited text-black-50 w-100 border-0" + colorCSS} disabled={!CAN_TYPE}>
 									{X_VESTING_CURRENT_PROGRAM_ID}
 								</Dropdown.Toggle>
 
@@ -289,15 +316,11 @@ const RoundFeatures: NextPage = () => {
 					</Row>
 				</Form.Group>
 
-				{ CAN_CREATE ?
-					<Row className="m-4"></Row>
-				: '' }
+				<Row className="m-4"></Row>
 
-				{ CAN_CREATE ?
 				<Row>
-					<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => createICO()} > {KEY_ICON()} Create Funding Round</Button></Col>
+					<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_CREATE} onClick={() => createICO()} > {KEY_ICON()} Create Funding Round</Button></Col>
 				</Row>
-				: '' }
 
 				<Row className="m-4"></Row>
 

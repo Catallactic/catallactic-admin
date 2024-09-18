@@ -165,11 +165,14 @@ const Features: NextPage = () => {
 				}
 
 				<Row className="m-4"></Row>
+
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Programs</div></div></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectVestingId}>
@@ -189,30 +192,40 @@ const Features: NextPage = () => {
 							</Dropdown>
 						</Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Vesting Id</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Vesting Id</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" value={X_VESTING_ID} disabled={true}></input></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Vesting Start</Form.Text></div></Col>
-						<Col><div><Form.Text className="">Vesting Cliff (days)</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Vesting Start</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Vesting Cliff (days)</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="datetime-local" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_START_MILLIS && X_VESTING_START_MILLIS != '0' ? X_VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={!connectedChain || !selectedCrypto}></input></Col>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_CLIFF_DAYS != 0 ? X_VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={!connectedChain || !selectedCrypto}></input></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Vesting Duration (days)</Form.Text></div></Col>
-						<Col><div><Form.Text className="">Vesting Number Slides</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Vesting Duration (days)</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Vesting Number Slides</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_DURATION_DAYS != 0 ? X_VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={!connectedChain || !selectedCrypto}></input></Col>
 						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_NUM_SLIDES != 0 ? X_VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!connectedChain || !selectedCrypto}></input></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-3"></Row>
+
 					<Row>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>

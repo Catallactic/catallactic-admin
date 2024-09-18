@@ -188,16 +188,20 @@ const Operations: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Config</div></div></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Grantor Account</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Grantor Account</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_GRANTOR} disabled={!CAN_TYPE} onChange={(event) => setVestinGrantor(event.target.value)} ></input></Col>
 						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setVestinGrantorOnSC()}>Set as Vesting Grantor</Button></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Enter Token Address</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Enter Token Address</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={X_VESTING_SCHEDULE_TOKEN_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setVestingScheduleTokenAddress(event.target.value)} ></input></Col>
@@ -207,14 +211,17 @@ const Operations: NextPage = () => {
 				</Form.Group>
 
 				<Row className="m-4"></Row>
+
 				<Form.Group className="p-5 rounded-5 bg-group">
 
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Vesting Schedules</div></div></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">List of Vesting Schedules</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">List of Vesting Schedules</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col>
@@ -236,33 +243,41 @@ const Operations: NextPage = () => {
 						</Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Holder</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Holder</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_HOLDER} ></input></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Vesting Schedule Id</Form.Text></div></Col>
-						<Col><div><Form.Text className="color-frame">Vesting Program Id</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Vesting Schedule Id</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Vesting Program Id</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_ID ? X_VESTING_SCHEDULE_ID : '' }></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_PROGRAM_ID ? X_VESTING_SCHEDULE_PROGRAM_ID : '' } ></input></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Total Amount</Form.Text></div></Col>
-						<Col><div><Form.Text className="color-frame">Released Amount</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Total Amount</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Released Amount</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_AMOUNT ? X_VESTING_SCHEDULE_AMOUNT / 10**18 : '' }></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={X_VESTING_SCHEDULE_RELEASED_AMOUNT ? X_VESTING_SCHEDULE_RELEASED_AMOUNT : '' } dir="rtl" ></input></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col xs={6}><div><Form.Text className="color-frame">Releseable Amount</Form.Text></div></Col>
+						<Col xs={6}><div><Form.Text className="color-frame fs-6">Releseable Amount</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={6}><input className="form-control form-control-lg color-frame border-0" disabled={ true } value={ X_VESTING_SCHEDULE_RELEASED_AMOUNT } ></input></Col>
@@ -270,11 +285,11 @@ const Operations: NextPage = () => {
 						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => releaseVesting()}>Release</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-3"></Row>
 
 				</Form.Group>
 
-				<Row className="m-4"></Row>
+				<Row className="m-2"></Row>
 
 			</Container>
 		</div>

@@ -116,40 +116,48 @@ const ERC20Features: NextPage = () => {
 				</Row>
 				}
 
-				<Row className="mb-4"></Row>
+				<Row className="m-4"></Row>
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Features</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+					
 					<Row>
-						<Col><div><Form.Text className="">Token Name</Form.Text></div></Col>
-					</Row>
+						<Col><div><Form.Text className="fs-6">Token Name</Form.Text></div></Col>
+					</Row>				
 					<Row>
-						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
-					</Row>
-					<Row>
-						<Col><div><Form.Text className="">Token Symbol</Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
-					</Row>
-					<Row>
-						<Col><div><Form.Text className="">Token Supply</Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col><input type="number" className={ 'form-control form-control-lg color-frame text-left border-0 ' + (X_TOKEN_INITIALIZED ? '' : 'bg-edited') } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={X_TOKEN_INITIALIZED ? true : false} ></input></Col>
+						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 bg-button' } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={!X_TOKEN_INITIALIZED} ></input></Col>
 					</Row>
 
-					{ !X_TOKEN_INITIALIZED ? <Row className="mb-3"></Row> : '' }
-					{ !X_TOKEN_INITIALIZED ? 
+					<Row className="m-2"></Row>
+					
+					<Row>						
+						<Col><div><Form.Text className="fs-6">Token Symbol</Form.Text></div></Col>
+					</Row>				
 					<Row>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={X_TOKEN_INITIALIZED ? true : false} onClick={() => saveERC20Features()}>Initialize</Button></Col>
+						<Col><input className={ 'form-control form-control-lg color-frame text-left border-0 bg-button' } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={!X_TOKEN_INITIALIZED} ></input></Col>
 					</Row>
-					: '' }
+
+					<Row className="m-2"></Row>
+
+					<Row>
+						<Col><div><Form.Text className="fs-6">Token Supply</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input type="number" className={ 'form-control form-control-lg color-frame text-left border-0  bg-button' } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={!X_TOKEN_INITIALIZED} ></input></Col>
+					</Row>
+
+					<Row className="m-4"></Row>
+
+					<Row>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!X_TOKEN_INITIALIZED} onClick={() => saveERC20Features()}>Initialize</Button></Col>
+					</Row>
 
 				</Form.Group>
 
-				<Row className="mb-4"></Row>
+				<Row className="m-4"></Row>
 
 			</Container>
 		</div>

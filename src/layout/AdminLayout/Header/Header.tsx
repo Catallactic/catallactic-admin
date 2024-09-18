@@ -44,7 +44,7 @@ export default function Header(props: HeaderProps) {
 
   return (
 
-    <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom">
+    <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom bg-header">
 			
       <Container fluid className="header-navbar d-flex align-items-center">
 				
@@ -70,8 +70,8 @@ export default function Header(props: HeaderProps) {
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
 					{wallet ?
-						<Dropdown className="btn btn-primary mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
-							<Dropdown.Toggle className="w-100" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+							<Dropdown.Toggle className="w-100 bg-header border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
 							</Dropdown.Toggle>
 
@@ -87,7 +87,7 @@ export default function Header(props: HeaderProps) {
 						</Dropdown>
 					: '' }
 
-					<button type="button" style={ connecting ? { backgroundColor:'#FFA500' } : wallet ? { backgroundColor:'#008000' } : { backgroundColor:'#dc3545' }} className="btn m-2 text-white text-uppercase fw-bolder" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+					<button type="button" style={ connecting ? { backgroundColor:'#CC6600' } : wallet ? { backgroundColor:'#666600' } : { backgroundColor:'#B594CB' }} className="btn m-2 text-white text-uppercase fw-bolder" disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
 					</button>
 

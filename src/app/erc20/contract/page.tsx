@@ -121,19 +121,25 @@ const ERC20Contract: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Token</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Token Contract Address</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Token Contract Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={connectedChain != undefined} value={TOKEN_ADDRESS || ''}></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={connectedChain != undefined} onClick={connectTokenContract}>Connect</Button></Col>
+						<Col xs={9}><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!connectedChain} value={TOKEN_ADDRESS || ''}></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={connectTokenContract}>Connect</Button></Col>
+					</Row>
+
+					<Row className="m-2"></Row>
+
+					<Row>
+						<Col><div><Form.Text className="fs-6">Token Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><div><Form.Text className="">Token Contract Owner</Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-edited color-frame border-0" value={TOKEN_OWNER} disabled={connectedChain != undefined}></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={connectedChain != undefined} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input id="tokenowner" type="email" className="form-control form-control-lg bg-edited color-frame border-0" value={TOKEN_OWNER} disabled={!connectedChain}></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => setNewTokenOwner('tokenowner')}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 				</Form.Group>
 

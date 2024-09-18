@@ -30,18 +30,34 @@
 	background-color: #add8e6!important;
 }
 .background-disabled {
-	background-color: #c0c0c0!important;
+	background-color: #e9ecef!important;
 }
 
-
+/* Layouts */
 .bg-page {
 	background-color: #F3F6FF!important;
 }
 .bg-group {
 	background-color: #FFFFFF!important;
 }
+.bg-header {
+	background-color: #96B9DC!important;
+}
+
+/* UI Elements */
 .bg-edited {
 	background-color: #F3F6FF!important;
+}
+.bg-edited[disabled], .bg-button:disabled {
+	background-color: #e9ecef!important;
+	color: #212529!important;
+}
+.bg-button {
+	background-color: #96B9DC!important;
+}
+.bg-button[disabled], .bg-button:disabled {
+	background-color: #e9ecef!important;
+	color: #212529!important;
 }
 /*.sidebar .sidebar-nav .nav-link {
 	background-color: #F3F6FF!important;
@@ -49,4 +65,15 @@
 }*/
 .header .header-navbar .header-nav .nav-link {
 	color: #FFF;
+}
+.sidebar .sidebar-nav .nav-group.show {
+	background-color: #F3F6FF!important;
+
+}
+.sidebar .sidebar-nav .nav-link:hover {
+	background-color: #96B9DC!important;
+}
+
+.color-dashboard {
+	color: #3a3d5c!important;
 }

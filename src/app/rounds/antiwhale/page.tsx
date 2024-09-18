@@ -169,7 +169,7 @@ const AntiwhaleFeatures: NextPage = () => {
 					</Row>
 
 					<Row>
-						<table className="table table-dark">
+						<table className="table">
 							<thead>
 								<tr>
 									<th scope="col">#</th>
@@ -224,7 +224,7 @@ const AntiwhaleFeatures: NextPage = () => {
 					</Row>
 
 					<Row className="mb-3">
-						<table className="table table-dark">
+						<table className="table">
 							<thead>
 								<tr>
 									<th scope="col">#</th>

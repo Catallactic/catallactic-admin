@@ -111,25 +111,36 @@ const ICOContract: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">ICO Contract Address</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">ICO Contract Address</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" disabled={true} value={getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == METAMASK_CHAIN_ID; })?.ico_address || ''}></input></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">ICO Contract Owner</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">ICO Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="email" className="form-control form-control-lg color-frame border-0 text-center" defaultValue={ICO_OWNER} disabled={true}></input></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Pending ICO Contract Owner</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Pending ICO Contract Owner</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={12}><input dir="rtl" type="email" className={"form-control form-control-lg color-frame border-0" + colorCSS} defaultValue={ICO_PENDING_OWNER} disabled={!CAN_TYPE} onChange={(event) => setICOPendingOwner(event.target.value)} ></input></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-3"></Row>
+
 					<Row>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER || !CAN_TYPE} onClick={() => setNewICOOwner()}> {KEY_ICON()} Transfer</Button></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!ICO_PENDING_OWNER || !CAN_TYPE} onClick={() => acceptNewICOOwner()}> {KEY_ICON()} Accept</Button></Col>
@@ -148,11 +159,11 @@ const ICOContract: NextPage = () => {
 						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
-						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Available</Form.Text></div></Col>
+						<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Invested</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Inv USD</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">ERC-20 Bought</Form.Text></div></Col>
 					</Row>
 					{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
 						<Row className="mb-3" key={index}>

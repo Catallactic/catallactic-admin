@@ -228,7 +228,7 @@ const Operations: NextPage = () => {
 				<Row className="m-4"></Row>
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><Form.Text className="">Current ICO Stage</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Current ICO Stage</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="text" className="form-control form-control-lg color-frame text-center border-0" value={ICO_CURRENT_STAGE_TEXT} disabled={true}></input></Col>
@@ -247,10 +247,10 @@ const Operations: NextPage = () => {
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">Currency</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">Amount</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">Amount USD</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6"></Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={3}>
@@ -283,10 +283,12 @@ const Operations: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20 to Investors</div></div></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">ICO Cryptocommodities Required</Form.Text></div></Col>
-						<Col><div><Form.Text className="color-frame">ICO Cryptocommodities Current</Form.Text></div></Col>
-						<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">ICO Cryptocommodities Required</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">ICO Cryptocommodities Current</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6"></Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } ></input></Col>
@@ -294,35 +296,40 @@ const Operations: NextPage = () => {
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Enter Vesting Token</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Enter Vesting Token</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={X_VESTING_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="color-frame">Enter ERC-20 Token</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Enter ERC-20 Token</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={X_TOKEN_ADDRESS} ></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
+
 					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
+
 				</Form.Group>
 
 				<Row className="m-4"></Row>
+
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Withdraw to Wallets</div></div></Col>
 					</Row>
 					<Row>
-						<Col><div><Form.Text className="color-frame">Enter Target Wallet</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Enter Target Wallet</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
@@ -331,14 +338,14 @@ const Operations: NextPage = () => {
 					<Row className="mb-3"></Row>
 					<Row>
 						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Available</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">% To Withdraw</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">To Withdraw</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">Available</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">% To Withdraw</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-6">To Withdraw</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToWitdrawCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0">
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CAN_TYPE}>
 									{WITHDRAW_CURRENCY}
 								</Dropdown.Toggle>
 

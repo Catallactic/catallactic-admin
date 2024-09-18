@@ -48,21 +48,6 @@
 	font-size: 1em!important;
 	font-weight: bold;
 }
-.bg-button {
-	background-color: #3a3d5c!important;
-	color: rgba(255, 255, 255, 0.87)!important;
-	font-size: 1.2em!important;
-}
-.bg-button-connect {
-	background-color: #FFE790!important;
-	color: #303353!important;
-	font-size: 1.2em!important;
-}
-.bg-button-disconnect {
-	background-color: #fec4c1!important;
-	color: #3a3d5c!important;
-	font-size: 1.2em!important;
-}
 .bg-label {
 	font-weight: bold;
 	color: rgba(255, 255, 255, 0.87)!important;

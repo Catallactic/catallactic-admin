@@ -31,7 +31,7 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
       })}
       id="sidebar"
     >
-      <div className="sidebar-brand d-none d-md-flex align-items-center justify-content-center">
+      <div className="sidebar-brand bg-header d-none d-md-flex align-items-center justify-content-center">
 
         <svg className="sidebar-brand-full ms-auto" width="118" height="46">
           <title>CoreUI Logo</title>
@@ -43,7 +43,7 @@ export default function Sidebar(props: { isShow: boolean; isShowMd: boolean }) {
           <use xlinkHref="/assets/brand/coreui.svg#signet" />
         </svg>
 
-				<Button variant="link" className="sidebar-toggler d-none d-md-inline-block rounded-0 text-end pe-4 fw-bold shadow-none ms-auto" onClick={toggleIsNarrow} type="button" aria-label="sidebar toggler">
+				<Button variant="link" className="sidebar-toggler bg-header d-none d-md-inline-block rounded-0 text-end pe-4 fw-bold shadow-none ms-auto" onClick={toggleIsNarrow} type="button" aria-label="sidebar toggler">
 					<FontAwesomeIcon className="sidebar-toggler-chevron" icon={faAngleLeft} fontSize={24} />
 				</Button>
 

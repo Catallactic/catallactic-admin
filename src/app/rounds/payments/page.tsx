@@ -212,12 +212,12 @@ const Payments: NextPage = () => {
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><div><Form.Text className="color-frame">Available Payment Tokens</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Available Payment Tokens</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={8}>
 							<Dropdown onSelect={onFactorySelectPaymentMethod}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0">
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!ICO_PAYMENT_SYMBOLS}>
 									{ X_FACTORY_PAYMENT_SYMBOL_SYMBOL }
 								</Dropdown.Toggle>
 
@@ -237,7 +237,7 @@ const Payments: NextPage = () => {
 
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><div><Form.Text className="color-frame">Installed Payment Tokens</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">Installed Payment Tokens</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col>
@@ -275,32 +275,33 @@ const Payments: NextPage = () => {
 					</Row>
 					*/}
 
-					<Row className="mb-3"></Row>
-					<Row>
-						<Col xs={4}><div><Form.Text className="color-frame">Symbol</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame" dir="rtl">Address</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame">Decimals</Form.Text></div></Col>
-					</Row>
+					<Row className="m-2"></Row>
 
+					<Row>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6">Symbol</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6" dir="rtl">Address</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6">Decimals</Form.Text></div></Col>
+					</Row>
 					<Row>
 						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolSymbol(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_SYMBOL ? X_ICO_PAYMENT_SYMBOL_SYMBOL : '' } ></input></Col>
 						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolAddress(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_ADDRESS ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_ADDRESS) : '' } dir="rtl" ></input></Col>
 						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolDecimals(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_DECIMALS ? X_ICO_PAYMENT_SYMBOL_DECIMALS : '' }></input></Col>
 					</Row>
 
-					<Row>
-						<Col xs={4}><div><Form.Text className="color-frame">Price (uUSD)</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame">Ref</Form.Text></div></Col>
-						<Col xs={4}><div><Form.Text className="color-frame">Dynamic Price (uUSD)</Form.Text></div></Col>
-					</Row>
+					<Row className="m-2"></Row>
 
+					<Row>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6">Price (uUSD)</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6">Ref</Form.Text></div></Col>
+						<Col xs={4}><div><Form.Text className="color-frame fs-6">Dynamic Price (uUSD)</Form.Text></div></Col>
+					</Row>
 					<Row>
 						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolPrice(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_PRICE ? X_ICO_PAYMENT_SYMBOL_PRICE : '' }></input></Col>
 						<Col xs={4}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={event => setICOPaymentSymbolRef(event.target.value)} value={X_ICO_PAYMENT_SYMBOL_REF ? truncateEthAddress(X_ICO_PAYMENT_SYMBOL_REF) : '' } dir="rtl" ></input></Col>
 						<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={ X_ICO_PAYMENT_SYMBOL_DYN_PRICE }></input></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-4"></Row>
 
 					<Row>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !CAN_TYPE || !X_ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => deleteICOPaymentMethod()}>{KEY_ICON()} Uninstall</Button></Col>
@@ -308,7 +309,7 @@ const Payments: NextPage = () => {
 						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !CAN_TYPE || !X_ICO_PAYMENT_SYMBOL_SYMBOL } onClick={() => cancelICOPaymentMethod()}>Cancel</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
 
 				</Form.Group>
 
@@ -317,7 +318,9 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Receive Address</div></div></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col xs={8}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={ !CAN_TYPE } onChange={(event) => setSelectedCryptocommodityReceiveAddress(event.target.value) }></input></Col>
 						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !CAN_TYPE } onClick={setReceiveAddress}>Update</Button></Col>
@@ -329,7 +332,9 @@ const Payments: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Dynamic Prices</div></div></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col><Form.Check type="checkbox" label="Dynamic Prices" className="color-frame" disabled={ !CAN_TYPE } onChange={setDynamicPriceSC} defaultChecked={DYNAMIC_PRICE} /></Col>
 					</Row>
@@ -341,15 +346,20 @@ const Payments: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 					</Row>
 
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Address</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={8}><input className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
-						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
+						<Col xs={8}><input className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!CAN_TYPE} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
+						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold" disabled={!CAN_TYPE} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col><div><Form.Text className="">Balance</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Balance</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input className="form-control form-control-lg text-center border-0" disabled={true} value={ICO_PAYMENT_METHOD_SEARCH_BALANCE} ></input></Col>

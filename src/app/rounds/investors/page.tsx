@@ -93,10 +93,10 @@ const Investors: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallets</div></div></Col>
 					</Row>
 					<Row>
-						<Col><div><Form.Text className="color-frame">List of Investors</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame fs-6">List of Investors</Form.Text></div></Col>
 					</Row>
 					<Row className="mb-3">
-						<table className="table table-dark">
+						<table className="table">
 							<thead>
 								<tr>
 									<th scope="col">#</th>
@@ -124,25 +124,26 @@ const Investors: NextPage = () => {
 					</Row>
 
 					<Row>
-						<Col><div><Form.Text className="">Address</Form.Text></div></Col>
+						<Col><div><Form.Text className="fs-6">Address</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={9}><input type="email" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS || !CAN_TYPE} onChange={(event) => setPaymentMethodsSearchAddress(event.target.value) } value={PAYMENT_METHODS_SEARCH_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button-connect p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS || !CAN_TYPE} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold" disabled={!BALANCES_PAYMENT_TOKENS_SEARCH_ADDRESS || !CAN_TYPE} onClick={()=>{ getBalancesPaymentMethodsSearchAddress(); getBalancesRawICOSearchAddressWallet(); getBalancesUSDICOSearchAddressWallet(); getBalancesCygasSearchAddress(); }}>Balances</Button></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
+
 					<Row>
-						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center fs-6">In Tokens</Form.Text></div></Col>
 						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
+						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center fs-6">In ICO</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Available</Form.Text></div></Col>
 						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Invested</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Inv USD</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">ERC-20 Bought</Form.Text></div></Col>
 					</Row>
 					{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
 					<Row className="mb-3" key={index} >
