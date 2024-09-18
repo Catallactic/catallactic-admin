@@ -80,9 +80,6 @@ const Cryptomcommodities: NextPage = () => {
 	// *************************************************************************************************************************
 	const [X_SELECTED_CRYPTOCOMMODITY_NAME, setSelectedCryptocommodityName] = useState<string>('');
 	const [X_SELECTED_CRYPTOCOMMODITY_ADDRESS, setSelectedCryptocommodityAddress] = useState<string>('');
-
-	const [ICO_PAYMENT_SYMBOL_SYMBOL, setICOPaymentSymbolSymbol] = useState<any | undefined>()
-
 	const [SELECTED_CRYPTOCOMMODITY_STORAGE, setCryptocommodityStorage] = useState<string>('');
 
 	// handle Cryptocommodity
@@ -146,8 +143,10 @@ const Cryptomcommodities: NextPage = () => {
 	async function setStorage() {
 		console.log("SELECTED_CRYPTOCOMMODITY_STORAGE", SELECTED_CRYPTOCOMMODITY_STORAGE);
 		let storage = keccak256(toUtf8Bytes(SELECTED_CRYPTOCOMMODITY_STORAGE));
-		console.log("storage", storage);
-		await contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage);
+		console.log("storage to set", storage);
+		await contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage)
+			.then(await handleICOReceipt)
+			.catch(await handleError);
 	}
 
   return (
@@ -214,7 +213,7 @@ const Cryptomcommodities: NextPage = () => {
 							<ListGroup onSelect={onSelectFacet}>
 								{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 									return (
-										<Row className="mt-2" key={index} eventKey={item} active={ICO_PAYMENT_SYMBOL_SYMBOL == item} >
+										<Row className="mt-2" key={index} eventKey={item}>
 											<Col xs={4}><input className="form-control form-control-lg border-0" disabled={ true } value={item} ></input></Col>
 											<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={FACTORY_FACETS[item] ? FACTORY_FACETS[item][0] : ''} ></input></Col>
 
