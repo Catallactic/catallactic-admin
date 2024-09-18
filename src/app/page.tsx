@@ -26,7 +26,6 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const [connectedAddress, setConnectedAddress] = useState('')
 	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
 	const { 
@@ -52,7 +51,6 @@ const Login: NextPage = () => {
 
 		if (!connectedChain) {
 			console.log('No chainId found. Aborting..')
-			setConnectedAddress('')
 			return;
 		}
 

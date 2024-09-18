@@ -188,11 +188,11 @@ const Environment: NextPage = () => {
 						<Col xs={7}><div><Form.Text className="color-frame">Address</Form.Text></div></Col>
 					</Row>
 					<Row className="mt-2" >
-								<Col xs={3}><input className="form-control form-control-lg border-0" disabled={ true } value={'Diamond'} ></input></Col>
-								<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
-								<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
-								<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" onClick={() => handleShowFunctions('Diamond')}>...</Button></Col>
-							</Row>
+						<Col xs={3}><input className="form-control form-control-lg border-0" disabled={ true } value={'Diamond'} ></input></Col>
+						<Col xs={2}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+						<Col xs={6}><input className="form-control form-control-lg text-center border-0" disabled={ true } value={'-'} ></input></Col>
+						<Col xs={1}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => handleShowFunctions('Diamond')}>...</Button></Col>
+					</Row>
 					{FACTORY_FACET_TYPES?.map((item: any, index: any) => {
 						return (
 							<Row className="mt-2" >
