@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import { Button, Container, Dropdown } from 'react-bootstrap'
-import HeaderFeaturedNav from '../Header/HeaderFeaturedNav'
+import { Button, Container, Dropdown, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
 import { useContext, useEffect } from 'react'
@@ -93,7 +92,23 @@ export default function Header(props: HeaderProps) {
         </Link>
 
         <div className="header-nav d-none d-md-flex">
-          <HeaderFeaturedNav />
+					<Nav>
+						<Nav.Item>
+							<Link href="/admin/environment" passHref legacyBehavior>
+								<Nav.Link className="p-2">Environment</Nav.Link>
+							</Link>
+						</Nav.Item>
+						<Nav.Item>
+							<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+								<Nav.Link className="p-2">My Cryptocommodities</Nav.Link>
+							</Link>
+						</Nav.Item>
+						<Nav.Item>
+							<Link href="/admin/accounts" passHref legacyBehavior>
+								<Nav.Link className="p-2">My Account</Nav.Link>
+							</Link>
+						</Nav.Item>
+					</Nav>
         </div>
 
         <div className="header-nav ms-auto">
