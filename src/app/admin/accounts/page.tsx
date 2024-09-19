@@ -282,6 +282,7 @@ const Accounts: NextPage = () => {
       <Container className='mw-100'>
 
 				<Row className="m-4"></Row>
+
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
@@ -295,6 +296,7 @@ const Accounts: NextPage = () => {
 				</Form.Group>
 
 				<Row className="m-4"></Row>
+
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
@@ -329,152 +331,143 @@ const Accounts: NextPage = () => {
 				</Form.Group>
 
 				<Row className="m-4"></Row>
-				<Accordion className="mb-3 bg-semitransparent border rounded-3">
-					<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-						<Accordion.Header>
-							<Row className="w-100"><Col className="bg-label text-center h4 p-2">ICO Participation</Col></Row>
-						</Accordion.Header>
-						<Accordion.Body className="px-0">
 
-							<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-								<Row>
-									<Col><div><div className="color-frame fs-4 text-center text-center w-100">Invest</div></div></Col>
-								</Row>
-								<Row>
-									<Col><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-									<Col><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-									<Col><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-									<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
-								</Row>
-								<Row>
-									<Col>
-										<Dropdown onSelect={onSelectToInvestCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0">
-												{TO_INVEST_CURRENCY}
-											</Dropdown.Toggle>
+				<Form.Group className="p-5 rounded-5 bg-group">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ICO Participation</div></div></Col>
+					</Row>
 
-											<Dropdown.Menu className="w-100">
-												{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-													return (
-														<Dropdown.Item as="button" key={index} eventKey={item} active={TO_INVEST_CURRENCY == item}>
-															{item}
-														</Dropdown.Item>
-													);
-												})}
-											</Dropdown.Menu>
-										</Dropdown>
-									</Col>
-									<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
-									<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => invest()}>Invest</Button></Col>
-								</Row>
-							</Form.Group>
+					<Row className="m-3"></Row>
 
-							<Row className="mb-3"></Row>
-							<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-								<Row>
-									<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refund</div></div></Col>
-								</Row>
-								<Row>
-									<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-								</Row>
-								<Row>
-									<Col xs={3}>
-										<Dropdown onSelect={onSelectToRefundCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100">
-												{TO_REFUND_CURRENCY}
-											</Dropdown.Toggle>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Invest</div></div></Col>
+					</Row>
+					<Row>
+						<Col><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col>
+							<Dropdown onSelect={onSelectToInvestCurrency}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING}>
+									{TO_INVEST_CURRENCY}
+								</Dropdown.Toggle>
 
-											<Dropdown.Menu className="w-100">
-												{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-													return (
-														<Dropdown.Item as="button" key={index} eventKey={item} active={TO_REFUND_CURRENCY == item}>
-															{item}
-														</Dropdown.Item>
-													);
-												})}
-											</Dropdown.Menu>
-										</Dropdown>
-									</Col>
-									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
-									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
-								</Row>
-							</Form.Group>
+								<Dropdown.Menu className="w-100">
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_INVEST_CURRENCY == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest</Button></Col>
+					</Row>
 
-							<Row className="mb-3"></Row>
-							<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-								<Row>
-									<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20</div></div></Col>
-								</Row>
+					<Row className="m-3"></Row>
 
-								<Row className="mb-3"></Row>
-								<Row>
-									<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => claim()}>Claim</Button></Col>
-								</Row>
-							</Form.Group>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refund</div></div></Col>
+					</Row>
+					<Row>
+						<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={3}>
+							<Dropdown onSelect={onSelectToRefundCurrency}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING}>
+									{TO_REFUND_CURRENCY}
+								</Dropdown.Toggle>
 
-						</Accordion.Body>
-					</Accordion.Item>
-				</Accordion>
+								<Dropdown.Menu className="w-100">
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_REFUND_CURRENCY == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
+						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
+						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
+					</Row>
+
+					<Row className="m-3"></Row>
+
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20</div></div></Col>
+					</Row>
+
+					<Row className="m-2"></Row>
+
+					<Row>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => claim()}>Claim</Button></Col>
+					</Row>
+				</Form.Group>
 
 				<Row className="m-4"></Row>
-				<Accordion className="mb-3 bg-semitransparent border rounded-3">
-					<Accordion.Item className="border-0 bg-semitransparent" eventKey="0">
-						<Accordion.Header>
-							<Row className="w-100"><Col className="bg-label text-center h4 p-2">ERC-20 Operations</Col></Row>
-						</Accordion.Header>
-						<Accordion.Body className="px-0">
 
-							<Form.Group className="p-3 border border-dark rounded bg-light-grey">
-								<Row>
-									<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
-								</Row>
+				<Form.Group className="p-5 rounded-5 bg-group">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Operations</div></div></Col>
+					</Row>
 
-								<Row>
-									<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
-								</Row>
-								<Row>
-									<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} ></input></Col>
-								</Row>
+					<Row className="m-3"></Row>
 
-								<Row className="mb-3"></Row>
-								<Row>
-								<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-									<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-								</Row>
-								<Row>
-									<Col xs={3}>
-										<Dropdown onSelect={onSelectToTransferCurrency}>
-											<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100">
-												{TO_TRANSFER_CURRENCY}
-											</Dropdown.Toggle>
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
+					</Row>
 
-											<Dropdown.Menu className="w-100">
-												{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-													return (
-														<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
-															{item}
-														</Dropdown.Item>
-													);
-												})}
-											</Dropdown.Menu>
-										</Dropdown>
-									</Col>
-									<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
-									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-									<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => transfer()}>Transfer</Button></Col>
-								</Row>
-							</Form.Group>
+					<Row>
+						<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} ></input></Col>
+					</Row>
 
-						</Accordion.Body>
-					</Accordion.Item>
-				</Accordion>
+					<Row className="mb-3"></Row>
+					<Row>
+					<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={3}>
+							<Dropdown onSelect={onSelectToTransferCurrency}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED}>
+									{TO_TRANSFER_CURRENCY}
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
+						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => transfer()}>Transfer</Button></Col>
+					</Row>
+				</Form.Group>
 
 				<Row className="m-4"></Row>
 
