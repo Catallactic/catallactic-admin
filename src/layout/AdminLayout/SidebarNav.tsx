@@ -28,7 +28,7 @@ import {
 import classNames from 'classnames'
 import Link from 'next/link'
 
-import { ContractsContext } from '../../../hooks/useContractContextHook'
+import { ContractsContext } from '../../hooks/useContractContextHook'
 
 // ******************************************************************************************************************************************************************
 // ****************************************************************************** NavItem ***************************************************************************

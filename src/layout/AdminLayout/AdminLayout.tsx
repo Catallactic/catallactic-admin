@@ -1,14 +1,11 @@
 "use client";
 
-import React, {
-  PropsWithChildren, useCallback, useEffect, useState,
-} from 'react'
+import React, { PropsWithChildren, useCallback, useEffect, useState, } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
-import Head from 'next/head'
 import { Container } from 'react-bootstrap'
-import Sidebar, { SidebarOverlay } from './Sidebar/Sidebar'
-import Header from './Header/Header'
-import Footer from './Footer/Footer'
+import Sidebar, { SidebarOverlay } from './Sidebar'
+import Header from './Header'
+import Footer from './Footer'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   // Show status for xs screen
