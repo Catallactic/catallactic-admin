@@ -104,21 +104,18 @@ const Features: NextPage = () => {
 		console.log(`\nVESTING_DURATION_DAYS: ` + X_VESTING_DURATION_DAYS + ' days');
 		console.log(`\nVESTING_DURATION_SECS: ` + X_VESTING_DURATION_DAYS * 60 * 60 * 24 + ' seconds');
 		console.log(`\nVESTING_NUM_SLIDES: ` + X_VESTING_NUM_SLIDES);
+		console.log(`\ncontracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT: ` + contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT);
 
 		const vestingStart = Date.parse(X_VESTING_START_MILLIS) / 1000;
 		const cliffInSecs = X_VESTING_CLIFF_DAYS * 60 * 60 * 24;
 		const durationInSecs = X_VESTING_DURATION_DAYS * 60 * 60 * 24;
-		console.log(`\ncontracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT: ` + contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT);
 		await contracts.SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.createVesting(vestingId , vestingStart, cliffInSecs, durationInSecs, X_VESTING_NUM_SLIDES)
 			.then(await handleICOReceipt)
+			.then(await cancelVesting)
 			.then(await loadVestingPrograms)
 			.catch(await handleError);
-
-		cancelVesting();
 	}
 	async function cancelVesting() {
-		console.log('cancelVesting');
-
 		setVestingId('');
 		setVestingStartMillis('');
 		setVestingCliffInDays(0);
@@ -126,8 +123,6 @@ const Features: NextPage = () => {
 		setVestingNumSlides(0);
 	}
 	async function deleteVesting() {
-		console.log('deletVesting', X_VESTING_ID);
-
 		//await SELECTED_CRYPTOCOMMODITY_VESTING_CONTRACT?.deletePaymentToken(ICO_PAYMENT_SYMBOL_SYMBOL, ICO_PAYMENT_SYMBOLS.indexOf(ICO_PAYMENT_SYMBOL_SYMBOL));
 
 		//populateICOContractData();
@@ -135,8 +130,6 @@ const Features: NextPage = () => {
 	}
 
   const handleVestingStartChange = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log('handleVestingStartChange: ', e.target.value);
-
 		setVestingStartMillis(e.target.value);
   };
 
@@ -231,9 +224,9 @@ const Features: NextPage = () => {
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => cancelVesting()}> {KEY_ICON()}Cancel</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto || !X_VESTING_ID} onClick={() => deleteVesting()}> {KEY_ICON()}Delete</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto || !X_VESTING_CLIFF_DAYS || !X_VESTING_DURATION_DAYS || !X_VESTING_NUM_SLIDES || !X_VESTING_START_MILLIS} onClick={() => saveVesting()}> {KEY_ICON()}Save</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto || (!X_VESTING_CLIFF_DAYS && !X_VESTING_DURATION_DAYS && !X_VESTING_NUM_SLIDES && !X_VESTING_START_MILLIS)} onClick={() => cancelVesting()}> {KEY_ICON()}Cancel</Button></Col>
 					</Row>
 
 				</Form.Group>

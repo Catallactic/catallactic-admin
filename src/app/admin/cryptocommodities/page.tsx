@@ -239,7 +239,7 @@ const Cryptomcommodities: NextPage = () => {
 					</Row>
 					<Row>
 						{ selectedCrypto ? <Col xs={8}><input className="form-control form-control-lg bg-edited color-frame border-0" value={SELECTED_CRYPTOCOMMODITY_STORAGE} onChange={(event) => setCryptocommodityStorage(event.target.value)} ></input></Col> : '' }
-						{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
+						{ selectedCrypto ? <Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={ !connectedChain || !SELECTED_CRYPTOCOMMODITY_STORAGE || !X_SELECTED_CRYPTOCOMMODITY_NAME } onClick={() => setStorage()}>{KEY_ICON()} Set Storage</Button></Col> : '' }
 					</Row>
 
 					<Row className="mb-3"></Row>
