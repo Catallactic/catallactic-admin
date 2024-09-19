@@ -163,15 +163,7 @@ const AntiwhaleFeatures: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Whitelist</div></div></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
-					<Row className="mb-3"></Row>
-					<Row className="w-100">
-						<Col className="text-center">
-							{ (X_ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
-							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
-							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT > 0) ? X_ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
-						</Col>
-					</Row>
+					<Row className="m-4"></Row>
 
 					<Row>
 						<table className="table">
@@ -194,16 +186,31 @@ const AntiwhaleFeatures: NextPage = () => {
 						</table>
 					</Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-2"></Row>
+
+					<Row className="w-100">
+						<Col className="text-center">
+							{ (X_ICO_WHITELIST_USER_COUNT === undefined ) ? "" : "" }
+							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT == 0 ) ? "Not whitelisted investors yet" : "" }
+							{ (X_ICO_WHITELIST_USER_COUNT != undefined && X_ICO_WHITELIST_USER_COUNT > 0) ? X_ICO_WHITELIST_USER_COUNT + " whitelisted investors" : "" }
+						</Col>
+					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || !ICO_USER_TO_WHITELIST}  onClick={() => whitelistUser(true)}> {KEY_ICON()} Whitelist Investor</Button></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col><input className={"form-control form-control-lg color-frame border-0" + colorCSS} onChange={(event) => setUserToWhitelist(event.target.value)} disabled={!CAN_TYPE}></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || !ICO_USER_TO_WHITELIST} onClick={() => whitelistUser(false)}> {KEY_ICON()} Unwhitelist Investor</Button></Col>
 					</Row>
+
+					<Row className="m-2"></Row>
 
 				</Form.Group>
 
@@ -212,21 +219,14 @@ const AntiwhaleFeatures: NextPage = () => {
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Blacklist</div></div></Col>
 					</Row>
-					<Row className="mb-3"></Row>
 
-					<Row className="mb-3"></Row>
+					<Row className="m-4"></Row>
+
 					<Row>
 						<Col><Form.Check type="checkbox" label="Exclude blacklisted investors" className="color-frame" disabled={!CAN_TYPE} onChange={setIsBlacklist} defaultChecked={X_ICO_IS_USE_BLACKLIST} /></Col>
 					</Row>
 
-					<Row className="mb-3"></Row>
-					<Row className="w-100">
-						<Col className="text-center">
-							{ (X_ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
-							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
-							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + X_ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
-						</Col>
-					</Row>
+					<Row className="m-2"></Row>
 
 					<Row className="mb-3">
 						<table className="table">
@@ -248,11 +248,26 @@ const AntiwhaleFeatures: NextPage = () => {
 							</tbody>
 						</table>
 					</Row>
+
+					<Row className="m-2"></Row>
+
+					<Row className="w-100">
+						<Col className="text-center">
+							{ (X_ICO_BLACKLIST_USER_COUNT === undefined ) ? "" : "" }
+							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT == 0 ) ? "Not blacklisted investors yet" : "" }
+							{ (X_ICO_BLACKLIST_USER_COUNT != undefined && X_ICO_BLACKLIST_USER_COUNT > 0) ? "Click to see " + X_ICO_BLACKLIST_USER_COUNT + " blacklisted investors" : "" }
+						</Col>
+					</Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col><input id="blacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('blacklistUser', true)}> {KEY_ICON()} Blacklist Investor</Button></Col>
 					</Row>
-					<Row className="mb-3"></Row>
+
+					<Row className="m-2"></Row>
+
 					<Row>
 						<Col><input id="unblacklistUser" className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE}></input></Col>
 						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => blacklistUser('unblacklistUser', false)}> {KEY_ICON()} UnBlacklist Investor</Button></Col>
