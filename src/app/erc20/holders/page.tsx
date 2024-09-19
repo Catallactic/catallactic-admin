@@ -127,12 +127,12 @@ const ERC20Holders: NextPage = () => {
 							<Col><div><Form.Text className="fs-6">Enter Investor Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col><input id="balanceInvestor" className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!connectedChain}></input></Col>
+							<Col><input id="balanceInvestor" className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain}></input></Col>
 						</Row>
 
 						<Row className="m-4"></Row>
 						<Row>
-							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0 bg-button" disabled={true} value={INVESTOR_BALANCE ? Number(INVESTOR_BALANCE) / 10**18 : 0}></input></Col>
+							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE ? Number(INVESTOR_BALANCE) / 10**18 : 0}></input></Col>
 							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
 						</Row>
 					</Form.Group>
@@ -149,7 +149,7 @@ const ERC20Holders: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Allowance From Investor Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg color-frame bg-edited text-left bg-button border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -158,7 +158,7 @@ const ERC20Holders: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Allowance to Investor Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg color-frame bg-edited text-left bg-button border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
 					</Row>
 
 					<Row className="m-4"></Row>

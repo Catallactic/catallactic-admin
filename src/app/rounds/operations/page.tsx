@@ -63,14 +63,6 @@ const Operations: NextPage = () => {
 	// *************************************************************************************************************************
 	useEffect(() => {
 
-		if (!connectedChain) {
-			console.log('No chainId found. Aborting..')
-			return;
-		}
-
-		if(!selectedCrypto)
-			return;
-
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
@@ -95,7 +87,7 @@ const Operations: NextPage = () => {
 		console.log('getBalancesCygasICOWallet');
 		getBalancesCygasICOWallet();
 
-	}, [connectedWallets])
+	}, [selectedCrypto])
 
 	useEffect(() => {
 		setVestingAddress(VESTING_ADDRESS);
@@ -216,8 +208,8 @@ const Operations: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
@@ -266,7 +258,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToRefundAllCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CAN_TYPE}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED}>
 									{TO_REFUND_ALL_CURRENCY}
 								</Dropdown.Toggle>
 
@@ -283,7 +275,7 @@ const Operations: NextPage = () => {
 						</Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT ? Number(TO_REFUND_ALL_AMOUNT) /  10**Number(ICO_PAYMENT_METHODS[TO_REFUND_ALL_CURRENCY!][3]) : 0} ></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_ALL_AMOUNT_USD ? Number(TO_REFUND_ALL_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
+						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={() => refundAll()}> {KEY_ICON()} Refund All</Button></Col>
 					</Row>
 				</Form.Group>
 
@@ -304,7 +296,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } ></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={transferClaimableAmountToICO}> {KEY_ICON()} Transfer</Button></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -313,8 +305,8 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame fs-6">Enter Vesting Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setVestingAddress(event.target.value)} value={X_VESTING_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onChange={(event) => setVestingAddress(event.target.value)} value={X_VESTING_ADDRESS} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={setVestingTokenOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -323,13 +315,13 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame fs-6">Enter ERC-20 Token</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE} onChange={(event) => setTokenAddress(event.target.value)} value={X_TOKEN_ADDRESS} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onChange={(event) => setTokenAddress(event.target.value)} value={X_TOKEN_ADDRESS} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={setTokenAddressOnSC}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
 
-					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
+					<Row><Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={() => claimAll()}> {KEY_ICON()}Claim All Investors</Button></Col></Row>
 
 				</Form.Group>
 
@@ -343,8 +335,8 @@ const Operations: NextPage = () => {
 						<Col><div><Form.Text className="color-frame fs-6">Enter Target Wallet</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
+						<Col xs={9}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_WITHDRAW_TARGET_ADDRESS} disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onChange={(event) => setWithdrawTargetAddress(event.target.value)} ></input></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={() => setTargetWalletAddress()}> {KEY_ICON()} Update</Button></Col>
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
@@ -356,7 +348,7 @@ const Operations: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToWitdrawCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CAN_TYPE}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED}>
 									{WITHDRAW_CURRENCY}
 								</Dropdown.Toggle>
 
@@ -372,12 +364,12 @@ const Operations: NextPage = () => {
 							</Dropdown>
 						</Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3]) : 0} disabled={true}></input></Col>
-						<Col xs={3}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={!CAN_TYPE} ></input></Col>
+						<Col xs={3}><input className={"form-control form-control-lg color-frame border-0" + colorCSS} value={WITHDRAW_PERCENTAGE} onChange={(event) => setWithdrawPercentage(event.target.value)} disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} ></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY] ? (Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[WITHDRAW_CURRENCY]) / 10**Number(ICO_PAYMENT_METHODS[WITHDRAW_CURRENCY][3])) * Number(WITHDRAW_PERCENTAGE) / 100 : 0} disabled={true}></input></Col>
 					</Row>
 					<Row className="mb-3"></Row>
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || ICO_CURRENT_STAGE < STAGE.FINISHED} onClick={() => withdrawICO()}> {KEY_ICON()}Withdraw</Button></Col>
 					</Row>
 				</Form.Group>
 
