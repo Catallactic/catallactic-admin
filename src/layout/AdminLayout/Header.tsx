@@ -110,7 +110,7 @@ export default function Header(props: HeaderProps) {
 	
 					{wallet ?
 						<Link href="/admin/accounts" passHref legacyBehavior>
-							<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer mx-3' />
+							<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-3' />
 						</Link>
 					: '' }
 
