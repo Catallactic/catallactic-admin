@@ -108,6 +108,12 @@ export default function Header(props: HeaderProps) {
 
         <div className="header-nav ms-auto">
 	
+					{wallet ?
+						<Link href="/admin/accounts" passHref legacyBehavior>
+							<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer mx-3' />
+						</Link>
+					: '' }
+
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
 					{wallet ?
 						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
@@ -125,12 +131,6 @@ export default function Header(props: HeaderProps) {
 								})}
 							</Dropdown.Menu>
 						</Dropdown>
-					: '' }
-
-						{wallet ?
-						<Link href="/admin/accounts" className='m-2' passHref legacyBehavior>
-							<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer' />
-						</Link>
 					: '' }
 
 					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
