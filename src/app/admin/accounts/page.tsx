@@ -385,7 +385,7 @@ const Accounts: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToRefundCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED}>
 									{TO_REFUND_CURRENCY}
 								</Dropdown.Toggle>
 
