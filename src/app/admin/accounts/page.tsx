@@ -22,7 +22,6 @@ const Accounts: NextPage = () => {
 	// *************************************************************************************************************************
 	// OnBoard hooks
 	const connectedWallets = useWallets()
-	const [connectedAddress, setConnectedAddress] = useState('')
 	const [{ connectedChain }] = useSetChain()
 
 	// Blockchain hooks
@@ -59,6 +58,9 @@ const Accounts: NextPage = () => {
 	} = useERC20Hook();
 	const { handleICOReceipt, handleError } = useResponseHook()
 	const CFG_ERC_20_ABI = require('../../../abi/ERC20Facet.json');
+
+	// UI hooks
+	const [connectedAddress, setConnectedAddress] = useState('')
 
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
