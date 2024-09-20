@@ -127,9 +127,11 @@ export default function Header(props: HeaderProps) {
 						</Dropdown>
 					: '' }
 
-					<Link href="/admin/accounts" className='m-2' passHref legacyBehavior>
-						<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer' />
-					</Link>
+						{wallet ?
+						<Link href="/admin/accounts" className='m-2' passHref legacyBehavior>
+							<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer' />
+						</Link>
+					: '' }
 
 					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
