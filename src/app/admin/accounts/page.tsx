@@ -309,7 +309,7 @@ const Accounts: NextPage = () => {
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
 					</Row>
 					<Row>
-						<Col><div><Form.Text className="">Connected to Metamask Account</Form.Text></div></Col>
+						<Col><div><Form.Text className="">Connected to Account</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={connectedAddress} disabled={true}></input></Col>

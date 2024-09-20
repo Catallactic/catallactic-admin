@@ -121,6 +121,7 @@ const Login: NextPage = () => {
 					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
 				</Row>
 
+				{/* https://europe1.discourse-cdn.com/business20/uploads/gnosis_safe/optimized/1X/593b6f307a37304066ba221f2aab8962159f6baa_2_936x526.jpeg */}
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Supply Allocations</Form.Text></div></Col>
 				</Row>
@@ -255,7 +256,7 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Pending Vesting Schedules</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame catatext">Vesting Schedules</Form.Text></div></Col>
 				</Row>
 				<div className="row">
 					<div className="col-12">
