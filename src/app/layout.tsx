@@ -21,8 +21,8 @@ const web3Onboard = init({
 	wallets: [injectedModule()],
 	chains: supportedChains,
 	appMetadata: {
-		name: 'Token Swap',
-		description: 'Swap tokens for other tokens',
+		name: 'Catallactic Tokenization Platform',
+		description: 'Manage your CryptoCommodity Lifecycle',
 		recommendedInjectedWallets: [
 			{ name: 'MetaMask', url: 'https://metamask.io' }
 		]
