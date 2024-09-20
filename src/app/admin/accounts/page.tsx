@@ -225,17 +225,17 @@ const Accounts: NextPage = () => {
 			window.ethereum.enable()
 			const signer = provider.getSigner()
 			await signer.sendTransaction({
-				from: connectedAddress,
-				to: TO_TRANSFER_ADDRESS,
-				value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
-				gasLimit: 200000,
-			})
-			.then(await handleICOReceipt)
-			.then(await getBalancesRawICOMeWallet)
-			.then(await getBalancesUSDICOMeWallet)
-			.then(await getBalancesPaymentTokensMeWallet)
-			.then(await getBalancesCygasMeWallet)
-			.catch(await handleError);
+					from: connectedAddress,
+					to: TO_TRANSFER_ADDRESS,
+					value: ethers.utils.parseEther(TO_TRANSFER_AMOUNT),
+					gasLimit: 200000,
+				})
+				.then(await handleICOReceipt)
+				.then(await getBalancesRawICOMeWallet)
+				.then(await getBalancesUSDICOMeWallet)
+				.then(await getBalancesPaymentTokensMeWallet)
+				.then(await getBalancesCygasMeWallet)
+				.catch(await handleError);
 
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
 
@@ -249,12 +249,12 @@ const Accounts: NextPage = () => {
 			const currencyToken: Contract = new ethers.Contract(currencyAddress, CFG_ERC_20_ABI, signer);
 			console.log('currencyToken ', currencyToken);
 			await currencyToken.transfer(TO_TRANSFER_ADDRESS, (BigInt(Number(TO_TRANSFER_AMOUNT) * 10**Number(currencyDecimals))).toString())
-			.then(await handleICOReceipt)
-			.then(await getBalancesRawICOMeWallet)
-			.then(await getBalancesUSDICOMeWallet)
-			.then(await getBalancesPaymentTokensMeWallet)
-			.then(await getBalancesCygasMeWallet)
-			.catch(await handleError);
+				.then(await handleICOReceipt)
+				.then(await getBalancesRawICOMeWallet)
+				.then(await getBalancesUSDICOMeWallet)
+				.then(await getBalancesPaymentTokensMeWallet)
+				.then(await getBalancesCygasMeWallet)
+				.catch(await handleError);
 		}
 
 	}
@@ -275,6 +275,19 @@ const Accounts: NextPage = () => {
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
 		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
+
+	useEffect(() => {
+		console.log('useEffect8');
+		if(!TO_TRANSFER_CURRENCY) return;
+		if(!ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY]) return;
+		console.log('TO_TRANSFER_AMOUNT', TO_TRANSFER_AMOUNT);
+
+		let amountToken: string = ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY];
+		let amountTokenPrice: number = Number(amountToken[2])
+		let amountToTransferUSD: number = Number(TO_TRANSFER_AMOUNT) * amountTokenPrice / 10**6;
+		setToTransferAmountUSD(amountToTransferUSD.toString());
+
+	}, [TO_TRANSFER_AMOUNT, TO_TRANSFER_CURRENCY]);
 
   return (
 
@@ -327,6 +340,57 @@ const Accounts: NextPage = () => {
 						<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
 						<Col xs={2}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_ME_WALLET && BALANCES_USD_ICO_ME_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_ME_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_ME_WALLET && BALANCES_USD_ICO_ME_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_ME_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
+					</Row>
+				</Form.Group>
+
+				<Row className="m-4"></Row>
+
+				<Form.Group className="p-5 rounded-5 bg-group">
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Operations</div></div></Col>
+					</Row>
+
+					<Row className="m-3"></Row>
+
+					<Row>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
+					</Row>
+
+					<Row>
+						<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input type="email" className="form-control form-control-lg bg-edited text-center border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} disabled={!connectedChain || !selectedCrypto} ></input></Col>
+					</Row>
+
+					<Row className="mb-3"></Row>
+					<Row>
+					<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={3}>
+							<Dropdown onSelect={onSelectToTransferCurrency}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectedCrypto}>
+									{TO_TRANSFER_CURRENCY}
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
+										return (
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
+												{item}
+											</Dropdown.Item>
+										);
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectedCrypto} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
+						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => transfer()}>Transfer</Button></Col>
 					</Row>
 				</Form.Group>
 
@@ -415,57 +479,6 @@ const Accounts: NextPage = () => {
 
 					<Row>
 						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => claim()}>Claim</Button></Col>
-					</Row>
-				</Form.Group>
-
-				<Row className="m-4"></Row>
-
-				<Form.Group className="p-5 rounded-5 bg-group">
-					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Operations</div></div></Col>
-					</Row>
-
-					<Row className="m-3"></Row>
-
-					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
-					</Row>
-
-					<Row>
-						<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} disabled={!connectedChain || !selectedCrypto} ></input></Col>
-					</Row>
-
-					<Row className="mb-3"></Row>
-					<Row>
-					<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col xs={3}>
-							<Dropdown onSelect={onSelectToTransferCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectedCrypto}>
-									{TO_TRANSFER_CURRENCY}
-								</Dropdown.Toggle>
-
-								<Dropdown.Menu className="w-100">
-									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
-										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_TRANSFER_CURRENCY == item}>
-												{item}
-											</Dropdown.Item>
-										);
-									})}
-								</Dropdown.Menu>
-							</Dropdown>
-						</Col>
-						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectedCrypto} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
-						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => transfer()}>Transfer</Button></Col>
 					</Row>
 				</Form.Group>
 
