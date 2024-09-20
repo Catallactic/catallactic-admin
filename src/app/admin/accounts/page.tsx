@@ -76,7 +76,7 @@ const Accounts: NextPage = () => {
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
-		console.log('loadERC20Features');
+		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
 
 	}, [connectedWallets, selectedCrypto])
@@ -435,7 +435,7 @@ const Accounts: NextPage = () => {
 						<Col><div><Form.Text className="">To Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} ></input></Col>
+						<Col><input type="email" className="form-control form-control-lg color-frame bg-edited text-left border-0" onChange={(event) => setToTransferAddress(event.target.value) } value={TO_TRANSFER_ADDRESS} disabled={!connectedChain || !selectedCrypto} ></input></Col>
 					</Row>
 
 					<Row className="mb-3"></Row>
@@ -448,7 +448,7 @@ const Accounts: NextPage = () => {
 					<Row>
 						<Col xs={3}>
 							<Dropdown onSelect={onSelectToTransferCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectedCrypto}>
 									{TO_TRANSFER_CURRENCY}
 								</Dropdown.Toggle>
 
@@ -463,9 +463,9 @@ const Accounts: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectedCrypto} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => transfer()}>Transfer</Button></Col>
+						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => transfer()}>Transfer</Button></Col>
 					</Row>
 				</Form.Group>
 
