@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
-import { Button, Container, Dropdown, Nav } from 'react-bootstrap'
+import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
 import { useContext, useEffect } from 'react'
@@ -98,11 +98,6 @@ export default function Header(props: HeaderProps) {
 								<Nav.Link className="p-2">Environment</Nav.Link>
 							</Link>
 						</Nav.Item>
-						<Nav.Item>
-							<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-								<Nav.Link className="p-2">My Cryptocommodities</Nav.Link>
-							</Link>
-						</Nav.Item>
 					</Nav>
         </div>
 
@@ -117,6 +112,7 @@ export default function Header(props: HeaderProps) {
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
 					{wallet ?
 						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+
 							<Dropdown.Toggle className="w-100 bg-header border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
 							</Dropdown.Toggle>
@@ -129,7 +125,14 @@ export default function Header(props: HeaderProps) {
 										</Dropdown.Item>
 									);
 								})}
+								<DropdownDivider/>
+								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
+									<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+										<span className='text-decoration-none'>Your CryptoCommodities</span>
+									</Link>
+								</Dropdown.Item>
 							</Dropdown.Menu>
+
 						</Dropdown>
 					: '' }
 
