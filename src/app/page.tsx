@@ -24,10 +24,16 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Read Data ******************************************************
 	// *************************************************************************************************************************
+	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
-	const { createEnvContracts, envContracts, loadYourCryptocommodities, CRYPTOCOMMODITIES, selectCrypto, unselectCrypto, selectedCrypto, contracts } = useContext(ContractsContext);
 
+	// Blockchain hooks
+	const { 
+		createEnvContracts, envContracts, 
+		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
+		selectCrypto, unselectCrypto, selectedCrypto, contracts 
+	} = useContext(ContractsContext);
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
@@ -104,15 +110,15 @@ const Login: NextPage = () => {
 				}
 
 				<Row className="mt-4 mb-2">
-					<Col xs={4}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
-					<Col xs={4}><div><Form.Text className="color-frame catatext" dir="rtl">Address</Form.Text></div></Col>
-					<Col xs={4}><div><Form.Text className="color-frame catatext">Decimals</Form.Text></div></Col>						
+					<Col xs={3}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
+					<Col xs={6}><div><Form.Text className="color-frame catatext" dir="rtl">Address</Form.Text></div></Col>
+					<Col xs={3}><div><Form.Text className="color-frame catatext">Decimals</Form.Text></div></Col>						
 				</Row>
 
 				<Row className="mb-5">
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } ></input></Col>
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
-					<Col xs={4}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } ></input></Col>
+					<Col xs={6}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS : 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
 				</Row>
 
 				<Row className="mt-4 mb-2">
