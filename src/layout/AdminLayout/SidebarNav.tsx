@@ -217,16 +217,21 @@ export default function SidebarNav() {
 			
       <SidebarNavTitle>Project</SidebarNavTitle>
 
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Infrastructure" disabled={false}>
+        <SidebarNavItem href="/rounds/contract">Contract</SidebarNavItem>
+        <SidebarNavItem href="/admin/environment">Environment</SidebarNavItem>
       </SidebarNavGroup>
 
     </ul>

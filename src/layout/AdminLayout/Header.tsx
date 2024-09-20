@@ -91,6 +91,7 @@ export default function Header(props: HeaderProps) {
           </svg>
         </Link>
 
+				{/*
         <div className="header-nav d-none d-md-flex">
 					<Nav>
 						<Nav.Item>
@@ -100,6 +101,7 @@ export default function Header(props: HeaderProps) {
 						</Nav.Item>
 					</Nav>
         </div>
+				*/}
 
         <div className="header-nav ms-auto">
 	
