@@ -196,7 +196,7 @@ const Accounts: NextPage = () => {
 			.catch(await handleError);
 	}
 
-	// refund
+	// claim
 	async function claim() {
 		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim()
 			.then(await handleICOReceipt)
@@ -254,9 +254,17 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
+				.then(await resetTransfer)
 				.catch(await handleError);
 		}
 
+	}
+
+	async function resetTransfer() {
+		setToTransferCurrency('USDT');
+		setToTransferAmount('0');
+		setToTransferAmountUSD('0');
+		setToTransferAddress('');
 	}
 
 	// *************************************************************************************************************************
