@@ -39,6 +39,10 @@ const web3Onboard = init({
 			minimal: true
 		}
 	},
+	notify: {
+		enabled: true,
+		position: 'bottomRight',
+	}
 })
 
 const wallets2 = web3Onboard.state.select('wallets')

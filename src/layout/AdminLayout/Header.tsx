@@ -4,7 +4,7 @@ import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstr
 import Link from 'next/link'
 
 import { useContext, useEffect } from 'react'
-import { useConnectWallet, useSetChain, useWallets } from '@web3-onboard/react'
+import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 
 type HeaderProps = {
@@ -22,6 +22,8 @@ export default function Header(props: HeaderProps) {
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 	const [{ connectedChain }] = useSetChain()
 	const connectedWallets = useWallets()
+	const [notifications, customNotification, updateNotify, preflightNotifications] = useNotifications()
+
 	// https://github.com/blocknative/web3-onboard/issues/1666
 	// https://github.com/blocknative/react-demo/blob/4bf91352edf35e42415989d3997688b529a4a4cf/src/App.js#L31
 	// const [notifications, customNotification, updateNotify] = useNotifications()
@@ -32,8 +34,16 @@ export default function Header(props: HeaderProps) {
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
 	useEffect(() => {
+
+		customNotification({
+			eventCode: 'connect',
+			type: 'success',
+			message: connectedWallets.length > 0 ? 'Wallet has connected' : 'Wallet has disconnected',
+			autoDismiss: 5000,
+			//onClick: () => window.open(`https://www.blocknative.com`)
+		})
 		
-		if (!connectedChain) {
+		if (connectedWallets.length == 0) {
 			console.log('No chainId found. Aborting..')
 			return;
 		}
