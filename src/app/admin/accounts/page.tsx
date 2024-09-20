@@ -79,7 +79,7 @@ const Accounts: NextPage = () => {
 		console.log('loadERC20Features');
 		loadICOPaymentMethod();
 
-	}, [connectedWallets])
+	}, [connectedWallets, selectedCrypto])
 
 	useEffect(() => {
 		getBalancesRawICOMeWallet();
