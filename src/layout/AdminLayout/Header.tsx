@@ -79,6 +79,14 @@ export default function Header(props: HeaderProps) {
 	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
 		console.log('onSelectCryptocommodity', cryptocommodityName);
 		await selectCrypto(cryptocommodityName);
+
+		customNotification({
+			eventCode: 'connect',
+			type: 'success',
+			message: 'Connected to CrytoCommodity ' + cryptocommodityName,
+			autoDismiss: 5000,
+			//onClick: () => window.open(`https://www.blocknative.com`)
+		})
 	}
 
   return (
