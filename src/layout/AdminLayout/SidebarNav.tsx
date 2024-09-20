@@ -1,30 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAddressCard,
-  faBell,
-  faFileLines,
-  faStar,
-  IconDefinition,
-} from '@fortawesome/free-regular-svg-icons'
-import {
-  faBug,
-  faCalculator,
-  faChartPie,
-  faChevronUp, faCode,
-  faDroplet,
-  faGauge,
-  faLayerGroup,
-  faLocationArrow,
-  faPencil,
-  faPuzzlePiece,
-  faRightToBracket,
-} from '@fortawesome/free-solid-svg-icons'
-import React, {
-  PropsWithChildren, useContext, useEffect, useState,
-} from 'react'
-import {
-  Accordion, AccordionContext, Badge, Button, Nav, useAccordionButton,
-} from 'react-bootstrap'
+import { faFileLines, IconDefinition, } from '@fortawesome/free-regular-svg-icons'
+import { faChevronUp, faGauge, faLocationArrow, faPuzzlePiece, } from '@fortawesome/free-solid-svg-icons'
+import React, { PropsWithChildren, useContext, useEffect, useState, } from 'react'
+import { Accordion, AccordionContext, Badge, Button, Nav, useAccordionButton, } from 'react-bootstrap'
 import classNames from 'classnames'
 import Link from 'next/link'
 

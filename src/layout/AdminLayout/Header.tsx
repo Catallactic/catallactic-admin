@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
 import { useContext, useEffect } from 'react'
-import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
+import { useConnectWallet, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 
 type HeaderProps = {
@@ -103,11 +103,6 @@ export default function Header(props: HeaderProps) {
 								<Nav.Link className="p-2">My Cryptocommodities</Nav.Link>
 							</Link>
 						</Nav.Item>
-						<Nav.Item>
-							<Link href="/admin/accounts" passHref legacyBehavior>
-								<Nav.Link className="p-2">My Account</Nav.Link>
-							</Link>
-						</Nav.Item>
 					</Nav>
         </div>
 
@@ -131,6 +126,10 @@ export default function Header(props: HeaderProps) {
 							</Dropdown.Menu>
 						</Dropdown>
 					: '' }
+
+					<Link href="/admin/accounts" className='m-2' passHref legacyBehavior>
+						<FontAwesomeIcon size="2xl" icon={faUser} className='text-white cursor-pointer' />
+					</Link>
 
 					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
