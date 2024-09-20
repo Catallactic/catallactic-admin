@@ -116,43 +116,6 @@ const Login: NextPage = () => {
 				</Row>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Deployed Networks</Form.Text></div></Col>
-				</Row>
-				<div className="row">
-					<div className="col-12">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										26K
-										<span className="fs-6 ms-2 fw-normal">
-											(-12.4%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>Project</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
-
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-									NO TOKEN GENERATION EVENT HAS BEEN EXECUTED
-							</div>
-						</Card>
-					</div>
-				</div>
-
-				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Supply Allocations</Form.Text></div></Col>
 				</Row>
 				<div className="row">
@@ -286,6 +249,43 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
+					<Col><div><Form.Text className="color-frame catatext">Pending Vesting Schedules</Form.Text></div></Col>
+				</Row>
+				<div className="row">
+					<div className="col-12">
+						<Card className="mb-4 background-disabled border-0 color-dashboard">
+							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+								<div>
+									<div className="fs-4 fw-semibold">
+										26K
+										<span className="fs-6 ms-2 fw-normal">
+											(-12.4%
+											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
+											)
+										</span>
+									</div>
+									<div>Project</div>
+								</div>
+								<Dropdown align="end">
+									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
+										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+									</DropdownToggle>
+
+									<DropdownMenu>
+										<DropdownItem href="#/action-1">Action</DropdownItem>
+										<DropdownItem href="#/action-2">Another action</DropdownItem>
+										<DropdownItem href="#/action-3">Something else</DropdownItem>
+									</DropdownMenu>
+								</Dropdown>
+							</CardBody>
+							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								NO CURRENT VESTING SCHEDULES
+							</div>
+						</Card>
+					</div>
+				</div>
+
+				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Ongoing Fundraising</Form.Text></div></Col>
 				</Row>
 				<div className="row">
@@ -323,7 +323,7 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Pending Vesting Schedules</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame catatext">Deployed Networks</Form.Text></div></Col>
 				</Row>
 				<div className="row">
 					<div className="col-12">
@@ -353,7 +353,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO CURRENT VESTING SCHEDULES
+									NO TOKEN GENERATION EVENT HAS BEEN EXECUTED
 							</div>
 						</Card>
 					</div>
