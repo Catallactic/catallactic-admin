@@ -6,7 +6,7 @@ import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
-import { Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
+import { Button, Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
 import {
   faArrowDown,
   faArrowUp,
@@ -53,25 +53,45 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
-
-		if (!connectedChain) {
+	const loadData = async ()=>{
+		if (!connectedWallets) {
 			console.log('No chainId found. Aborting..')
 			return;
 		}
 
 		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
-		if (chainId) {
+		if (!chainId) {
 			console.log('No chainId found. Aborting loadYourCryptocommodities.')
 			return;
 		}
 
+		console.log('createEnvContracts');
 		createEnvContracts(chainId);
 
-		console.log(' ');
-		loadYourCryptocommodities();
+		console.log('loadICOFeatures');
+		loadICOFeatures();
+
+		console.log('getBalancesPaymentMethodsICOWallet')
+		getBalancesPaymentMethodsICOWallet();
+
+		console.log('loadICOPaymentMethod')
+		loadICOPaymentMethod();
+	}
+
+	useEffect(() => {
+		loadData();
+	}, [])
+
+	useEffect(() => {
+		loadData();
 	}, [connectedWallets])
 
+	useEffect(() => {
+		loadData();
+	}, [selectedCrypto])
+
+	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
+	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -295,39 +315,58 @@ const Login: NextPage = () => {
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Ongoing Fundraising</Form.Text></div></Col>
 				</Row>
-				<div className="row">
-					<div className="col-12">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										26K
-										<span className="fs-6 ms-2 fw-normal">
-											(-12.4%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>Project</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
 
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO FUNDRAISING ONGOING
-							</div>
-						</Card>
+				{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
+					<Form.Group className="p-2 rounded-5 bg-group">
+						<Row>
+							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
+						</Row>
+
+						<Row>
+							<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
+							<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+							<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
+						</Row>
+						<Row>
+							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Available</Form.Text></div></Col>
+							<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
+							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Invested</Form.Text></div></Col>
+							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Inv USD</Form.Text></div></Col>
+							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">ERC-20 Bought</Form.Text></div></Col>
+						</Row>
+						{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
+							<Row className="mb-3" key={index}>
+								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+								<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true}> {item}</Button></Col>
+								<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][5] ? Number(ICO_PAYMENT_METHODS[item][5]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0 } disabled={true}></input></Col>
+								<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / 10**6 : 0 } disabled={true}></input></Col>
+								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / ICO_PRICE : 0 } disabled={true}></input></Col>
+							</Row>
+						))}
+						<Row>
+							<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET}></input></Col>
+							<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
+							<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / 10**6 } disabled={true}></input></Col>
+							<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
+						</Row>
+						<Row className="mb-3"></Row>
+						{connectedChain ?
+						<Row>
+							<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
+						</Row>
+						: '' }
+					</Form.Group>
+				:
+					<div className="row">
+						<div className="col-12">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+									NO FUNDRAISING ONGOING
+								</div>
+							</Card>
+						</div>
 					</div>
-				</div>
+				}
 
 				<Row className="mt-4 mb-2">
 					<Col><div><Form.Text className="color-frame catatext">Deployed Networks</Form.Text></div></Col>
