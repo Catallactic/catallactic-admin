@@ -363,7 +363,7 @@ const Login: NextPage = () => {
 						<div className="col-12">
 							<Card className="mb-4 background-disabled border-0 color-dashboard">
 								<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-									NO FUNDRAISING ONGOING
+									NO CRYPTOCOMMODITY SELECTED
 								</div>
 							</Card>
 						</div>
