@@ -59,7 +59,37 @@ const ICOContract: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	// data to be loaded
+	const loadData = async ()=>{
+		if (!connectedChain) {
+			console.log('No chainId found. Aborting..')
+			return;
+		}
 
+		if (!selectCrypto) {
+			console.log('No crypto selected. Aborting..')
+			return;
+		}
+
+		console.log('getBalancesPaymentMethodsICOWallet')
+		getBalancesPaymentMethodsICOWallet();
+
+		console.log('loadICOPaymentMethod')
+		loadICOPaymentMethod();
+	}
+
+	// conditions to load
+	useEffect(() => {
+		loadData();
+	}, [])
+
+	useEffect(() => {
+		loadData();
+	}, [connectedWallets])
+
+	useEffect(() => {
+		loadData();
+	}, [selectedCrypto])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************

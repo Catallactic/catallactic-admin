@@ -53,6 +53,7 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	// data to be loaded
 	const loadData = async ()=>{
 		if (!connectedWallets) {
 			console.log('No chainId found. Aborting..')
@@ -78,6 +79,7 @@ const Login: NextPage = () => {
 		loadICOPaymentMethod();
 	}
 
+	// conditions to load
 	useEffect(() => {
 		loadData();
 	}, [])
@@ -89,9 +91,6 @@ const Login: NextPage = () => {
 	useEffect(() => {
 		loadData();
 	}, [selectedCrypto])
-
-	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
-	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -116,6 +115,9 @@ const Login: NextPage = () => {
 		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
+
+	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
+	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
   return (
     <div className="bg-group rounded-5 d-flex flex-row align-items-center dark:bg-transparent">
