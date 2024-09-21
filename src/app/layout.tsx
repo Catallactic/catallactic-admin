@@ -13,6 +13,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 import '../styles/globals.scss'
 import '../styles/_app.css';
 import { supportedChains } from 'config/config';
+import { useEffect } from 'react';
 
 declare var window: any
 
@@ -58,19 +59,24 @@ function RootLayout({
 }) {
 
 	// reload if changes
-	/*useEffect(() => {
+	useEffect(() => {
+
+		console.log("Reload on changes configured")
 
 		window.ethereum.on('accountsChanged', (accounts: any) => {
 			window.location.reload();
+			console.log("App reloaded");
 		});
 		window.ethereum.on('disconnect', (accounts: any) => {
 			window.location.reload();
+			console.log("App reloaded");
 		});
 		window.ethereum.on('chainChanged', (chainId: any) => {
 			window.location.reload();
+			console.log("App reloaded");
 		});
 
-	}, []);*/
+	}, []);
 
 	const contractsContextDefaultValue = useContractContextHook();
 
