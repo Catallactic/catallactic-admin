@@ -125,13 +125,13 @@ export default function Header(props: HeaderProps) {
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
 					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
-						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
+						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
 
 							<Dropdown.Toggle className="w-100 bg-header border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || <FontAwesomeIcon size="xl" icon={faCoins} className='text-white cursor-pointer mx-2' />  }
 							</Dropdown.Toggle>
 
-							<Dropdown.Menu className="w-100">
+							<Dropdown.Menu className="w-auto">
 								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
 									return (
 										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
