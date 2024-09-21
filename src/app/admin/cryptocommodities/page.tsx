@@ -158,7 +158,7 @@ const Cryptomcommodities: NextPage = () => {
 				<Form.Group className="p-5 rounded-5 bg-group">
 
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Cryptocommodities</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Your Cryptocommodities</div></div></Col>
 					</Row>
 
 					<Row>
