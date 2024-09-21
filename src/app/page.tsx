@@ -175,7 +175,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO TGE
+								NO SELECTED
 							</div>
 						</Card>
 					</div>
@@ -207,7 +207,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO TGE
+								NO SELECTED
 							</div>
 						</Card>
 					</div>
@@ -239,7 +239,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO TGE
+								NO SELECTED
 							</div>
 						</Card>
 					</div>
@@ -271,7 +271,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO TGE
+								NO SELECTED
 							</div>
 						</Card>
 					</div>
@@ -308,7 +308,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-								NO CURRENT VESTING SCHEDULES
+								NO CRYPTOCOMMODITY SELECTED
 							</div>
 						</Card>
 					</div>
@@ -401,7 +401,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
-									NO TOKEN GENERATION EVENT HAS BEEN EXECUTED
+								NO CRYPTOCOMMODITY SELECTED
 							</div>
 						</Card>
 					</div>
