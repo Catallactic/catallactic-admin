@@ -142,7 +142,7 @@ export default function Header(props: HeaderProps) {
 								<DropdownDivider/>
 								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
 									<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-										<span className='text-decoration-none'>Your CryptoCommodities</span>
+										<span className='text-decoration-none'>CryptoCommodities Finder</span>
 									</Link>
 								</Dropdown.Item>
 							</Dropdown.Menu>
