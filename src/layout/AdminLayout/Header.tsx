@@ -124,11 +124,12 @@ export default function Header(props: HeaderProps) {
         <div className="header-nav ms-auto">
 	
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
+					{/* CryptoCommodities icon */}
 					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
 						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
 
 							<Dropdown.Toggle className="w-100 bg-header border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || <FontAwesomeIcon size="xl" icon={faCoins} className='text-white cursor-pointer mx-2' />  }
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu className="w-auto">
@@ -148,16 +149,17 @@ export default function Header(props: HeaderProps) {
 							</Dropdown.Menu>
 
 						</Dropdown>
-						
-					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ?
+					
+					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ? 
 					<Button className='bg-header border-0'>
 						<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-							<FontAwesomeIcon size="xl" icon={faCoins} className='text-white cursor-pointer mx-2' />
+							{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
 						</Link>
 					</Button>
 
 					: '' }
 
+					{/* User account icon */}
 					{wallet ?
 						<Button className='bg-header border-0'>
 							<Link href="/admin/accounts" passHref legacyBehavior>
