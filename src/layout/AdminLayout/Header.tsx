@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCoins, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
@@ -128,7 +128,7 @@ export default function Header(props: HeaderProps) {
 						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity}>
 
 							<Dropdown.Toggle className="w-100 bg-header border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || 'Select CryptoCommodity' }
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || <FontAwesomeIcon size="xl" icon={faCoins} className='text-white cursor-pointer mx-2' />  }
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu className="w-100">
@@ -152,7 +152,7 @@ export default function Header(props: HeaderProps) {
 					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ?
 					<Button className='bg-header border-0'>
 						<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-							<span className='text-decoration-none'>Create CryptoCommodity</span>
+							<FontAwesomeIcon size="xl" icon={faCoins} className='text-white cursor-pointer mx-2' />
 						</Link>
 					</Button>
 
@@ -161,12 +161,12 @@ export default function Header(props: HeaderProps) {
 					{wallet ?
 						<Button className='bg-header border-0'>
 							<Link href="/admin/accounts" passHref legacyBehavior>
-								<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-3' />
+								<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' />
 							</Link>
 						</Button>
 					: '' }
 
-					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
 						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Connect'}
 					</button>
 
