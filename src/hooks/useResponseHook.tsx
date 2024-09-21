@@ -1,9 +1,12 @@
 "use client";
 
+import { useNotifications } from '@web3-onboard/react';
 import { LOG_METHODS } from 'config/config';
 import { toast } from 'react-toastify';
 
 export function useResponseHook() {
+
+	const [notifications, customNotification, updateNotify, preflightNotifications] = useNotifications()
 
 	async function handleICOReceipt(tx:any) {
 		console.log('%c handleICOReceipt', LOG_METHODS, tx);
@@ -28,6 +31,14 @@ export function useResponseHook() {
 			theme: "colored",
 		});
 
+		customNotification({
+			eventCode: 'connect',
+			type: 'success',
+			message: 'GasUsed: ' + receipt.gasUsed,
+			autoDismiss: 5000,
+			//onClick: () => window.open(`https://www.blocknative.com`)
+		})
+
 		//populateICOContractData();
 		return tx;
 	}
@@ -47,6 +58,14 @@ export function useResponseHook() {
 			progress: undefined,
 			theme: "colored",
 		});
+
+		customNotification({
+			eventCode: 'connect',
+			type: 'error',
+			message: parseError(err.message),
+			autoDismiss: 5000,
+			//onClick: () => window.open(`https://www.blocknative.com`)
+		})
 	}
 
 	function parseError(err:any) {

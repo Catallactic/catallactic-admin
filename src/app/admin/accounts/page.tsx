@@ -12,6 +12,7 @@ import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useSetChain, useWallets } from '@web3-onboard/react';
+import { useWeb3Onboard } from '@web3-onboard/react/dist/context';
 
 declare let window:any
 
@@ -23,6 +24,7 @@ const Accounts: NextPage = () => {
 	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
+	const web3OnBoard = useWeb3Onboard();
 
 	// Blockchain hooks
 	const { 
@@ -73,13 +75,24 @@ const Accounts: NextPage = () => {
 			return;
 		}
 
-		setConnectedAddress(connectedWallets[0].accounts[0].address)
+		//setConnectedAddress(connectedWallets[0].accounts[0].address)
 
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
 		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
+
+		const provider = new ethers.providers.Web3Provider(window.ethereum)
+		provider
+			.send("eth_requestAccounts", [])
+    	.then((accounts)=>{
+				console.log(accounts);
+				if(accounts.length>0)
+					setConnectedAddress(accounts[0])
+
+			})
+			.catch((e)=>console.log(e))
 
 	}, [connectedWallets, selectedCrypto])
 
@@ -88,7 +101,33 @@ const Accounts: NextPage = () => {
 		getBalancesUSDICOMeWallet();
 		getBalancesPaymentTokensMeWallet();
 		getBalancesCygasMeWallet();
-	}, [ICO_PAYMENT_METHODS])	
+	}, [ICO_PAYMENT_METHODS])
+
+	useEffect(() => {
+
+		const wallets = web3OnBoard.state.select('wallets')
+		wallets.subscribe(wallet => {
+			console.log("Changed wallet", wallet)
+			console.log(wallet)
+
+			wallet[0].provider.on('accountsChanged', function (accounts) {
+				console.log("Changed account", accounts[0])
+	    });
+
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			provider
+				.send("eth_requestAccounts", [])
+				.then((accounts)=>{
+					console.log("eth_requestAccounts", accounts);
+					if(accounts.length>0)
+						setConnectedAddress(accounts[0])
+	
+				})
+				.catch((e)=>console.log(e))
+
+		})
+
+	}, []);
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
