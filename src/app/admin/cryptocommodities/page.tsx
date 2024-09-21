@@ -182,7 +182,7 @@ const Cryptomcommodities: NextPage = () => {
 						<Col>
 							<Dropdown onSelect={onSelectCryptocommodity}>
 								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ !connectedChain || !CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0 || !!selectedCrypto || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND || !!X_SELECTED_CRYPTOCOMMODITY_NAME_ADD }>
-									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) || "Select CryptoCommodity" }
+									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : "Select CryptoCommodity" }
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
