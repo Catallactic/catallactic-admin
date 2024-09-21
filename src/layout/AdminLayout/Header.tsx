@@ -157,7 +157,7 @@ export default function Header(props: HeaderProps) {
 					: '' }
 
 					<button type="button" className={"btn m-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
-						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Disconnected'}
+						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Connect'}
 					</button>
 
 				</div>
