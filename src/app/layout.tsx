@@ -13,7 +13,6 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 import '../styles/globals.scss'
 import '../styles/_app.css';
 import { supportedChains } from 'config/config';
-import { useEffect } from 'react';
 
 declare var window: any
 
@@ -43,7 +42,13 @@ const web3Onboard = init({
 	notify: {
 		enabled: true,
 		position: 'bottomRight',
-	}
+	},
+	/*connect: {
+		iDontHaveAWalletLink: "I don't have a wallet man",
+		removeWhereIsMyWalletWarning: true,
+		autoConnectLastWallet: false,
+		autoConnectAllPreviousWallet: false,
+	},*/
 })
 
 const wallets2 = web3Onboard.state.select('wallets')
@@ -59,7 +64,7 @@ function RootLayout({
 }) {
 
 	// reload if changes
-	useEffect(() => {
+	/*useEffect(() => {
 
 		console.log("Reload on changes configured")
 
@@ -76,7 +81,7 @@ function RootLayout({
 			console.log("App reloaded");
 		});
 
-	}, []);
+	}, []);*/
 
 	const contractsContextDefaultValue = useContractContextHook();
 
