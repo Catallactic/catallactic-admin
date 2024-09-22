@@ -56,13 +56,13 @@ const Login: NextPage = () => {
 	// data to be loaded
 	const loadData = async ()=>{
 		if (!connectedWallets) {
-			console.log('No chainId found. Aborting..')
+			console.log('No connected acount. Aborting..')
 			return;
 		}
 
 		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
 		if (!chainId) {
-			console.log('No chainId found. Aborting loadYourCryptocommodities.')
+			console.log('No chainId found. Aborting.')
 			return;
 		}
 
@@ -125,11 +125,11 @@ const Login: NextPage = () => {
 
 				<Row className="m-4"></Row>
 
-				{ CAN_CREATE || CAN_MODIFY ? '' :
 				<Row>
-					<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <Link href="/admin/cryptocommodities">this page</Link> to create one.</Form.Text></Col>
+					<Col><div><div className="color-frame fs-2 text-center fw-bold text-center w-100">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME } CryptoCommodity Dashboard</div></div></Col>
 				</Row>
-				}
+
+				<Row className="m-4"></Row>
 
 				<Row className="mt-4 mb-2">
 					<Col xs={3}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
@@ -315,7 +315,7 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Ongoing Fundraising</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame catatext">Token Balances</Form.Text></div></Col>
 				</Row>
 
 				{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
@@ -323,19 +323,19 @@ const Login: NextPage = () => {
 						<Row>
 							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 						</Row>
-
-						<Row>
-							<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
-							<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-							<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Available</Form.Text></div></Col>
-							<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
-							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Invested</Form.Text></div></Col>
-							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Inv USD</Form.Text></div></Col>
-							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">ERC-20 Bought</Form.Text></div></Col>
-						</Row>
+						<Row className="m-2"></Row>
+					<Row>
+						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
+						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Raised In ICO</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Num Tokens Available</Form.Text></div></Col>
+						<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Tokens</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Amount (USD)</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" } Sold</Form.Text></div></Col>
+					</Row>
 						{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
 							<Row className="mb-3" key={index}>
 								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
@@ -408,6 +408,16 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="m-4"></Row>
+
+				{ CAN_CREATE || CAN_MODIFY ? '' :
+					<Row>
+						<Col className='text-center'><Form.Text className="color-frame w-100">These features are disabled because you have not created a cryptocommodity. Visit <Link href="/admin/cryptocommodities">this page</Link> to create one.</Form.Text></Col>
+					</Row>
+				}
+
+				{ CAN_CREATE || CAN_MODIFY ? '' :
+					<Row className="m-4"></Row>
+				}
 
       </Container>
     </div>

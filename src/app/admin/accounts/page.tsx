@@ -347,7 +347,7 @@ const Accounts: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Wallet</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Account</div></div></Col>
 					</Row>
 					<Row>
 						<Col><div><Form.Text className="">Connected to Account</Form.Text></div></Col>
@@ -361,19 +361,20 @@ const Accounts: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Account Balances</div></div></Col>
 					</Row>
+					<Row className="m-2"></Row>
 					<Row>
-						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In Tokens</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
 						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">In ICO</Form.Text></div></Col>
+						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Investment In { selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME } ICO</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col xs={3}><div className="text-center"><Form.Text className="text-center">Available</Form.Text></div></Col>
 						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested</Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Inv USD</Form.Text></div></Col>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center">ERC-20 Bought</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Tokens Invested</Form.Text></div></Col>
+						<Col xs={2}><div className="text-center"><Form.Text className="text-center">Invested Amount (USD)</Form.Text></div></Col>
+						<Col xs={3}><div className="text-center"><Form.Text className="text-center">Number of {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} Bought</Form.Text></div></Col>
 					</Row>
 					{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => (
 					<Row className="mb-3" key={index} >
@@ -386,7 +387,7 @@ const Accounts: NextPage = () => {
 					))}
 					<Row>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ME_WALLET}></input></Col>
-						<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >ERC-20</Button></Col>
+						<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
 						<Col xs={2}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_ME_WALLET && BALANCES_USD_ICO_ME_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_ME_WALLET['TOTAL']) / 10**6 : 0}></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_USD_ICO_ME_WALLET && BALANCES_USD_ICO_ME_WALLET['TOTAL'] ? Number(BALANCES_USD_ICO_ME_WALLET['TOTAL']) / ICO_PRICE : 0}></input></Col>
 					</Row>
@@ -396,13 +397,13 @@ const Accounts: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ERC-20 Operations</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} Operations</div></div></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Transfer {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</div></div></Col>
 					</Row>
 
 					<Row>
@@ -447,7 +448,7 @@ const Accounts: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">ICO Participation</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} ICO Participation</div></div></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
@@ -481,7 +482,7 @@ const Accounts: NextPage = () => {
 						</Col>
 						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest in {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
@@ -521,13 +522,13 @@ const Accounts: NextPage = () => {
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim ERC-20</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Claim {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</div></div></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
 
 					<Row>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => claim()}>Claim</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => claim()}>Claim Bought {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
 					</Row>
 				</Form.Group>
 
