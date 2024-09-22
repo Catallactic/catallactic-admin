@@ -176,7 +176,6 @@ export default function SidebarNav() {
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity" disabled={false}>
 				<SidebarNavItem href="/erc20/features">Features</SidebarNavItem>
         <SidebarNavItem href="/erc20/holders">Holders</SidebarNavItem>
-        <SidebarNavItem href="/erc20/contract">Contract</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Exchanges" disabled={true}>
@@ -205,14 +204,12 @@ export default function SidebarNav() {
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
         <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
         <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
-        <SidebarNavItem href="/rounds/contract">Contract</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
 				<SidebarNavItem href="/vesting/features">Vesting Programs</SidebarNavItem>
 				<SidebarNavItem href="/vesting/operations">Vesting Schedulers</SidebarNavItem>
         <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
-        <SidebarNavItem href="/vesting/contract">Contract</SidebarNavItem>
       </SidebarNavGroup>
 			
       <SidebarNavTitle>Project</SidebarNavTitle>
@@ -230,7 +227,7 @@ export default function SidebarNav() {
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Infrastructure" disabled={false}>
-        <SidebarNavItem href="/rounds/contract">Contract</SidebarNavItem>
+        <SidebarNavItem href="/admin/contract">Contract</SidebarNavItem>
         <SidebarNavItem href="/admin/environment">Environment</SidebarNavItem>
       </SidebarNavGroup>
 
