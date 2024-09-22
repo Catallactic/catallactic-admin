@@ -55,19 +55,11 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	// data to be loaded
 	const loadData = async ()=>{
+
 		if (!connectedWallets) {
 			console.log('No connected acount. Aborting..')
 			return;
 		}
-
-		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
-		if (!chainId) {
-			console.log('No chainId found. Aborting.')
-			return;
-		}
-
-		console.log('createEnvContracts');
-		createEnvContracts(chainId);
 
 		console.log('loadICOFeatures');
 		loadICOFeatures();
@@ -95,11 +87,8 @@ const Login: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
-	const onSelectCryptocommodity = async (cryptocommodityName: any)=>{
-		console.log('onSelectCryptocommodity', cryptocommodityName);
-		await selectCrypto(cryptocommodityName);
-	}
 
+	
 
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
