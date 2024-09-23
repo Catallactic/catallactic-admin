@@ -61,6 +61,7 @@ const ICOContract: NextPage = () => {
 	// *************************************************************************************************************************
 	// data to be loaded
 	const loadData = async ()=>{
+
 		if (!connectedWallets) {
 			console.log('No connected acount. Aborting..')
 			return;
@@ -71,6 +72,9 @@ const ICOContract: NextPage = () => {
 			console.log('No chainId found. Aborting.')
 			return;
 		}
+
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
 
 		console.log('createEnvContracts');
 		createEnvContracts(chainId);
@@ -131,13 +135,13 @@ const ICOContract: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
-		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: `, ICO_CURRENT_STAGE);
+		setCanCreate(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED) && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
