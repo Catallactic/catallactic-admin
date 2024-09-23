@@ -53,20 +53,35 @@ const ERC20Features: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
+	const loadData = async ()=>{
 
 		if (!connectedChain) {
 			console.log('No chainId found. Aborting..')
 			return;
 		}
-		
+
 		if(!selectedCrypto)
 			return;
+
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
 
 		console.log('loadERC20Features');
 		loadERC20Features();
 
+	}
+
+	useEffect(() => {
+		loadData();
+	}, [])
+
+	useEffect(() => {
+		loadData();
 	}, [connectedWallets])
+
+	useEffect(() => {
+		loadData();
+	}, [selectedCrypto])
 
 	useEffect(() => {
 
@@ -100,13 +115,13 @@ const ERC20Features: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
-		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: `, ICO_CURRENT_STAGE);
+		setCanCreate(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED) && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -132,7 +147,7 @@ const ERC20Features: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Token Name</Form.Text></div></Col>
 					</Row>				
 					<Row>
-						<Col><input className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={Boolean(X_TOKEN_INITIALIZED)} ></input></Col>
+						<Col><input className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_NAME} onChange={(event) => setTokenName(event.target.value)} disabled={!CAN_TYPE || !!X_TOKEN_INITIALIZED} ></input></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -141,7 +156,7 @@ const ERC20Features: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Token Symbol</Form.Text></div></Col>
 					</Row>				
 					<Row>
-						<Col><input className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={Boolean(X_TOKEN_INITIALIZED)} ></input></Col>
+						<Col><input className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_SYMBOL} onChange={(event) => setTokenSymbol(event.target.value)} disabled={!CAN_TYPE || !!X_TOKEN_INITIALIZED} ></input></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -150,7 +165,7 @@ const ERC20Features: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Token Supply</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={Boolean(X_TOKEN_INITIALIZED)} ></input></Col>
+						<Col><input type="number" className={ 'form-control form-control-lg bg-edited text-left border-0' } defaultValue={X_TOKEN_SUPPLY ? X_TOKEN_SUPPLY / 10**18 : ''} onChange={(event) => setTokenSupply(Number(event.target.value))} disabled={!CAN_TYPE || !!X_TOKEN_INITIALIZED} ></input></Col>
 					</Row>
 
 					{ !X_TOKEN_INITIALIZED ?
@@ -159,7 +174,7 @@ const ERC20Features: NextPage = () => {
 
 					{ !X_TOKEN_INITIALIZED ?
 					<Row>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!X_TOKEN_NAME || !X_TOKEN_SYMBOL || X_TOKEN_SUPPLY==0 } onClick={() => saveERC20Features()}>Initialize</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE || !X_TOKEN_NAME || !X_TOKEN_SYMBOL || X_TOKEN_SUPPLY==0 } onClick={() => saveERC20Features()}>Initialize</Button></Col>
 					</Row>
 					: '' }
 
