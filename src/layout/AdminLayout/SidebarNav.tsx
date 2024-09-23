@@ -6,8 +6,6 @@ import { Accordion, AccordionContext, Badge, Button, Nav, useAccordionButton, } 
 import classNames from 'classnames'
 import Link from 'next/link'
 
-import { ContractsContext } from '../../hooks/useContractContextHook'
-
 // ******************************************************************************************************************************************************************
 // ****************************************************************************** NavItem ***************************************************************************
 // ******************************************************************************************************************************************************************
@@ -18,12 +16,7 @@ type SidebarNavItemProps = {
 } & PropsWithChildren
 
 const SidebarNavItem = (props: SidebarNavItemProps) => {
-  const {
-    icon,
-    children,
-    href,
-    disabled,
-  } = props
+  const { icon, children, href, disabled, } = props
 
   return (
     <Nav.Item>
@@ -102,12 +95,7 @@ type SidebarNavGroupProps = {
 } & PropsWithChildren
 
 const SidebarNavGroup = (props: SidebarNavGroupProps) => {
-  const {
-    toggleIcon,
-    toggleText,
-    children,
-		disabled,
-  } = props
+  const { toggleIcon, toggleText, children, disabled, } = props
 
   const [isShow, setIsShow] = useState(false)
 
@@ -143,8 +131,6 @@ const SidebarNavIcon = (props: SidebarNavIconProps) => {
 // *********************************************************************************** Nav **************************************************************************
 // ******************************************************************************************************************************************************************
 export default function SidebarNav() {
-
-	const { selectedCrypto } = useContext(ContractsContext);
 
 	return (
     <ul className="list-unstyled">
