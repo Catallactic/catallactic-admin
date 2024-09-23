@@ -56,15 +56,18 @@ const Payments: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
+	const loadData = async ()=>{
 
 		if (!connectedChain) {
 			console.log('No chainId found. Aborting..')
 			return;
 		}
 
-		const chainId = Number(connectedWallets.at(0)?.chains[0].id);
-		createEnvContracts(chainId ? chainId : 0);
+		if(!selectedCrypto)
+			return;
+
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
 
 		console.log('loadFactoryPaymentMethod');
 		loadFactoryPaymentMethod();
@@ -72,7 +75,19 @@ const Payments: NextPage = () => {
 		console.log('loadICOPaymentMethod');
 		loadICOPaymentMethod();
 
+	}
+
+	useEffect(() => {
+		loadData();
+	}, [])
+
+	useEffect(() => {
+		loadData();
 	}, [connectedWallets])
+
+	useEffect(() => {
+		loadData();
+	}, [selectedCrypto])
 
 	useEffect(() => {
 
@@ -187,13 +202,13 @@ const Payments: NextPage = () => {
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
-		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: `, ICO_CURRENT_STAGE);
+		setCanCreate(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED) && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
@@ -355,8 +370,8 @@ const Payments: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={8}><input className="form-control form-control-lg color-frame bg-edited text-left border-0" disabled={!CAN_TYPE} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
-						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold" disabled={!CAN_TYPE} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
+						<Col xs={8}><input className="form-control form-control-lg color-frame bg-edited text-center border-0" disabled={!CAN_TYPE} onChange={(event) => setICOPaymentMethodSearchAddress(event.target.value) } value={ICO_PAYMENT_METHOD_SEARCH_ADDRESS} dir="rtl" ></input></Col>
+						<Col xs={4}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={()=>{ getICOPaymentMethodBalance(); }} >Balances</Button></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
