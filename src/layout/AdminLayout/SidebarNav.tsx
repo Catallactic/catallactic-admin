@@ -25,12 +25,13 @@ const SidebarNavItem = (props: SidebarNavItemProps) => {
     disabled,
   } = props
 
+	// disable prefetch because homepage / prefeteches and return 404 and subsequent request do a full reload
+	// if this works try to enable prefetch again in newer versions
   return (
     <Nav.Item>
-      <Link href={href} passHref legacyBehavior>
+      <Link href={href} passHref legacyBehavior prefetch={false}>
         <Nav.Link className="px-3 py-2 d-flex align-items-center" disabled={disabled}>
-          {icon ? <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} />
-            : <span className="nav-icon ms-n3" />}
+          {icon ? <FontAwesomeIcon className="nav-icon ms-n3" icon={icon} /> : <span className="nav-icon ms-n3" />}
           {children}
         </Nav.Link>
       </Link>
