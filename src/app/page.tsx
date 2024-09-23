@@ -61,6 +61,9 @@ const Login: NextPage = () => {
 			return;
 		}
 
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
+
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
@@ -96,13 +99,15 @@ const Login: NextPage = () => {
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
+  const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
-		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connectedChain != undefined && selectedCrypto != undefined);
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: `, ICO_CURRENT_STAGE);
+		setCanCreate(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED) && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
 	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
@@ -121,20 +126,20 @@ const Login: NextPage = () => {
 				<Row className="m-4"></Row>
 
 				<Row className="mt-4 mb-2">
-					<Col xs={3}><div><Form.Text className="color-frame catatext">Symbol</Form.Text></div></Col>
-					<Col xs={6}><div><Form.Text className="color-frame catatext" dir="rtl">Address</Form.Text></div></Col>
-					<Col xs={3}><div><Form.Text className="color-frame catatext">Decimals</Form.Text></div></Col>						
+					<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Symbol</Form.Text></div></Col>
+					<Col xs={6}><div><Form.Text className="color-frame fs-4 fw-bold" dir="rtl">Address</Form.Text></div></Col>
+					<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Decimals</Form.Text></div></Col>						
 				</Row>
 
 				<Row className="mb-5">
-					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } ></input></Col>
-					<Col xs={6}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS : 'NO SELECTED' } dir="rtl" ></input></Col>
-					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard fw-bolder border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } ></input></Col>
+					<Col xs={6}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS : 'NO SELECTED' } dir="rtl" ></input></Col>
+					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
 				</Row>
 
 				{/* https://europe1.discourse-cdn.com/business20/uploads/gnosis_safe/optimized/1X/593b6f307a37304066ba221f2aab8962159f6baa_2_936x526.jpeg */}
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Supply Allocations</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Supply Allocations</Form.Text></div></Col>
 				</Row>
 				<div className="row">
 					<div className="col-sm-6 col-lg-3">
@@ -163,7 +168,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO SELECTED
 							</div>
 						</Card>
@@ -195,7 +200,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO SELECTED
 							</div>
 						</Card>
@@ -227,7 +232,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO SELECTED
 							</div>
 						</Card>
@@ -259,7 +264,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO SELECTED
 							</div>
 						</Card>
@@ -267,7 +272,7 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Vesting Schedules</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Vesting Schedules</Form.Text></div></Col>
 				</Row>
 				<div className="row">
 					<div className="col-12">
@@ -296,7 +301,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO CRYPTOCOMMODITY SELECTED
 							</div>
 						</Card>
@@ -304,7 +309,7 @@ const Login: NextPage = () => {
 				</div>
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Token Balances</Form.Text></div></Col>
+					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Token Balances</Form.Text></div></Col>
 				</Row>
 
 				{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
@@ -351,7 +356,7 @@ const Login: NextPage = () => {
 					<div className="row">
 						<div className="col-12">
 							<Card className="mb-4 background-disabled border-0 color-dashboard">
-								<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 									NO CRYPTOCOMMODITY SELECTED
 								</div>
 							</Card>
@@ -360,7 +365,7 @@ const Login: NextPage = () => {
 				}
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame catatext">Deployed Networks</Form.Text></div></Col>
+					<Col><div><Form.Text className="color- fs-4 fw-bold">Deployed Networks</Form.Text></div></Col>
 				</Row>
 				<div className="row">
 					<div className="col-12">
@@ -389,7 +394,7 @@ const Login: NextPage = () => {
 									</DropdownMenu>
 								</Dropdown>
 							</CardBody>
-							<div className="mt-3 mx-3 text-center fw-bolder fs-3" style={{ height: '70px' }}>
+							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 								NO CRYPTOCOMMODITY SELECTED
 							</div>
 						</Card>
