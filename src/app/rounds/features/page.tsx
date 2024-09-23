@@ -70,6 +70,9 @@ const RoundFeatures: NextPage = () => {
 		if(!selectedCrypto)
 			return;
 
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
+
 		console.log('loadICOFeatures');
 		loadICOFeatures();
 
