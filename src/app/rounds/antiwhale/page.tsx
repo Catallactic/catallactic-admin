@@ -48,28 +48,54 @@ const AntiwhaleFeatures: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
-	useEffect(() => {
+	const loadData = async ()=>{
 
 		if (!connectedChain) {
 			console.log('No chainId found. Aborting..')
 			return;
 		}
 
+		if(!selectedCrypto)
+			return;
+
+		console.log('loadYourCryptocommodities');
+		loadYourCryptocommodities();
+
 		console.log('loadERC20Features');
 		loadAntiWhale();
+	}
 
+	useEffect(() => {
+		loadData();
+	}, [])
+
+	useEffect(() => {
+		loadData();
 	}, [connectedWallets])
 
 	useEffect(() => {
+		loadData();
+	}, [selectedCrypto])
 
+	useEffect(() => {
 		setWhitelistUserList(ICO_WHITELIST_USER_LIST);
+	}, [ICO_WHITELIST_USER_LIST])
+
+	useEffect(() => {
 		setWhitelistUserCount(ICO_WHITELIST_USER_COUNT);
+	}, [ICO_WHITELIST_USER_COUNT])
+
+	useEffect(() => {
 		setIsUseBlacklist(ICO_IS_USE_BLACKLIST);
+	}, [ICO_IS_USE_BLACKLIST])
+
+	useEffect(() => {
 		setBlacklistUserList(ICO_BLACKLIST_USER_LIST);
+	}, [ICO_BLACKLIST_USER_LIST])
+
+	useEffect(() => {
 		setBlacklistUserCount(ICO_BLACKLIST_USER_COUNT);
-
-	}, [ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT])
-
+	}, [ICO_BLACKLIST_USER_COUNT])
 
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -131,19 +157,18 @@ const AntiwhaleFeatures: NextPage = () => {
 
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
-	// *************************************************************************************************************************
   const [CAN_CREATE, setCanCreate] = useState<boolean>(false);
   const [CAN_MODIFY, setCanModify] = useState<boolean>(false);
   const [CAN_TYPE, setCanType] = useState<boolean>(false);
   const [colorCSS, setColorCSS] = useState<string>('');
 	useEffect(() => {
-		console.log(`isDisconnected: ` + !connectedChain);
-		console.log(`selectedCrypto: ` + selectedCrypto);
-		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
-		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
-		setCanType(connectedChain != undefined && selectedCrypto != undefined);
-		setColorCSS(connectedChain != undefined && selectedCrypto != undefined ? ' bg-edited' : '');
+		console.log(`isDisconnected: `, !connectedChain);
+		console.log(`selectedCrypto: `, selectedCrypto);
+		console.log(`ICO_CURRENT_STAGE: `, ICO_CURRENT_STAGE);
+		setCanCreate(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
+		setCanModify(!!connectedChain && !!selectedCrypto && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED) && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
+		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
   return (
