@@ -313,18 +313,18 @@ const Login: NextPage = () => {
 							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 						</Row>
 						<Row className="m-2"></Row>
-					<Row>
-						<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
-						<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-						<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Raised In ICO</Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Num Tokens Available</Form.Text></div></Col>
-						<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Tokens</Form.Text></div></Col>
-						<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Amount (USD)</Form.Text></div></Col>
-						<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" } Sold</Form.Text></div></Col>
-					</Row>
+						<Row>
+							<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
+							<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+							<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Raised In ICO</Form.Text></div></Col>
+						</Row>
+						<Row>
+							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Num Tokens Available</Form.Text></div></Col>
+							<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
+							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Tokens</Form.Text></div></Col>
+							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Amount (USD)</Form.Text></div></Col>
+							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" } Sold</Form.Text></div></Col>
+						</Row>
 						{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
 							<Row className="mb-3" key={index}>
 								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
@@ -342,9 +342,9 @@ const Login: NextPage = () => {
 						</Row>
 						<Row className="mb-3"></Row>
 						{connectedChain ?
-						<Row>
-							<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
-						</Row>
+							<Row>
+								<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
+							</Row>
 						: '' }
 					</Form.Group>
 				:
