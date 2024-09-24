@@ -97,11 +97,12 @@ const Cryptomcommodities: NextPage = () => {
 	// *************************************************************************************************************************
 	// Add New Cryptocommodity
 	const [X_SELECTED_CRYPTOCOMMODITY_NAME_ADD, setSelectedCryptocommodityNameAdd] = useState<string>('');
-	async function saveCryptocommodity() {
-		console.log('saveCryptocommodity', X_SELECTED_CRYPTOCOMMODITY_NAME_ADD);
+	async function addCryptocommodity() {
+		console.log('addCryptocommodity', X_SELECTED_CRYPTOCOMMODITY_NAME_ADD);
 		envContracts.FACTORY_CONTRACT?.createCryptocommodity(X_SELECTED_CRYPTOCOMMODITY_NAME_ADD)
 			.then(await handleICOReceipt)
 			.then(await loadYourCryptocommodities)
+			.then(await resetForm)
 			.catch(await handleError);
 	}
 
@@ -133,14 +134,14 @@ const Cryptomcommodities: NextPage = () => {
 		console.log("selectors ", selectors);
 
 		// would need to merge abi files
-		let tx = await contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
-			facetAddress: FACTORY_FACETS[facetName][1],
-			action: FacetCutAction.Add,
-			functionSelectors: selectors,
-		}]);
-		await tx.wait();
-
-		loadCryptocommodityFacets();
+		contracts.SELECTED_CRYPTOCOMMODITY_DIAMOND_CUT_CONTRACT?.diamondCut([{ 
+				facetAddress: FACTORY_FACETS[facetName][1],
+				action: FacetCutAction.Add,
+				functionSelectors: selectors,
+			}])
+			.then(await handleICOReceipt)
+			.then(await loadCryptocommodityFacets)
+			.catch(await handleError);
 
 		console.log("installFacet end", facetName);
 	}
@@ -154,9 +155,19 @@ const Cryptomcommodities: NextPage = () => {
 		console.log("SELECTED_CRYPTOCOMMODITY_STORAGE", SELECTED_CRYPTOCOMMODITY_STORAGE);
 		let storage = keccak256(toUtf8Bytes(SELECTED_CRYPTOCOMMODITY_STORAGE));
 		console.log("storage to set", storage);
-		await contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage)
+		contracts.SELECTED_CRYPTOCOMMODITY_COMMON_CONTRACT?.setStorage(storage)
 			.then(await handleICOReceipt)
 			.catch(await handleError);
+	}
+
+	// *************************************************************************************************************************
+	// ******************************************************** Update Data ****************************************************
+	// *************************************************************************************************************************
+	async function resetForm() {
+		setSelectedCryptocommodityNameAdd('');
+		setSelectedCryptocommodityNameFind('');
+		setSelectedCryptocommodityName((''));
+		setSelectedCryptocommodityAddress((''));
 	}
 
   return (
@@ -181,7 +192,7 @@ const Cryptomcommodities: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={onSelectCryptocommodity}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ !connectedChain || !CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0 || !!selectedCrypto || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND || !!X_SELECTED_CRYPTOCOMMODITY_NAME_ADD }>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ !connectedChain || !CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0 || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND || !!X_SELECTED_CRYPTOCOMMODITY_NAME_ADD }>
 									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : "Select CryptoCommodity" }
 								</Dropdown.Toggle>
 
@@ -200,7 +211,7 @@ const Cryptomcommodities: NextPage = () => {
 						<Col>
 							<div className="input-group mb-3">
 								<input type="text" className="form-control form-control-lg bg-edited border-0" placeholder="Enter Symbol" aria-label="Symbol" aria-describedby="button-addon1" disabled={ !connectedChain || !!selectedCrypto || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND } value={X_SELECTED_CRYPTOCOMMODITY_NAME_ADD} onChange={(event) => setSelectedCryptocommodityNameAdd(event.target.value)}></input>
-								<Button type="submit" id="button-addon1" className="btn btn-lg btn-outline-secondary bg-button fw-bold border-0" disabled={ !connectedChain || !!selectedCrypto || !X_SELECTED_CRYPTOCOMMODITY_NAME_ADD || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND } onClick={() => saveCryptocommodity()}>{KEY_ICON()} Add</Button>
+								<Button type="submit" id="button-addon1" className="btn btn-lg btn-outline-secondary bg-button fw-bold border-0" disabled={ !connectedChain || !!selectedCrypto || !X_SELECTED_CRYPTOCOMMODITY_NAME_ADD || !!X_SELECTED_CRYPTOCOMMODITY_NAME_FIND } onClick={() => addCryptocommodity()}>{KEY_ICON()} Add</Button>
 							</div>
 						</Col>
 
