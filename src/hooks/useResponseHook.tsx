@@ -50,7 +50,7 @@ export function useResponseHook() {
 		//parseError(err.message,);
 		toast.error(parseError(err.message), {
 			position: "bottom-right",
-			autoClose: 5000,
+			//autoClose: 5000,
 			hideProgressBar: false,
 			closeOnClick: true,
 			pauseOnHover: true,
