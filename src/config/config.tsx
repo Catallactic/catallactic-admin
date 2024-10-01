@@ -67,6 +67,12 @@ export const supportedChains = [
 		rpcUrl: 'https://rpc.devnet.citrea.xyz'
 	},
 	{
+		id: 5_115,
+		token: 'cBTC',
+		label: 'Citrea Testnet',
+		rpcUrl: 'https://rpc.testnet.citrea.xyz'
+	},
+	{
 		id: 686_868,
 		token: 'BTC',
 		label: 'Merlin Testnet',
