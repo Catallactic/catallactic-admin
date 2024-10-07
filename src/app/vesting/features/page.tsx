@@ -223,8 +223,8 @@ const Features: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Vesting Cliff (days)</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="datetime-local" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_START_MILLIS && X_VESTING_START_MILLIS != '0' ? X_VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={!CAN_TYPE}></input></Col>
-						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_CLIFF_DAYS != 0 ? X_VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={!CAN_TYPE}></input></Col>
+						<Col><input type="datetime-local" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_START_MILLIS && X_VESTING_START_MILLIS != '0' ? X_VESTING_START_MILLIS : ''} onChange={handleVestingStartChange} disabled={!CAN_TYPE} placeholder={"e.g. " + new Date().toISOString().split('T')[0]}></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_CLIFF_DAYS != 0 ? X_VESTING_CLIFF_DAYS : ''} onChange={(event) => setVestingCliffInDays(Number(event.target.value))} disabled={!CAN_TYPE} placeholder="e.g. 120"></input></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -234,8 +234,8 @@ const Features: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Vesting Number Slides</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_DURATION_DAYS != 0 ? X_VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={!CAN_TYPE}></input></Col>
-						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_NUM_SLIDES != 0 ? X_VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!CAN_TYPE}></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_DURATION_DAYS != 0 ? X_VESTING_DURATION_DAYS : ''} onChange={(event) => setVestingDurationInDays(Number(event.target.value))} disabled={!CAN_TYPE} placeholder="e.g. 360"></input></Col>
+						<Col><input type="number" className={"form-control form-control-lg color-frame border-0" + colorCSS} value={X_VESTING_NUM_SLIDES != 0 ? X_VESTING_NUM_SLIDES : ''} onChange={(event) => setVestingNumSlides(Number(event.target.value))} disabled={!CAN_TYPE} placeholder="e.g. 9"></input></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
