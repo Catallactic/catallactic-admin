@@ -20,6 +20,7 @@ import {
 import { useSetChain, useWallets } from '@web3-onboard/react';
 import { useWeb3Onboard } from '@web3-onboard/react/dist/context';
 import { supportedChains } from 'config/config';
+import { useERC20Hook } from 'hooks/useERC20Hook';
 
 const Login: NextPage = () => {
 
@@ -52,6 +53,13 @@ const Login: NextPage = () => {
 		isWhitelisted, 
 		isBlacklisted,
 	} = useCrowdsaleHook();
+	const { 
+		loadERC20Features, TOKEN_INITIALIZED, TOKEN_NAME, TOKEN_SYMBOL, TOKEN_SUPPLY,
+		getBalancesCygasMeWallet, BALANCES_ERC_20_ME_WALLET, 
+		getBalancesCygasSearchAddress, BALANCES_ERC_20_SEARCH_ADDRESS, 
+		getBalancesCygasICOWallet, BALANCES_ERC_20_ICO_WALLET, 
+		getBalancesCygasTargetWallet, BALANCES_ERC_20_TARGET_WALLET, 
+	} = useERC20Hook();
 
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
@@ -75,6 +83,9 @@ const Login: NextPage = () => {
 
 		console.log('loadICOPaymentMethod')
 		loadICOPaymentMethod();
+
+		console.log('loadERC20Features')
+		loadERC20Features();
 	}
 
 	// conditions to load
@@ -114,7 +125,7 @@ const Login: NextPage = () => {
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
 
 	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
-	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
+	//const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
   return (
     <div className="bg-group rounded-5 d-flex flex-row align-items-center dark:bg-transparent">
@@ -128,298 +139,306 @@ const Login: NextPage = () => {
 
 				<Row className="m-4"></Row>
 
-				<Row className="mt-4 mb-2">
-					<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Symbol</Form.Text></div></Col>
-					<Col xs={6}><div><Form.Text className="color-frame fs-4 fw-bold" dir="rtl">Address</Form.Text></div></Col>
-					<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Decimals</Form.Text></div></Col>						
-				</Row>
+				<Form.Group className="bg-group-dashboard p-5 rounded-5">
 
-				<Row className="mb-5">
-					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } ></input></Col>
-					<Col xs={6}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS : 'NO SELECTED' } dir="rtl" ></input></Col>
-					<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
-				</Row>
+					<Row className="mt-4 mb-2">
+						<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Symbol</Form.Text></div></Col>
+						<Col xs={6}><div><Form.Text className="color-frame fs-4 fw-bold" dir="rtl">Address</Form.Text></div></Col>
+						<Col xs={3}><div><Form.Text className="color-frame fs-4 fw-bold">Decimals</Form.Text></div></Col>						
+					</Row>
 
-				{/* https://europe1.discourse-cdn.com/business20/uploads/gnosis_safe/optimized/1X/593b6f307a37304066ba221f2aab8962159f6baa_2_936x526.jpeg */}
-				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Supply Allocations</Form.Text></div></Col>
-				</Row>
-				<div className="row">
-					<div className="col-sm-6 col-lg-3">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										26K
-										<span className="fs-6 ms-2 fw-normal">
-											(-12.4%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
-										</span>
+					<Row className="mb-5">
+						<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } ></input></Col>
+						<Col xs={6}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_ADDRESS : 'NO SELECTED' } dir="rtl" ></input></Col>
+						<Col xs={3}><input className="form-control form-control-lg border-0 text-center background-disabled color-dashboard border-0" disabled={ true } value={ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : 'NO SELECTED' } dir="rtl" ></input></Col>
+					</Row>
+
+					{/* https://europe1.discourse-cdn.com/business20/uploads/gnosis_safe/optimized/1X/593b6f307a37304066ba221f2aab8962159f6baa_2_936x526.jpeg */}
+					<Row className="mt-4 mb-2">
+						<Col><div><Form.Text className="color-frame fs-4 fw-bold">Supply Allocations</Form.Text></div></Col>
+					</Row>
+					<div className="row">
+						<div className="col-sm-6 col-lg-3">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											0
+											<span className="fs-6 ms-2 fw-normal"> ( 0% ) </span>
+										</div>
+										<div>Project</div>
 									</div>
-									<div>Project</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
 
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO SELECTED
-							</div>
-						</Card>
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									NO SELECTED
+								</div>
+							</Card>
+						</div>
+						
+						<div className="col-sm-6 col-lg-3">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											0
+											<span className="fs-6 ms-2 fw-normal"> ( 0% ) </span>
+										</div>
+										<div>Holders</div>
+									</div>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart2">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
+
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									NO SELECTED
+								</div>
+							</Card>
+						</div>
+
+						<div className="col-sm-6 col-lg-3">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											0
+											<span className="fs-6 ms-2 fw-normal"> ( 0% ) </span>
+										</div>
+										<div>Exchanges</div>
+									</div>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart3">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
+
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									NO SELECTED
+								</div>
+							</Card>
+						</div>
+
+						<div className="col-sm-6 col-lg-3">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											0
+											<span className="fs-6 ms-2 fw-normal"> ( 0% ) </span>
+										</div>
+										<div>DeFi Services</div>
+									</div>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart4">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
+
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									NO SELECTED
+								</div>
+							</Card>
+						</div>
 					</div>
 
-					<div className="col-sm-6 col-lg-3">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										$6.200
-										<span className="fs-6 ms-2 fw-normal">
-											(40.9%
-											<FontAwesomeIcon icon={faArrowUp} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>Holders</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart2">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
+				</Form.Group>
 
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO SELECTED
-							</div>
-						</Card>
-					</div>
+				<Row className="m-4"></Row>
 
-					<div className="col-sm-6 col-lg-3">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										2.49%
-										<span className="fs-6 ms-2 fw-normal">
-											(84.7%
-											<FontAwesomeIcon icon={faArrowUp} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>Exchanges</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart3">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
+				<Form.Group className="bg-group-dashboard p-5 rounded-5">
 
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO SELECTED
-							</div>
-						</Card>
-					</div>
+					<Row className="mt-4 mb-2">
+						<Col><div><Form.Text className="color-frame fs-4 fw-bold">Token Balances</Form.Text></div></Col>
+					</Row>
 
-					<div className="col-sm-6 col-lg-3">
-						<Card className="mb-4 background-disabled color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										44K
-										<span className="fs-6 ms-2 fw-normal">
-											(-23.6%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>DeFi Services</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart4">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
-
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO SELECTED
-							</div>
-						</Card>
-					</div>
-				</div>
-
-				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Vesting Schedules</Form.Text></div></Col>
-				</Row>
-				<div className="row">
-					<div className="col-12">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										26K
-										<span className="fs-6 ms-2 fw-normal">
-											(-12.4%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
-										</span>
-									</div>
-									<div>Project</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
-
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO CRYPTOCOMMODITY SELECTED
-							</div>
-						</Card>
-					</div>
-				</div>
-
-				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color-frame fs-4 fw-bold">Token Balances</Form.Text></div></Col>
-				</Row>
-
-				{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
-					<Form.Group className="p-2 rounded-5 bg-group">
-						<Row>
-							<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
-						</Row>
-						<Row className="m-2"></Row>
-						<Row>
-							<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
-							<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
-							<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Raised In ICO</Form.Text></div></Col>
-						</Row>
-						<Row>
-							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Num Tokens Available</Form.Text></div></Col>
-							<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
-							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Tokens</Form.Text></div></Col>
-							<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Amount (USD)</Form.Text></div></Col>
-							<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" } Sold</Form.Text></div></Col>
-						</Row>
-						{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
-							<Row className="mb-3" key={index}>
-								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
-								<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true}> {item}</Button></Col>
-								<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][5] ? Number(ICO_PAYMENT_METHODS[item][5]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0 } disabled={true}></input></Col>
-								<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / 10**6 : 0 } disabled={true}></input></Col>
-								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / ICO_PRICE : 0 } disabled={true}></input></Col>
-							</Row>
-						))}
-						<Row>
-							<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET}></input></Col>
-							<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" }</Button></Col>
-							<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / 10**6 } disabled={true}></input></Col>
-							<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
-						</Row>
-						<Row className="mb-3"></Row>
-						{connectedChain ?
+					{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
+						<Form.Group className="p-2 rounded-5 bg-group">
 							<Row>
-								<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
+								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 							</Row>
-						: '' }
-					</Form.Group>
-				:
+							<Row className="m-2"></Row>
+							<Row>
+								<Col xs={3}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Holdings In Tokens</Form.Text></div></Col>
+								<Col xs={2}><div><Form.Text className=""></Form.Text></div></Col>
+								<Col xs={7}><div className="text-center border-bottom border-dark"><Form.Text className="text-center">Raised In ICO</Form.Text></div></Col>
+							</Row>
+							<Row>
+								<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">Num Tokens Available</Form.Text></div></Col>
+								<Col xs={2}><div><Form.Text className="fs-6"></Form.Text></div></Col>
+								<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Tokens</Form.Text></div></Col>
+								<Col xs={2}><div className="text-center"><Form.Text className="text-center fs-6">Raised Amount (USD)</Form.Text></div></Col>
+								<Col xs={3}><div className="text-center"><Form.Text className="text-center fs-6">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" } Sold</Form.Text></div></Col>
+							</Row>
+							{ICO_PAYMENT_SYMBOLS?.map((item: string, index: any) => (
+								<Row className="mb-3" key={index}>
+									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_PAYMENT_TOKENS_ICO_WALLET && BALANCES_PAYMENT_TOKENS_ICO_WALLET[item] && ICO_PAYMENT_METHODS[item] ? Number(BALANCES_PAYMENT_TOKENS_ICO_WALLET[item].toString()) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0}></input></Col>
+									<Col xs={2}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={true}> {item}</Button></Col>
+									<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][5] ? Number(ICO_PAYMENT_METHODS[item][5]) / 10**Number(ICO_PAYMENT_METHODS[item][3]) : 0 } disabled={true}></input></Col>
+									<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / 10**6 : 0 } disabled={true}></input></Col>
+									<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_PAYMENT_METHODS[item] && ICO_PAYMENT_METHODS[item][4] ? Number(ICO_PAYMENT_METHODS[item][4]) / ICO_PRICE : 0 } disabled={true}></input></Col>
+								</Row>
+							))}
+							<Row>
+								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={BALANCES_ERC_20_ICO_WALLET}></input></Col>
+								<Col xs={4}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0 btn btn-primary" disabled={true} >{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20" }</Button></Col>
+								<Col xs={2}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / 10**6 } disabled={true}></input></Col>
+								<Col xs={3}><input className="form-control form-control-lg color-frame border-0" value={ ICO_TOTAL_uUSD_INVESTED / ICO_PRICE } disabled={true}></input></Col>
+							</Row>
+							<Row className="mb-3"></Row>
+							{connectedChain ?
+								<Row>
+									<Col><div className="text-center"><Form.Text className=""> * Invested and available amounts should match</Form.Text></div></Col>
+								</Row>
+							: '' }
+						</Form.Group>
+					:
+						<div className="row">
+							<div className="col-12">
+								<Card className="mb-4 background-disabled border-0 color-dashboard">
+									<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+										NO CRYPTOCOMMODITY SELECTED
+									</div>
+								</Card>
+							</div>
+						</div>
+					}
+
+				</Form.Group>
+
+				<Row className="m-4"></Row>
+
+				<Form.Group className="bg-group-dashboard p-5 rounded-5">
+
+					<Row className="mt-4 mb-2">
+						<Col><div><Form.Text className="color-frame fs-4 fw-bold">Vesting Schedules</Form.Text></div></Col>
+					</Row>
 					<div className="row">
 						<div className="col-12">
 							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											0
+											<span className="fs-6 ms-2 fw-normal"> ( 0% ) </span>
+											{/*26K
+											<span className="fs-6 ms-2 fw-normal">
+												(-12.4%
+												<FontAwesomeIcon icon={faArrowDown} fixedWidth />
+												)
+												</span>*/}
+										</div>
+										<div>Vested Tokens</div>
+									</div>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
+
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
 								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
 									NO CRYPTOCOMMODITY SELECTED
 								</div>
 							</Card>
 						</div>
 					</div>
-				}
 
-				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="fs-4 color-dashboard fw-bold">Deployed Networks</Form.Text></div></Col>
-				</Row>
-				{/*<Row className="mt-4 mb-2">
-					<Col xl="2"><div><Form.Text className="fs-5 color-dashboard">Primary Network</Form.Text></div></Col>
-					<Col>
-						<Dropdown>
-							<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ false }>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : "Select Primary Network" }
-							</Dropdown.Toggle>
+				</Form.Group>
 
-							<Dropdown.Menu className="w-100">
-								{supportedChains.map(function (chain) {
-									return (
-										<Dropdown.Item as="button" key={chain.id} eventKey={chain.label}>
-											{chain.label}
-										</Dropdown.Item>
-									)
-								})}
-							</Dropdown.Menu>
-						</Dropdown>
-					</Col>
-				</Row>*/}
-				<div className="row">
-					<div className="col-12">
-						<Card className="mb-4 background-disabled border-0 color-dashboard">
-							<CardBody className="pb-0 d-flex justify-content-between align-items-start">
-								<div>
-									<div className="fs-4 fw-semibold">
-										26K
-										<span className="fs-6 ms-2 fw-normal"> (100%)
-										</span>
+				<Row className="m-4"></Row>
+
+				<Form.Group className="bg-group-dashboard p-5 rounded-5">
+
+					<Row className="mt-4 mb-2">
+						<Col><div><Form.Text className="fs-4 color-dashboard fw-bold">Deployed Networks</Form.Text></div></Col>
+					</Row>
+					{/*<Row className="mt-4 mb-2">
+						<Col xl="2"><div><Form.Text className="fs-5 color-dashboard">Primary Network</Form.Text></div></Col>
+						<Col>
+							<Dropdown>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ false }>
+									{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : "Select Primary Network" }
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{supportedChains.map(function (chain) {
+										return (
+											<Dropdown.Item as="button" key={chain.id} eventKey={chain.label}>
+												{chain.label}
+											</Dropdown.Item>
+										)
+									})}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+					</Row>*/}
+					<div className="row">
+						<div className="col-12">
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<CardBody className="pb-0 d-flex justify-content-between align-items-start">
+									<div>
+										<div className="fs-4 fw-semibold">
+											{/* TOKEN_SUPPLY ? TOKEN_SUPPLY : 0 */}
+											0
+											<span className="fs-6 ms-2 fw-normal"> (100%) </span>
+										</div>
+										<div>Total Supply</div>
 									</div>
-									<div>Total Supply</div>
-								</div>
-								<Dropdown align="end">
-									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
-										<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
-									</DropdownToggle>
+									<Dropdown align="end">
+										<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
+											<FontAwesomeIcon fixedWidth icon={faEllipsisVertical} />
+										</DropdownToggle>
 
-									<DropdownMenu>
-										<DropdownItem href="#/action-1">Action</DropdownItem>
-										<DropdownItem href="#/action-2">Another action</DropdownItem>
-										<DropdownItem href="#/action-3">Something else</DropdownItem>
-									</DropdownMenu>
-								</Dropdown>
-							</CardBody>
-							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								{selectedCrypto && connectedChain?.id ? supportedChains.filter(chain => chain.id === Number(connectedChain.id))[0].label.toUpperCase() : "NO CRYPTOCOMMODITY SELECTED" }
-							</div>
-						</Card>
+										<DropdownMenu>
+											<DropdownItem href="#/action-1">Action</DropdownItem>
+											<DropdownItem href="#/action-2">Another action</DropdownItem>
+											<DropdownItem href="#/action-3">Something else</DropdownItem>
+										</DropdownMenu>
+									</Dropdown>
+								</CardBody>
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									{selectedCrypto && connectedChain?.id ? supportedChains.filter(chain => chain.id === Number(connectedChain.id))[0].label.toUpperCase() : "NO CRYPTOCOMMODITY SELECTED" }
+								</div>
+							</Card>
+						</div>
 					</div>
-				</div>
+
+				</Form.Group>
 
 				<Row className="m-4"></Row>
 
