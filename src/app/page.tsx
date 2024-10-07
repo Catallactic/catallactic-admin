@@ -18,6 +18,8 @@ import {
   faVenus,
 } from '@fortawesome/free-solid-svg-icons'
 import { useSetChain, useWallets } from '@web3-onboard/react';
+import { useWeb3Onboard } from '@web3-onboard/react/dist/context';
+import { supportedChains } from 'config/config';
 
 const Login: NextPage = () => {
 
@@ -27,6 +29,7 @@ const Login: NextPage = () => {
 	// OnBoard hooks
 	const connectedWallets = useWallets()
 	const [{ connectedChain }] = useSetChain()
+	const web3OnBoard = useWeb3Onboard();
 
 	// Blockchain hooks
 	const { 
@@ -365,8 +368,28 @@ const Login: NextPage = () => {
 				}
 
 				<Row className="mt-4 mb-2">
-					<Col><div><Form.Text className="color- fs-4 fw-bold">Deployed Networks</Form.Text></div></Col>
+					<Col><div><Form.Text className="fs-4 color-dashboard fw-bold">Deployed Networks</Form.Text></div></Col>
 				</Row>
+				{/*<Row className="mt-4 mb-2">
+					<Col xl="2"><div><Form.Text className="fs-5 color-dashboard">Primary Network</Form.Text></div></Col>
+					<Col>
+						<Dropdown>
+							<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={ false }>
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME && CRYPTOCOMMODITIES.includes(selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME) ? selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME : "Select Primary Network" }
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu className="w-100">
+								{supportedChains.map(function (chain) {
+									return (
+										<Dropdown.Item as="button" key={chain.id} eventKey={chain.label}>
+											{chain.label}
+										</Dropdown.Item>
+									)
+								})}
+							</Dropdown.Menu>
+						</Dropdown>
+					</Col>
+				</Row>*/}
 				<div className="row">
 					<div className="col-12">
 						<Card className="mb-4 background-disabled border-0 color-dashboard">
@@ -374,13 +397,10 @@ const Login: NextPage = () => {
 								<div>
 									<div className="fs-4 fw-semibold">
 										26K
-										<span className="fs-6 ms-2 fw-normal">
-											(-12.4%
-											<FontAwesomeIcon icon={faArrowDown} fixedWidth />
-											)
+										<span className="fs-6 ms-2 fw-normal"> (100%)
 										</span>
 									</div>
-									<div>Project</div>
+									<div>Total Supply</div>
 								</div>
 								<Dropdown align="end">
 									<DropdownToggle as="button" bsPrefix="btn" className="btn-link rounded-0 color-dashboard shadow-none p-0 border-0" id="dropdown-chart1">
@@ -395,7 +415,7 @@ const Login: NextPage = () => {
 								</Dropdown>
 							</CardBody>
 							<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-								NO CRYPTOCOMMODITY SELECTED
+								{selectedCrypto && connectedChain?.id ? supportedChains.filter(chain => chain.id === Number(connectedChain.id))[0].label.toUpperCase() : "NO CRYPTOCOMMODITY SELECTED" }
 							</div>
 						</Card>
 					</div>
