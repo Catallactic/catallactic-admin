@@ -282,7 +282,7 @@ const Login: NextPage = () => {
 					</Row>
 
 					{ ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ?
-						<Form.Group className="p-2 rounded-5 bg-group">
+						<Form.Group className="p-2 rounded-5">
 							<Row>
 								<Col><div><div className="color-frame fs-4 text-center text-center w-100">Balances</div></div></Col>
 							</Row>
