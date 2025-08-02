@@ -33,12 +33,20 @@ export default function Header(props: HeaderProps) {
 	// *************************************************************************************************************************
 	// ******************************************************* Load Data *******************************************************
 	// *************************************************************************************************************************
+	var METAMASK_CHAINS:any;
+	const getMETAMASK_CHAINS = function() {
+		if(!METAMASK_CHAINS && process.env.NEXT_PUBLIC_METAMASK_CHAINS) {
+			METAMASK_CHAINS = JSON.parse(process.env.NEXT_PUBLIC_METAMASK_CHAINS ? process.env.NEXT_PUBLIC_METAMASK_CHAINS : '[]' )
+		}
+		return METAMASK_CHAINS;
+	}
+
 	useEffect(() => {
 
 		customNotification({
 			eventCode: 'connect',
 			type: 'success',
-			message: connectedWallets.length > 0 ? 'Wallet has connected' : 'Wallet has disconnected',
+			message: connectedWallets.length > 0 ? 'Wallet has connected2' : 'Wallet has disconnected',
 			autoDismiss: 5000,
 			//onClick: () => window.open(`https://www.blocknative.com`)
 		})
@@ -169,7 +177,7 @@ export default function Header(props: HeaderProps) {
 					: '' }
 
 					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
-						{connecting ? 'Connecting' : wallet ? 'Connected' : 'Connect'}
+						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect'}
 					</button>
 
 				</div>
