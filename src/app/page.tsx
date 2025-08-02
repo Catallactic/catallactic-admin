@@ -6,7 +6,7 @@ import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
-import { Button, Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Row } from 'react-bootstrap'
+import { Button, Card, CardBody, Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, ProgressBar, Row } from 'react-bootstrap'
 import {
   faArrowDown,
   faArrowUp,
@@ -345,6 +345,15 @@ const Login: NextPage = () => {
 						<Col><Row><Form.Text className="text-center color-frame fs-3 fw-bold">Fundraising Ongoing</Form.Text></Row></Col>
 					</Row>
 					<Row className="m-3"></Row>
+
+					<Row className="mt-4 mb-2">
+						<Col><div><Form.Text className="color-frame fs-4">Fundraising Process</Form.Text></div></Col>
+					</Row>
+					<div className="row">
+						<div className="col-12">
+							<ProgressBar animated variant="danger" now={60} label={`60%`} />
+						</div>
+					</div>
 
 					<Row className="mt-4 mb-2">
 						<Col><div><Form.Text className="color-frame fs-4">Vesting Schedules</Form.Text></div></Col>

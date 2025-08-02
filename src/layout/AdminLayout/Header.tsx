@@ -46,7 +46,7 @@ export default function Header(props: HeaderProps) {
 		customNotification({
 			eventCode: 'connect',
 			type: 'success',
-			message: connectedWallets.length > 0 ? 'Wallet has connected2' : 'Wallet has disconnected',
+			message: connectedWallets.length > 0 ? 'Wallet has connected' : 'Wallet has disconnected',
 			autoDismiss: 5000,
 			//onClick: () => window.open(`https://www.blocknative.com`)
 		})
