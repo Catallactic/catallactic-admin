@@ -22,7 +22,7 @@ export default function Header(props: HeaderProps) {
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 	const [{ connectedChain }] = useSetChain()
 	const connectedWallets = useWallets()
-	const [notifications, customNotification, updateNotify, preflightNotifications] = useNotifications()
+	const [notifications, customNotification, updateNotify] = useNotifications()
 
 	// https://github.com/blocknative/web3-onboard/issues/1666
 	// https://github.com/blocknative/react-demo/blob/4bf91352edf35e42415989d3997688b529a4a4cf/src/App.js#L31

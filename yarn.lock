@@ -628,44 +628,46 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@formatjs/ecma402-abstract@1.11.4":
-  version "1.11.4"
-  resolved "https://registry.npmjs.org/@formatjs/ecma402-abstract/-/ecma402-abstract-1.11.4.tgz"
-  integrity sha512-EBikYFp2JCdIfGEb5G9dyCkTGDmC57KSHhRQOC3aYxoPWVZvfWCDjZwkGYHN7Lis/fmuWl906bnNTJifDQ3sXw==
+"@formatjs/ecma402-abstract@2.3.4":
+  version "2.3.4"
+  resolved "https://registry.npmjs.org/@formatjs/ecma402-abstract/-/ecma402-abstract-2.3.4.tgz"
+  integrity sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==
   dependencies:
-    "@formatjs/intl-localematcher" "0.2.25"
-    tslib "^2.1.0"
+    "@formatjs/fast-memoize" "2.2.7"
+    "@formatjs/intl-localematcher" "0.6.1"
+    decimal.js "^10.4.3"
+    tslib "^2.8.0"
 
-"@formatjs/fast-memoize@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-1.2.1.tgz"
-  integrity sha512-Rg0e76nomkz3vF9IPlKeV+Qynok0r7YZjL6syLz4/urSg0IbjPZCB/iYUMNsYA643gh4mgrX3T7KEIFIxJBQeg==
+"@formatjs/fast-memoize@2.2.7":
+  version "2.2.7"
+  resolved "https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-2.2.7.tgz"
+  integrity sha512-Yabmi9nSvyOMrlSeGGWDiH7rf3a7sIwplbvo/dlz9WCIjzIQAfy1RMf4S0X3yG724n5Ghu2GmEl5NJIV6O9sZQ==
   dependencies:
-    tslib "^2.1.0"
+    tslib "^2.8.0"
 
-"@formatjs/icu-messageformat-parser@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-2.1.0.tgz"
-  integrity sha512-Qxv/lmCN6hKpBSss2uQ8IROVnta2r9jd3ymUEIjm2UyIkUCHVcbUVRGL/KS/wv7876edvsPe+hjHVJ4z8YuVaw==
+"@formatjs/icu-messageformat-parser@2.11.2":
+  version "2.11.2"
+  resolved "https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-2.11.2.tgz"
+  integrity sha512-AfiMi5NOSo2TQImsYAg8UYddsNJ/vUEv/HaNqiFjnI3ZFfWihUtD5QtuX6kHl8+H+d3qvnE/3HZrfzgdWpsLNA==
   dependencies:
-    "@formatjs/ecma402-abstract" "1.11.4"
-    "@formatjs/icu-skeleton-parser" "1.3.6"
-    tslib "^2.1.0"
+    "@formatjs/ecma402-abstract" "2.3.4"
+    "@formatjs/icu-skeleton-parser" "1.8.14"
+    tslib "^2.8.0"
 
-"@formatjs/icu-skeleton-parser@1.3.6":
-  version "1.3.6"
-  resolved "https://registry.npmjs.org/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-1.3.6.tgz"
-  integrity sha512-I96mOxvml/YLrwU2Txnd4klA7V8fRhb6JG/4hm3VMNmeJo1F03IpV2L3wWt7EweqNLES59SZ4d6hVOPCSf80Bg==
+"@formatjs/icu-skeleton-parser@1.8.14":
+  version "1.8.14"
+  resolved "https://registry.npmjs.org/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-1.8.14.tgz"
+  integrity sha512-i4q4V4qslThK4Ig8SxyD76cp3+QJ3sAqr7f6q9VVfeGtxG9OhiAk3y9XF6Q41OymsKzsGQ6OQQoJNY4/lI8TcQ==
   dependencies:
-    "@formatjs/ecma402-abstract" "1.11.4"
-    tslib "^2.1.0"
+    "@formatjs/ecma402-abstract" "2.3.4"
+    tslib "^2.8.0"
 
-"@formatjs/intl-localematcher@0.2.25":
-  version "0.2.25"
-  resolved "https://registry.npmjs.org/@formatjs/intl-localematcher/-/intl-localematcher-0.2.25.tgz"
-  integrity sha512-YmLcX70BxoSopLFdLr1Ds99NdlTI2oWoLbaUW2M406lxOIPzE1KQhRz2fPUkq34xVZQaihCoU29h0KK7An3bhA==
+"@formatjs/intl-localematcher@0.6.1":
+  version "0.6.1"
+  resolved "https://registry.npmjs.org/@formatjs/intl-localematcher/-/intl-localematcher-0.6.1.tgz"
+  integrity sha512-ePEgLgVCqi2BBFnTMWPfIghu6FkbZnnBVhO2sSxvLfrdFw7wCHAHiDoM2h4NRgjbaY7+B7HgOLZGkK187pZTZg==
   dependencies:
-    tslib "^2.1.0"
+    tslib "^2.8.0"
 
 "@fortawesome/fontawesome-common-types@6.5.2":
   version "6.5.2"
@@ -1130,10 +1132,10 @@
     joi "17.9.1"
     viem "2.12.0"
 
-"@web3-onboard/core@^2.22.3", "@web3-onboard/core@2.22.3":
-  version "2.22.3"
-  resolved "https://registry.npmjs.org/@web3-onboard/core/-/core-2.22.3.tgz"
-  integrity sha512-/7pE20n910kvdTS3hn/ui5mWCMMu6jot+mdSsn2nAoNdLBCmSgRQgVuEFTL84CR99K6O0dFUCdnKvhrs8t5bog==
+"@web3-onboard/core@2.24.0":
+  version "2.24.0"
+  resolved "https://registry.npmjs.org/@web3-onboard/core/-/core-2.24.0.tgz"
+  integrity sha512-aFfao9ln5DMW9QSTzXHP4ymuFoJslBs3TrYR+z+5B6/lPMK1CUSe5wmPeFVaqTXs4gIGkyWByuznb9LUq/Vong==
   dependencies:
     "@web3-onboard/common" "^2.4.1"
     bnc-sdk "^4.6.7"
@@ -1145,25 +1147,25 @@
     nanoid "^4.0.0"
     rxjs "^7.5.5"
     svelte "^3.49.0"
-    svelte-i18n "^3.3.13"
+    svelte-i18n "^4.0.1"
     viem "2.12.0"
 
-"@web3-onboard/injected-wallets@^2.11.2":
-  version "2.11.2"
-  resolved "https://registry.npmjs.org/@web3-onboard/injected-wallets/-/injected-wallets-2.11.2.tgz"
-  integrity sha512-VeI0LTFKAcikBLBOub/avzdvc2SWOh3qLjqw/Yh34YS7ArGG5jrQXSbOuVXLqQoW07TyY4SDHXTI1Yft9MiF4Q==
+"@web3-onboard/injected-wallets@^2.11.3":
+  version "2.11.3"
+  resolved "https://registry.npmjs.org/@web3-onboard/injected-wallets/-/injected-wallets-2.11.3.tgz"
+  integrity sha512-DSfcJRwe7KgXHSosXSz8QUMpoSTd6ltrb3qb8xhDjwLdpYlSlcmhaH5blP/gvNeB38imiJ9xCQpnI5tpaLKneQ==
   dependencies:
     "@web3-onboard/common" "^2.4.1"
     joi "17.9.1"
     lodash.uniqby "^4.7.0"
 
-"@web3-onboard/react@^2.9.3":
-  version "2.9.3"
-  resolved "https://registry.npmjs.org/@web3-onboard/react/-/react-2.9.3.tgz"
-  integrity sha512-mik8917UXJfXBLL+g11rvKnoiFqaggt6Qi61EaemKNpO8Mwl0ZseXRhanxEI6n/leDDuveioGdTT1fPNrpByvg==
+"@web3-onboard/react@^2.11.0":
+  version "2.11.0"
+  resolved "https://registry.npmjs.org/@web3-onboard/react/-/react-2.11.0.tgz"
+  integrity sha512-aKwkVX3Xt0FshAerq1j15FYZnanEfrcNRl7SjziH8Zh/v82chixBqdPOKG7uh4lYKutIY7OAuyubPPRr/J7mzw==
   dependencies:
     "@web3-onboard/common" "^2.4.1"
-    "@web3-onboard/core" "2.22.3"
+    "@web3-onboard/core" "2.24.0"
     use-sync-external-store "1.0.0"
 
 abitype@1.0.0:
@@ -1764,6 +1766,11 @@ debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5:
   integrity sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==
   dependencies:
     ms "2.1.2"
+
+decimal.js@^10.4.3:
+  version "10.6.0"
+  resolved "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz"
+  integrity sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==
 
 decompress-response@^6.0.0:
   version "6.0.0"
@@ -2865,15 +2872,15 @@ internal-slot@^1.1.0:
     hasown "^2.0.2"
     side-channel "^1.1.0"
 
-intl-messageformat@^9.13.0:
-  version "9.13.0"
-  resolved "https://registry.npmjs.org/intl-messageformat/-/intl-messageformat-9.13.0.tgz"
-  integrity sha512-7sGC7QnSQGa5LZP7bXLDhVDtQOeKGeBFGHF2Y8LVBwYZoQZCgWeKoPGTa5GMG8g/TzDgeXuYJQis7Ggiw2xTOw==
+intl-messageformat@^10.5.3:
+  version "10.7.16"
+  resolved "https://registry.npmjs.org/intl-messageformat/-/intl-messageformat-10.7.16.tgz"
+  integrity sha512-UmdmHUmp5CIKKjSoE10la5yfU+AYJAaiYLsodbjL4lji83JNvgOQUjGaGhGrpFCb0Uh7sl7qfP1IyILa8Z40ug==
   dependencies:
-    "@formatjs/ecma402-abstract" "1.11.4"
-    "@formatjs/fast-memoize" "1.2.1"
-    "@formatjs/icu-messageformat-parser" "2.1.0"
-    tslib "^2.1.0"
+    "@formatjs/ecma402-abstract" "2.3.4"
+    "@formatjs/fast-memoize" "2.2.7"
+    "@formatjs/icu-messageformat-parser" "2.11.2"
+    tslib "^2.8.0"
 
 invariant@^2.2.4:
   version "2.2.4"
@@ -3910,9 +3917,9 @@ rxjs@^6.6.3:
     tslib "^1.9.0"
 
 rxjs@^7.5.5:
-  version "7.8.1"
-  resolved "https://registry.npmjs.org/rxjs/-/rxjs-7.8.1.tgz"
-  integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
+  version "7.8.2"
+  resolved "https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz"
+  integrity sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==
   dependencies:
     tslib "^2.1.0"
 
@@ -4344,20 +4351,20 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-svelte-i18n@^3.3.13:
-  version "3.7.4"
-  resolved "https://registry.npmjs.org/svelte-i18n/-/svelte-i18n-3.7.4.tgz"
-  integrity sha512-yGRCNo+eBT4cPuU7IVsYTYjxB7I2V8qgUZPlHnNctJj5IgbJgV78flsRzpjZ/8iUYZrS49oCt7uxlU3AZv/N5Q==
+svelte-i18n@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/svelte-i18n/-/svelte-i18n-4.0.1.tgz"
+  integrity sha512-jaykGlGT5PUaaq04JWbJREvivlCnALtT+m87Kbm0fxyYHynkQaxQMnIKHLm2WeIuBRoljzwgyvz0Z6/CMwfdmQ==
   dependencies:
     cli-color "^2.0.3"
     deepmerge "^4.2.2"
     esbuild "^0.19.2"
     estree-walker "^2"
-    intl-messageformat "^9.13.0"
+    intl-messageformat "^10.5.3"
     sade "^1.8.1"
     tiny-glob "^0.2.9"
 
-"svelte@^3 || ^4", svelte@^3.49.0:
+"svelte@^3 || ^4 || ^5", svelte@^3.49.0:
   version "3.59.2"
   resolved "https://registry.npmjs.org/svelte/-/svelte-3.59.2.tgz"
   integrity sha512-vzSyuGr3eEoAtT/A6bmajosJZIUWySzY2CzB3w2pgPvnkUjGqlDnsNnA0PMO+mMAhuyMul6C2uuZzY6ELSkzyA==

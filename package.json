@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "export": "next export",
-    "start": "next start",
+    "start": "next start -p 3021",
     "lint": "next lint"
   },
   "dependencies": {
@@ -18,9 +18,9 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
-    "@web3-onboard/core": "^2.22.3",
-    "@web3-onboard/injected-wallets": "^2.11.2",
-    "@web3-onboard/react": "^2.9.3",
+    "@web3-onboard/core": "^2.28.2",
+    "@web3-onboard/injected-wallets": "^2.11.3",
+    "@web3-onboard/react": "^2.11.0",
     "axios": "^1.6.0",
     "bootstrap": "^5.3.2",
     "ethers": "^5.7.2",

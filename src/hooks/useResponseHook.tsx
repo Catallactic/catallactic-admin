@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 export function useResponseHook() {
 
-	const [notifications, customNotification, updateNotify, preflightNotifications] = useNotifications()
+	const [notifications, customNotification, updateNotify] = useNotifications()
 
 	async function handleICOReceipt(tx:any) {
 		console.log('%c handleICOReceipt', LOG_METHODS, tx);
