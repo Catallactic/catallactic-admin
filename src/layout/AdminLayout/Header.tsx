@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useContext, useEffect } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
+import { useRouter } from 'next/navigation'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -23,6 +24,7 @@ export default function Header(props: HeaderProps) {
 	const [{ connectedChain }] = useSetChain()
 	const connectedWallets = useWallets()
 	const [notifications, customNotification, updateNotify] = useNotifications()
+  const router = useRouter()
 
 	// https://github.com/blocknative/web3-onboard/issues/1666
 	// https://github.com/blocknative/react-demo/blob/4bf91352edf35e42415989d3997688b529a4a4cf/src/App.js#L31
@@ -62,6 +64,16 @@ export default function Header(props: HeaderProps) {
 		loadYourCryptocommodities();
 
 	}, [connectedWallets])
+
+	useEffect(() => {
+		console.log('wallet: ', wallet)
+		console.log('connectedWallets: ', connectedWallets)
+		if (connectedWallets.length > 0 && !selectedCrypto) {
+			console.log('Moving to /admin/cryptocommodities')
+			router.push('/admin/cryptocommodities')
+		}
+	}, [connectedWallets, selectedCrypto])
+
 
 	/*useEffect(() => {
 
