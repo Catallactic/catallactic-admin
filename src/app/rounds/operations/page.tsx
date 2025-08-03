@@ -6,7 +6,7 @@ import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
-import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, Form, ProgressBar, Row } from 'react-bootstrap';
 
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -246,7 +246,7 @@ const Operations: NextPage = () => {
 				<Row className="m-4"></Row>
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><Form.Text className="fs-6">Current ICO Stage</Form.Text></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Current ICO Stage</div></div></Col>
 					</Row>
 					<Row>
 						<Col><input type="text" className="form-control form-control-lg color-frame text-center border-0" value={ICO_CURRENT_STAGE_TEXT} disabled={true}></input></Col>
@@ -256,6 +256,16 @@ const Operations: NextPage = () => {
 						{ICO_CURRENT_STAGE == STAGE.ONGOING || ICO_CURRENT_STAGE == STAGE.ONHOLD ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => setCrowdsaleStage(STAGE.FINISHED)}> {KEY_ICON()} FINISH </Button></Col> : "" }
 						{ICO_CURRENT_STAGE == STAGE.FINISHED ? <Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => reset()}> {KEY_ICON()} RESET </Button></Col> : "" }
 					</Row>
+					<Row className="mb-3"></Row>
+					<div className="row">
+						<div className="col-12">
+						{ connectedChain ? 
+							<ProgressBar animated variant={(ICO_TOTAL_uUSD_INVESTED / 10**6) < Number(ICO_SOFT_CAP) ? 'danger' :  'success'} min={0} now={Number(ICO_SOFT_CAP) + (ICO_TOTAL_uUSD_INVESTED / 10**6)} max={Number(ICO_SOFT_CAP) + Number(ICO_HARD_CAP)} label={`${100*(Number(ICO_TOTAL_uUSD_INVESTED) / 10**6)/Number(ICO_SOFT_CAP)}%`} />
+							:
+							''
+						}
+						</div>
+					</div>
 				</Form.Group>
 
 				<Row className="m-4"></Row>

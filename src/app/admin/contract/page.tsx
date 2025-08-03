@@ -31,6 +31,7 @@ const ICOContract: NextPage = () => {
 	const { 
 		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		loadInvested, ICO_TOTAL_uUSD_INVESTED, ICO_INVESTORS_COUNT, ICO_INVESTORS_LIST,
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
 		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
@@ -53,7 +54,6 @@ const ICOContract: NextPage = () => {
   const [ICO_PENDING_OWNER, setICOPendingOwner] = useState<string | undefined>()
   const [ICO_BALANCE, setICOBalance] = useState<string | undefined>()
 
-	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
 	const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
 	// *************************************************************************************************************************
@@ -87,6 +87,9 @@ const ICOContract: NextPage = () => {
 
 		console.log('loadICOPaymentMethod')
 		loadICOPaymentMethod();
+
+		console.log('loadInvested')
+		loadInvested();
 	}
 
 	// conditions to load

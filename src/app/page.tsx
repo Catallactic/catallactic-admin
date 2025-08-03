@@ -38,9 +38,10 @@ const Login: NextPage = () => {
 		loadYourCryptocommodities, CRYPTOCOMMODITIES, 
 		selectCrypto, unselectCrypto, selectedCrypto, contracts 
 	} = useContext(ContractsContext);
-	const { 
-		loadICOFeatures, ICO_HARD_CAP, ICO_SOFT_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
+	const {
+		loadICOFeatures, ICO_SOFT_CAP, ICO_HARD_CAP, ICO_PRICE, ICO_MIN_TRANSFER, ICO_MAX_TRANSFER, ICO_MAX_INVESTMENT, ICO_WHITELIST_THRESHOLD, ICO_CURRENT_STAGE, ICO_CURRENT_STAGE_TEXT, STAGE,
 		loadICOPaymentMethod, ICO_PAYMENT_SYMBOLS, ICO_PAYMENT_METHODS, 
+		loadInvested, ICO_TOTAL_uUSD_INVESTED, ICO_INVESTORS_COUNT, ICO_INVESTORS_LIST,
 		loadAntiWhale, ICO_WHITELIST_USER_LIST, ICO_WHITELIST_USER_COUNT, ICO_IS_USE_BLACKLIST, ICO_BLACKLIST_USER_LIST, ICO_BLACKLIST_USER_COUNT,
 		getBalancesRawICOMeWallet,  BALANCES_RAW_ICO_ME_WALLET, 
 		getBalancesRawICOSearchAddressWallet, BALANCES_RAW_ICO_SEARCH_ADDRESS_WALLET, 
@@ -86,6 +87,9 @@ const Login: NextPage = () => {
 
 		console.log('loadERC20Features')
 		loadERC20Features();
+
+		console.log('loadInvested')
+		loadInvested();
 	}
 
 	// conditions to load
@@ -123,9 +127,6 @@ const Login: NextPage = () => {
 		setCanType(!!connectedChain && !!selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME));
 		setColorCSS(!!connectedChain && !!selectedCrypto ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
-
-	const [ICO_TOTAL_uUSD_INVESTED, setTotaluUSDInvested] = useState<number>(0)
-	//const [BALANCES_ERC_20_ICO_WALLET, setBalancesCygasICOWallet] = useState<string>('0')
 
   return (
     <div className="bg-group rounded-5 d-flex flex-row align-items-center dark:bg-transparent">
@@ -342,7 +343,7 @@ const Login: NextPage = () => {
 
 				<Form.Group className="bg-group-dashboard p-5 rounded-5">
 					<Row>
-						<Col><Row><Form.Text className="text-center color-frame fs-3 fw-bold">Fundraising Ongoing</Form.Text></Row></Col>
+						<Col><Row><Form.Text className="text-center color-frame fs-3 fw-bold">Fundraising</Form.Text></Row></Col>
 					</Row>
 					<Row className="m-3"></Row>
 
@@ -351,7 +352,15 @@ const Login: NextPage = () => {
 					</Row>
 					<div className="row">
 						<div className="col-12">
-							<ProgressBar animated variant="danger" now={60} label={`60%`} />
+						{ connectedChain ? 
+							<ProgressBar animated variant={(ICO_TOTAL_uUSD_INVESTED / 10**6) < Number(ICO_SOFT_CAP) ? 'danger' :  'success'} min={0} now={Number(ICO_SOFT_CAP) + (ICO_TOTAL_uUSD_INVESTED / 10**6)} max={Number(ICO_SOFT_CAP) + Number(ICO_HARD_CAP)} label={`${100*(Number(ICO_TOTAL_uUSD_INVESTED) / 10**6)/Number(ICO_SOFT_CAP)}%`} />
+							:
+							<Card className="mb-4 background-disabled border-0 color-dashboard">
+								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
+									NO CRYPTOCOMMODITY SELECTED
+								</div>
+							</Card>
+						}
 						</div>
 					</div>
 
