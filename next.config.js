@@ -9,19 +9,6 @@ const nextConfig = {
     return config;
   },
 
-	// there is not page.tsx on '/' because, when navigating to '/', NextJS throws a 404 on RSC and kills the session
-	// Maybe a bug but not fixed by one year
-	// GET https://catallactic.github.io/catallactic-admin.txt?_rsc=3lb4g 404 (Not Found)
-	async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/dashboard',
-        permanent: true,
-      },
-    ]
-  },
-
 	//swcMinify: false,			// https://github.com/vercel/next.js/discussions/39425
 	/*env: {
 		METAMASK_CHAINS: [
