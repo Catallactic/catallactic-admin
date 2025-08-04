@@ -18,10 +18,10 @@ export default function ChevronManageList() {
 				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} /></Col>
 				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Deploy'))}`} /></Col>
 				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
+				<Col className='m-0 p-0'></Col>
+				<Col className='m-0 p-0'></Col>
+				<Col className='m-0 p-0'></Col>
+				<Col className='m-0 p-0'></Col>
 			</Row>
 	  </div>
   )
