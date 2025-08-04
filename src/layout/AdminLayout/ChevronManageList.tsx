@@ -1,9 +1,5 @@
 import { Col, Row } from 'react-bootstrap'
 
-interface IProps {
-	chevron: string;
-	setChevron: (chevron: string) => void;
-}
 
 function Chevron(text: any) {
   return (
@@ -14,17 +10,19 @@ function Chevron(text: any) {
 	)
 };
 
-const ChevronList = (props: IProps) => {
+export default function ChevronManageList() {
   return (
 		<div className='m-2'>
-			<Row>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CryptoCommodity'))}`} onClick={() => props.setChevron("CC")} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} onClick={() => props.setChevron("FUN")} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Deploy'))}`} onClick={() => props.setChevron("DEP")} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} onClick={() => props.setChevron("MAN")} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} onClick={() => props.setChevron("SER")} /></Col>
+			<Row className='overflow-x-auto d-flex flex-row flex-nowrap'>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CryptoCommodity'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Deploy'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
+				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></Col>
 			</Row>
 	  </div>
   )
 }
-export default ChevronList

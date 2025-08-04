@@ -3,11 +3,16 @@ import { faBars, faCoins, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useRouter } from 'next/navigation'
 import ChevronList from './ChevronList'
+import ChevronCCList from './ChevronCCList'
+import ChevronFundraiseList from './ChevronFundraiseList'
+import ChevronDeployList from './ChevronDeployList'
+import ChevronManageList from './ChevronManageList'
+import ChevronServiceList from './ChevronServiceList'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -110,6 +115,11 @@ export default function Header(props: HeaderProps) {
 		})
 	}
 
+	// *************************************************************************************************************************
+	// ************************************************************ UI *********************************************************
+	// *************************************************************************************************************************
+  const [chevron, setChevron] = useState<string>("CC");
+
   return (
 
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom bg-header">
@@ -200,12 +210,14 @@ export default function Header(props: HeaderProps) {
       <div className="header-divider border-top my-2 mx-sm-n2" />
 
       <Container fluid>
-        <ChevronList />
+        <ChevronList chevron={chevron} setChevron={setChevron} />
       </Container>
 
-      <Container fluid>
-        <ChevronList />
-      </Container>
+			{ chevron == "CC" ? <Container fluid><ChevronCCList /></Container> : ''}
+			{ chevron == "FUN" ? <Container fluid><ChevronFundraiseList /></Container> : ''}
+			{ chevron == "DEP" ? <Container fluid><ChevronDeployList /></Container> : ''}
+			{ chevron == "MAN" ? <Container fluid><ChevronManageList /></Container> : ''}
+			{ chevron == "SER" ? <Container fluid><ChevronServiceList /></Container> : ''}
 
     </header>
   )
