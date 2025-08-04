@@ -203,6 +203,10 @@ export default function Header(props: HeaderProps) {
         <ChevronList />
       </Container>
 
+      <Container fluid>
+        <ChevronList />
+      </Container>
+
     </header>
   )
 }

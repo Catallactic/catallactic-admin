@@ -12,13 +12,13 @@ function Chevron(text: any) {
 
 export default function ChevronList() {
   return (
-		<div>
+		<div className='m-2'>
 			<Row>
-				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Prepared'))}`} /></a></Col>
-				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Created'))}`} /></a></Col>
-				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Ongoing'))}`} /></a></Col>
-				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Finished'))}`} /></a></Col>
-				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Vesting'))}`} /></a></Col>
+				<Col className='m-0 p-0'><a href="/admin/cryptocommodities"><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CryptoCommodity'))}`} /></a></Col>
+				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} /></a></Col>
+				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Deploy'))}`} /></a></Col>
+				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} /></a></Col>
+				<Col className='m-0 p-0'><a href=""><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Service'))}`} /></a></Col>
 			</Row>
 	  </div>
   )
