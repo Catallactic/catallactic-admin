@@ -7,6 +7,7 @@ import { useContext, useEffect } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useRouter } from 'next/navigation'
+import ChevronList from './ChevronList'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -196,13 +197,11 @@ export default function Header(props: HeaderProps) {
 
       </Container>
 
-			{/*}
       <div className="header-divider border-top my-2 mx-sm-n2" />
 
       <Container fluid>
-        <Breadcrumb />
+        <ChevronList />
       </Container>
-			*/}
 
     </header>
   )
