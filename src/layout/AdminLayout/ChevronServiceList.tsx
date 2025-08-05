@@ -15,14 +15,14 @@ export default function ChevronServiceList() {
   return (
 		<div className='m-2'>
 			<Row className='overflow-x-auto d-flex flex-row flex-nowrap'>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Payments'))}`} onClick={() => (redirect('/erc20/features'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Transfers'))}`} onClick={() => (redirect('/erc20/holders'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Lending'))}`} onClick={() => (redirect('/erc20/features'))} /></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Payments'))}`} onClick={() => (redirect('/erc20/features'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Transfers'))}`} onClick={() => (redirect('/erc20/holders'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Lending'))}`} onClick={() => (redirect('/erc20/features'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
 			</Row>
 	  </div>
   )

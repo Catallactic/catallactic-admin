@@ -14,14 +14,14 @@ export default function ChevronDeployList() {
   return (
 		<div className='m-2'>
 			<Row className='overflow-x-auto d-flex flex-row flex-nowrap'>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CryptoCommodity'))}`} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} /></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
-				<Col className='m-0 p-0'></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CryptoCommodity'))}`} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Fundraise'))}`} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
+				<Col className='m-0 p-0 cursor-pointer'></Col>
 			</Row>
 	  </div>
   )

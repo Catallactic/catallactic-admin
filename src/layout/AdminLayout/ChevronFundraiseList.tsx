@@ -15,14 +15,14 @@ export default function ChevronFundraiseList() {
   return (
 		<div className='m-2'>
 			<Row className='overflow-x-auto d-flex flex-row flex-nowrap'>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Vesting Period'))}`} onClick={() => (redirect('/vesting/features'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Round'))}`} onClick={() => (redirect('/rounds/features'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Antiwhale'))}`} onClick={() => (redirect('/rounds/antiwhale'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Payment Methods'))}`} onClick={() => (redirect('/rounds/payments'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('ReceiveFacet'))}`} onClick={() => (redirect('/rounds/payments'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Start'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
-				<Col className='m-0 p-0'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Finalice'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Vesting Period'))}`} onClick={() => (redirect('/vesting/features'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Round'))}`} onClick={() => (redirect('/rounds/features'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Antiwhale'))}`} onClick={() => (redirect('/rounds/antiwhale'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Payment Methods'))}`} onClick={() => (redirect('/rounds/payments'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('ReceiveFacet'))}`} onClick={() => (redirect('/rounds/payments'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Start'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Manage'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('Finalice'))}`} onClick={() => (redirect('/rounds/operations'))} /></Col>
 			</Row>
 	  </div>
   )
