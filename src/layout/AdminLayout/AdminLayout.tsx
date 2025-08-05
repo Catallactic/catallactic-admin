@@ -6,6 +6,7 @@ import { Container } from 'react-bootstrap'
 import Sidebar, { SidebarOverlay } from './Sidebar'
 import Header from './Header'
 import Footer from './Footer'
+import OffCanvas from './OffCanvas';
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   // Show status for xs screen
@@ -51,11 +52,12 @@ export default function AdminLayout({ children }: PropsWithChildren) {
 
       <div className="wrapper bg-page d-flex flex-column min-vh-100">
         <Header toggleSidebar={toggleIsShowSidebar} toggleSidebarMd={toggleIsShowSidebarMd} />
-        <div className="body flex-grow-1 px-sm-2 m-4">
+        <div className="body flex-grow-1 px-sm-2 m-4 position-relative">
           <Container fluid="lg" className='mw-100'>
             {children}
-          </Container>
-        </div>
+					</Container>
+					<OffCanvas/>
+				</div>
         <Footer />
       </div>
 
