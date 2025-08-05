@@ -26,6 +26,19 @@ function OffCanvas() {
           </p>
         </Offcanvas.Body>
       </Offcanvas>
+
+			{/*{show ?
+			<div className="bg-secondary-subtle offcanvas offcanvas-end show" tabIndex={-1}>
+				<div className="offcanvas-header">
+					<div className="offcanvas-title h5">Responsive offcanvas</div>
+					<button type="button" className="btn-close" aria-label="Close" onClick={handleClose}></button>
+				</div>
+				<div className="offcanvas-body">
+					<p className="mb-0">This is content within an <code>.offcanvas-lg</code>.</p>
+				</div>
+			</div>
+			: ""}*/}
+
     </>
   );
 }

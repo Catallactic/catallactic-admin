@@ -55,8 +55,8 @@ export default function AdminLayout({ children }: PropsWithChildren) {
         <div className="body flex-grow-1 px-sm-2 m-4 position-relative">
           <Container fluid="lg" className='mw-100'>
             {children}
+						<OffCanvas/>
 					</Container>
-					<OffCanvas/>
 				</div>
         <Footer />
       </div>
