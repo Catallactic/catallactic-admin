@@ -1,4 +1,4 @@
-import { faBook, faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -16,7 +16,7 @@ function OffCanvas() {
 				<FontAwesomeIcon className="sidebar-toggler-chevron" icon={faBook} fontSize={24} />
       </Button>
 
-      <Offcanvas show={show} onHide={handleClose} placement='end'>
+      <Offcanvas show={show} onHide={handleClose} placement='end' className="bg-secondary-subtle">
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Responsive offcanvas</Offcanvas.Title>
         </Offcanvas.Header>
