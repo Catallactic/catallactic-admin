@@ -182,6 +182,7 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
+				.then(await resetInvest)
 				.catch(await handleError);
 
 		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
@@ -205,9 +206,16 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
+				.then(await resetInvest)
 				.catch(await handleError);
 		}
 
+	}
+
+	async function resetInvest() {
+		setToInvestCurrency('USDT');
+		setToInvestAmount('0');
+		setToInvestAmountUSD('0');
 	}
 
 	// refund
@@ -234,7 +242,14 @@ const Accounts: NextPage = () => {
 			.then(await getBalancesUSDICOMeWallet)
 			.then(await getBalancesPaymentTokensMeWallet)
 			.then(await getBalancesCygasMeWallet)
+			.then(await resetRefund)
 			.catch(await handleError);
+	}
+
+	async function resetRefund() {
+		setToRefundCurrency('');
+		setToRefundAmount('0');
+		setToRefundAmountUSD('0');
 	}
 
 	// claim
@@ -276,6 +291,7 @@ const Accounts: NextPage = () => {
 				.then(await getBalancesUSDICOMeWallet)
 				.then(await getBalancesPaymentTokensMeWallet)
 				.then(await getBalancesCygasMeWallet)
+				.then(await resetTransfer)
 				.catch(await handleError);
 
 		} else if(TO_TRANSFER_CURRENCY == 'ERC_20') {
@@ -438,9 +454,9 @@ const Accounts: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectedCrypto} onChange={(event) => setToTransferAmount(event.target.value) } defaultValue={BALANCES_PAYMENT_TOKENS_ME_WALLET && BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY] && ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY] ? Number(BALANCES_PAYMENT_TOKENS_ME_WALLET[TO_TRANSFER_CURRENCY].toString()) / 10**Number(ICO_PAYMENT_METHODS[TO_TRANSFER_CURRENCY][3]) : 0}></input></Col>
+						<Col xs={3}><input id="buyAmount" type="number" className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectedCrypto} onChange={(event) => setToTransferAmount(event.target.value) } value={TO_TRANSFER_AMOUNT}></input></Col>
 						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_TRANSFER_AMOUNT_USD ? TO_TRANSFER_AMOUNT_USD : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto} onClick={() => transfer()}>Transfer</Button></Col>
+						<Col xs={3}><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectedCrypto || !TO_TRANSFER_AMOUNT || TO_TRANSFER_AMOUNT=='0' || !TO_TRANSFER_ADDRESS} onClick={() => transfer()}>Transfer</Button></Col>
 					</Row>
 				</Form.Group>
 
@@ -482,7 +498,7 @@ const Accounts: NextPage = () => {
 						</Col>
 						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest in {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || !TO_INVEST_AMOUNT || TO_INVEST_AMOUNT=='0' || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest in {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
