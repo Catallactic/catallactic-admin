@@ -8,11 +8,7 @@ import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@we
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useRouter } from 'next/navigation'
 import ChevronList from './ChevronList'
-import ChevronCCList from './ChevronCCList'
-import ChevronFundraiseList from './ChevronFundraiseList'
-import ChevronDeployList from './ChevronDeployList'
-import ChevronManageList from './ChevronManageList'
-import ChevronServiceList from './ChevronServiceList'
+import ChevronChildrenList from './ChevronChildrenList'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -213,11 +209,7 @@ export default function Header(props: HeaderProps) {
         <ChevronList chevron={chevron} setChevron={setChevron} />
       </Container>
 
-			{ chevron == "CC" ? <Container fluid><ChevronCCList /></Container> : ''}
-			{ chevron == "FUN" ? <Container fluid><ChevronFundraiseList /></Container> : ''}
-			{ chevron == "DEP" ? <Container fluid><ChevronDeployList /></Container> : ''}
-			{ chevron == "MAN" ? <Container fluid><ChevronManageList /></Container> : ''}
-			{ chevron == "SER" ? <Container fluid><ChevronServiceList /></Container> : ''}
+			<Container fluid><ChevronChildrenList process={chevron} /></Container>
 
     </header>
   )

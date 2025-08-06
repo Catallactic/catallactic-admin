@@ -98,3 +98,42 @@ export const CFG_VESTING_ABI = require('../abi/VestingFacet.json');
 export const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
 export const LOG_METHODS = 'color: #8B0000';
+
+export const CHEVRON_LIST:any = {
+	CC: [
+		{title: "Design", URL: "/erc20/features"},
+		{title: "Create", URL: "/erc20/features"},
+		{title: "Airdrop", URL: "/erc20/holders"},
+		{title: "Manage", URL: "/erc20/holders"},
+		{title: "Audit", URL: "/erc20/features"},
+		{}, {}, {},
+	],
+	DEP: [
+		{title: "CryptoCommodity", URL: "/erc20/features"},
+		{title: "Fundraise", URL: "/erc20/features"},
+		{}, {}, {}, {}, {}, {},
+	],
+	FUN: [
+		{title: "Vesting Period", URL: "/vesting/features"},
+		{title: "Round", URL: "/rounds/features"},
+		{title: "Antiwhale", URL: "/rounds/antiwhale"},
+		{title: "Payment Methods", URL: "/rounds/payments"},
+		{title: "ReceiveFacet", URL: "/rounds/payments"},
+		{title: "Start", URL: "/rounds/operations"},
+		{title: "Manage", URL: "/rounds/operations"},
+		{title: "Finalice", URL: "/rounds/operations"},
+	],
+	MAN: [
+		{title: "CryptoCommodity", URL: "/vesting/features"},
+		{title: "Fundraise", URL: "/vesting/features"},
+		{title: "Deploy", URL: "/vesting/features"},
+		{title: "Manage", URL: "/vesting/features"},
+		{}, {}, {}, {},
+	],
+	SER: [
+		{title: "Payments", URL: "/vesting/features"},
+		{title: "Transfers", URL: "/vesting/holders"},
+		{title: "Lending", URL: "/vesting/features"},
+		{}, {}, {}, {}, {},
+	]
+}
