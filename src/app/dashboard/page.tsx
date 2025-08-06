@@ -397,7 +397,7 @@ const Login: NextPage = () => {
 									</Dropdown>
 								</CardBody>
 								<div className="mt-3 mx-3 text-center fs-4" style={{ height: '70px' }}>
-									NO CRYPTOCOMMODITY SELECTED
+									NO ONGOING VESTING SCHEDULES
 								</div>
 							</Card>
 						</div>
