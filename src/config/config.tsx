@@ -108,11 +108,6 @@ export const CHEVRON_LIST:any = {
 		{title: "Audit", URL: "/erc20/features"},
 		{}, {}, {},
 	],
-	DEP: [
-		{title: "CryptoCommodity", URL: "/erc20/features"},
-		{title: "Fundraise", URL: "/erc20/features"},
-		{}, {}, {}, {}, {}, {},
-	],
 	FUN: [
 		{title: "Vesting Period", URL: "/vesting/features"},
 		{title: "Round", URL: "/rounds/features"},
@@ -122,6 +117,11 @@ export const CHEVRON_LIST:any = {
 		{title: "Start", URL: "/rounds/operations"},
 		{title: "Manage", URL: "/rounds/operations"},
 		{title: "Finalice", URL: "/rounds/operations"},
+	],
+	DEP: [
+		{title: "CryptoCommodity", URL: "/erc20/features"},
+		{title: "Fundraise", URL: "/erc20/features"},
+		{}, {}, {}, {}, {}, {},
 	],
 	MAN: [
 		{title: "CryptoCommodity", URL: "/vesting/features"},
@@ -135,5 +135,61 @@ export const CHEVRON_LIST:any = {
 		{title: "Transfers", URL: "/vesting/holders"},
 		{title: "Lending", URL: "/vesting/features"},
 		{}, {}, {}, {}, {},
+	]
+}
+
+export const TUTORIAL:any = {
+	CC: [
+		{ type: "H1", text: "FUNDRAISING PROCESS", },
+		{ type: "H2", text: "Create CryptoCommodity", },
+		{ type: "H3", text: "ISSUER: Create Cryptocommodity", URL: "/admin/cryptocommodities", },
+		{ type: "H3", text: "ISSUER: Select Cryptocommodity", URL: "/admin/cryptocommodities", },
+		{ type: "H3", text: "ISSUER: Install Facets", URL: "/admin/cryptocommodities", },
+		{ type: "H3", text: "ISSUER: Create Storage", URL: "/admin/cryptocommodities", },
+		{ type: "H3", text: "ISSUER: Initialize Cryptocommodity ERC-20 with Name, Symbol, Cryptocommodity Supply", URL: "/erc20/features", },
+	],
+	FUN: [
+		{ type: "H1", text: "FUNDRAISING PROCESS", },
+		{ type: "H2", text: "Create Funding Round", },
+		{ type: "H3", text: "ISSUER: Create Vesting Period", URL: "/vesting/features", },
+		{ type: "H3", text: "ISSUER: Create Funding Round", URL: "/rounds/features", },
+		{ type: "H3", text: "ISSUER: Configure Antiwhale", URL: "/rounds/antiwhale", },
+		{ type: "H3", text: "ISSUER: Install Payment Methods", URL: "/rounds/payments", },
+		{ type: "H3", text: "ISSUER: Set the setReceiveFacet (the Crowdsale facet address)", URL:"/rounds/payments", },
+		{ type: "H2", text: "Manage Funding Round", },
+		{ type: "H3", text: "ISSUER: Start Funding Round", URL: "/rounds/operations", },		
+		{ type: "H3", text: "INVESTOR: Find Cryptocommodity", URL: "/admin/cryptocommodities", },
+		{ type: "H3", text: "INVESTOR: Invest Token", URL: "/admin/accounts", },
+		{ type: "H3", text: "INVESTOR: Invest Coin", URL: "/admin/accounts", },		
+		{ type: "H3", text: "ISSUER: Whitelist Investor", URL: "/rounds/antiwhale", },
+		{ type: "H3", text: "INVESTOR: Invest Token", URL: "/admin/accounts", },
+		{ type: "H3", text: "INVESTOR: Invest Coin", URL: "/admin/accounts", },
+		{ type: "H2", text: "Finalize Funding Round with Failure", },
+		{ type: "H3", text: "ISSUER: Finalize Funding Round", URL: "/rounds/operations", },		
+		{ type: "H3", text: "INVESTOR: Refund invested tokens", URL: "/rounds/operations", },		
+		{ type: "H3", text: "INVESTOR: Refund invested coins", URL: "/rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Reset Funding Round", URL: "/rounds/operations", },		
+		{ type: "H2", text: "Finalize Funding Round with Success", },		
+		{ type: "H3", text: "ISSUER: Finalize Funding Round", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Vesting Address in Crowdsale", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Token Address in Crowdsale", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Token Address in Vesting", URL: "/vesting/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Crowdsale Address as Vesting Grantor", URL: "/vesting/operations", },		
+		{ type: "H3", text: "ISSUER: Transfers to Crowdsale Total Cryptocommodities purchased", URL: "/rounds/operations", },
+		{ type: "H3", text: "INVESTOR: Claims purchased Cryptocommodities", URL: "/admin/accounts", },		
+		{ type: "H3", text: "INVESTOR: Waits Vesting Periods", URL: "/vesting/operations", },		
+		{ type: "H3", text: "INVESTOR: Release Vesting Slides", URL: "/vesting/operations", },		
+		{ type: "H3", text: "ISSUER: Configures Withdraw Wallet", URL: "rounds/operations", },
+		{ type: "H3", text: "ISSUER: Withdraws Funds to Wallet", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Runs TGE to Exchanges (Optionally)", URL: "/admin/contract", },
+	],
+	DEP: [
+		{ type: "H1", text: "DEPLOYMENT PROCESS", },
+	],
+	MAN: [
+		{ type: "H1", text: "MANAGEMENT PROCESS", },
+	],
+	SER: [
+		{ type: "H1", text: "SERVICES PROCESS", },
 	]
 }
