@@ -18,7 +18,7 @@ const ChevronList = (props: IProps) => {
   return (
 		<div className='m-2'>
 			<Row>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CRYPTOCOMMO'))}`} onClick={() => props.setChevron("CC")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CROMMODITY'))}`} onClick={() => props.setChevron("CC")} /></Col>
 				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('FUNDRAISE'))}`} onClick={() => props.setChevron("FUN")} /></Col>
 				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('DEPLOY'))}`} onClick={() => props.setChevron("DEP")} /></Col>
 				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('TRADE'))}`} onClick={() => props.setChevron("MAN")} /></Col>
