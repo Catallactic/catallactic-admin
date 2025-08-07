@@ -9,7 +9,10 @@ import Footer from './Footer'
 import OffCanvas from './OffCanvas';
 
 export default function AdminLayout({ children }: PropsWithChildren) {
-  // Show status for xs screen
+
+  const [process, setProcess] = useState("CC")
+
+	// Show status for xs screen
   const [isShowSidebar, setIsShowSidebar] = useState(false)
 
   // Show status for md screen and above
@@ -51,11 +54,11 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       <Sidebar isShow={isShowSidebar} isShowMd={isShowSidebarMd} />
 
       <div className="wrapper bg-page d-flex flex-column min-vh-100">
-        <Header toggleSidebar={toggleIsShowSidebar} toggleSidebarMd={toggleIsShowSidebarMd} />
+        <Header toggleSidebar={toggleIsShowSidebar} toggleSidebarMd={toggleIsShowSidebarMd} process={process} setProcess={setProcess} />
         <div className="body flex-grow-1 px-sm-2 m-4 position-relative">
           <Container fluid="lg" className='mw-100'>
             {children}
-						<OffCanvas/>
+						<OffCanvas process={process}/>
 					</Container>
 				</div>
         <Footer />

@@ -140,7 +140,7 @@ export const CHEVRON_LIST:any = {
 
 export const TUTORIAL:any = {
 	CC: [
-		{ type: "H1", text: "FUNDRAISING PROCESS", },
+		{ type: "H1", text: "CROMMODITY PROCESS", },
 		{ type: "H2", text: "Create CryptoCommodity", },
 		{ type: "H3", text: "ISSUER: Create Cryptocommodity", URL: "/admin/cryptocommodities", },
 		{ type: "H3", text: "ISSUER: Select Cryptocommodity", URL: "/admin/cryptocommodities", },
@@ -170,26 +170,26 @@ export const TUTORIAL:any = {
 		{ type: "H3", text: "INVESTOR: Refund invested coins", URL: "/rounds/operations", },		
 		{ type: "H3", text: "ISSUER: Reset Funding Round", URL: "/rounds/operations", },		
 		{ type: "H2", text: "Finalize Funding Round with Success", },		
-		{ type: "H3", text: "ISSUER: Finalize Funding Round", URL: "rounds/operations", },		
-		{ type: "H3", text: "ISSUER: Enter Vesting Address in Crowdsale", URL: "rounds/operations", },		
-		{ type: "H3", text: "ISSUER: Enter Token Address in Crowdsale", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Finalize Funding Round", URL: "/rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Vesting Address in Crowdsale", URL: "/rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Enter Token Address in Crowdsale", URL: "/rounds/operations", },		
 		{ type: "H3", text: "ISSUER: Enter Token Address in Vesting", URL: "/vesting/operations", },		
 		{ type: "H3", text: "ISSUER: Enter Crowdsale Address as Vesting Grantor", URL: "/vesting/operations", },		
 		{ type: "H3", text: "ISSUER: Transfers to Crowdsale Total Cryptocommodities purchased", URL: "/rounds/operations", },
 		{ type: "H3", text: "INVESTOR: Claims purchased Cryptocommodities", URL: "/admin/accounts", },		
 		{ type: "H3", text: "INVESTOR: Waits Vesting Periods", URL: "/vesting/operations", },		
 		{ type: "H3", text: "INVESTOR: Release Vesting Slides", URL: "/vesting/operations", },		
-		{ type: "H3", text: "ISSUER: Configures Withdraw Wallet", URL: "rounds/operations", },
-		{ type: "H3", text: "ISSUER: Withdraws Funds to Wallet", URL: "rounds/operations", },		
+		{ type: "H3", text: "ISSUER: Configures Withdraw Wallet", URL: "/rounds/operations", },
+		{ type: "H3", text: "ISSUER: Withdraws Funds to Wallet", URL: "/rounds/operations", },		
 		{ type: "H3", text: "ISSUER: Runs TGE to Exchanges (Optionally)", URL: "/admin/contract", },
 	],
 	DEP: [
 		{ type: "H1", text: "DEPLOYMENT PROCESS", },
 	],
 	MAN: [
-		{ type: "H1", text: "MANAGEMENT PROCESS", },
+		{ type: "H1", text: "TRADE MANAGEMENT", },
 	],
 	SER: [
-		{ type: "H1", text: "SERVICES PROCESS", },
+		{ type: "H1", text: "SERVICES MANAGEMENT", },
 	]
 }

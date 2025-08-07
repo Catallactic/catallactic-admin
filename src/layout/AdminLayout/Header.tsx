@@ -3,7 +3,7 @@ import { faBars, faCoins, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useRouter } from 'next/navigation'
@@ -13,6 +13,8 @@ import ChevronChildrenList from './ChevronChildrenList'
 type HeaderProps = {
   toggleSidebar: () => void;
   toggleSidebarMd: () => void;
+	process: string;
+	setProcess: (process: string) => void;
 }
 
 export default function Header(props: HeaderProps) {
@@ -114,8 +116,6 @@ export default function Header(props: HeaderProps) {
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
 	// *************************************************************************************************************************
-  const [chevron, setChevron] = useState<string>("CC");
-
   return (
 
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom bg-header">
@@ -206,10 +206,10 @@ export default function Header(props: HeaderProps) {
       <div className="header-divider border-top my-2 mx-sm-n2" />
 
       <Container fluid>
-        <ChevronList chevron={chevron} setChevron={setChevron} />
+        <ChevronList chevron={props.process} setChevron={props.setProcess} />
       </Container>
 
-			<Container fluid><ChevronChildrenList process={chevron} /></Container>
+			<Container fluid><ChevronChildrenList process={props.process} /></Container>
 
     </header>
   )
