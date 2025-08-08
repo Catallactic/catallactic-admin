@@ -99,6 +99,14 @@ export const CFG_ERC_20_ABI = require('../abi/ERC20Facet.json');
 
 export const LOG_METHODS = 'color: #8B0000';
 
+export const PROCESS:any = {
+	CC: 'CROMMODITY',
+	FUN: 'FUNDRAISING',
+	TRA: 'TRADING',
+	PAY: 'PAYMENTS',
+	LEN: 'LENDING',
+}
+
 export const CHEVRON_LIST:any = {
 	CC: [
 		{title: "Design", URL: "/erc20/features"},
@@ -118,21 +126,17 @@ export const CHEVRON_LIST:any = {
 		{title: "Manage", URL: "/rounds/operations"},
 		{title: "Finalice", URL: "/rounds/operations"},
 	],
-	DEP: [
-		{title: "CryptoCommodity", URL: "/erc20/features"},
-		{title: "Fundraise", URL: "/erc20/features"},
-		{}, {}, {}, {}, {}, {},
-	],
-	MAN: [
-		{title: "CryptoCommodity", URL: "/vesting/features"},
-		{title: "Fundraise", URL: "/vesting/features"},
+	TRA: [
 		{title: "Deploy", URL: "/vesting/features"},
 		{title: "Manage", URL: "/vesting/features"},
-		{}, {}, {}, {},
+		{}, {}, {}, {}, {}, {},
 	],
-	SER: [
+	PAY: [
 		{title: "Payments", URL: "/vesting/features"},
 		{title: "Transfers", URL: "/vesting/holders"},
+		{}, {}, {}, {},
+	],
+	LEN: [
 		{title: "Lending", URL: "/vesting/features"},
 		{}, {}, {}, {}, {},
 	]
@@ -183,13 +187,13 @@ export const TUTORIAL:any = {
 		{ type: "H3", text: "ISSUER: Withdraws Funds to Wallet", URL: "/rounds/operations", },		
 		{ type: "H3", text: "ISSUER: Runs TGE to Exchanges (Optionally)", URL: "/admin/contract", },
 	],
-	DEP: [
-		{ type: "H1", text: "DEPLOYMENT PROCESS", },
+	TRA: [
+		{ type: "H1", text: "TRADING MANAGEMENT", },
 	],
-	MAN: [
-		{ type: "H1", text: "TRADE MANAGEMENT", },
+	PAY: [
+		{ type: "H1", text: "PAYMENT SERVICES", },
 	],
-	SER: [
-		{ type: "H1", text: "SERVICES MANAGEMENT", },
+	LEN: [
+		{ type: "H1", text: "LENDING SERVICES", },
 	]
 }

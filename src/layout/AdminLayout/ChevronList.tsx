@@ -1,4 +1,5 @@
 import { Col, Row } from 'react-bootstrap'
+import { PROCESS } from 'config/config';
 
 interface IProps {
 	chevron: string;
@@ -18,11 +19,11 @@ const ChevronList = (props: IProps) => {
   return (
 		<div className='m-2'>
 			<Row>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('CROMMODITY'))}`} onClick={() => props.setChevron("CC")} /></Col>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('FUNDRAISE'))}`} onClick={() => props.setChevron("FUN")} /></Col>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('DEPLOY'))}`} onClick={() => props.setChevron("DEP")} /></Col>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('TRADE'))}`} onClick={() => props.setChevron("MAN")} /></Col>
-				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron('DEFI'))}`} onClick={() => props.setChevron("SER")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron(PROCESS.CC))}`} onClick={() => props.setChevron("CC")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron(PROCESS.FUN))}`} onClick={() => props.setChevron("FUN")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron(PROCESS.TRA))}`} onClick={() => props.setChevron("TRA")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron(PROCESS.PAY))}`} onClick={() => props.setChevron("PAY")} /></Col>
+				<Col className='m-0 p-0 cursor-pointer'><img src={`data:image/svg+xml;utf8,${encodeURIComponent(Chevron(PROCESS.LEN))}`} onClick={() => props.setChevron("LEN")} /></Col>
 			</Row>
 	  </div>
   )
