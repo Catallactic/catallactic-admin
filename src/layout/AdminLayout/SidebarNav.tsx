@@ -136,6 +136,26 @@ export default function SidebarNav() {
     <ul className="list-unstyled">
       <SidebarNavItem icon={faGauge} href="/dashboard"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto bg-disconnected">ALPHA</Badge></small></SidebarNavItem>
 
+      <SidebarNavTitle>Crommodty</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Crommodity" disabled={false}>
+				<SidebarNavItem href="/erc20/features">Features</SidebarNavItem>
+        <SidebarNavItem href="/erc20/holders">Holders</SidebarNavItem>
+        <SidebarNavItem href="/admin/contract">Contract</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
       <SidebarNavTitle>Fundraising</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
@@ -153,11 +173,6 @@ export default function SidebarNav() {
       </SidebarNavGroup>
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="CryptoCommodity" disabled={false}>
-				<SidebarNavItem href="/erc20/features">Features</SidebarNavItem>
-        <SidebarNavItem href="/erc20/holders">Holders</SidebarNavItem>
-      </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Exchanges" disabled={true}>
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
@@ -197,22 +212,9 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>Project</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Operations" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
-      </SidebarNavGroup>
+      <SidebarNavTitle>ENVIRONMENT</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Infrastructure" disabled={false}>
-        <SidebarNavItem href="/admin/contract">Contract</SidebarNavItem>
         <SidebarNavItem href="/admin/environment">Environment</SidebarNavItem>
       </SidebarNavGroup>
 
