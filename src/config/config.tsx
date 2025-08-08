@@ -134,11 +134,11 @@ export const CHEVRON_LIST:any = {
 	PAY: [
 		{title: "Payments", URL: "/vesting/features"},
 		{title: "Transfers", URL: "/vesting/holders"},
-		{}, {}, {}, {},
+		{}, {}, {}, {}, {}, {},
 	],
 	LEN: [
 		{title: "Lending", URL: "/vesting/features"},
-		{}, {}, {}, {}, {},
+		{}, {}, {}, {}, {}, {}, {},
 	]
 }
 
