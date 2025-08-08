@@ -203,13 +203,19 @@ export default function Header(props: HeaderProps) {
 
       </Container>
 
-      <div className="header-divider border-top my-2 mx-sm-n2" />
+			{ wallet && CRYPTOCOMMODITIES && selectedCrypto && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME) ?
+	      <div className="header-divider border-top my-2 mx-sm-n2" />
+			: '' }
 
-      <Container fluid>
-        <ChevronList chevron={props.process} setChevron={props.setProcess} />
-      </Container>
+			{ wallet && CRYPTOCOMMODITIES && selectedCrypto && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME) ?
+				<Container fluid>
+					<ChevronList chevron={props.process} setChevron={props.setProcess} />
+				</Container>
+			: '' }
 
-			<Container fluid><ChevronChildrenList process={props.process} /></Container>
+			{ wallet && CRYPTOCOMMODITIES && selectedCrypto  && CRYPTOCOMMODITIES.includes(selectedCrypto.SELECTED_CRYPTOCOMMODITY_NAME) ?
+				<Container fluid><ChevronChildrenList process={props.process} /></Container>
+			: '' }
 
     </header>
   )
