@@ -136,24 +136,20 @@ export default function SidebarNav() {
     <ul className="list-unstyled">
       <SidebarNavItem icon={faGauge} href="/dashboard"> Dashboard <small className="ms-auto"><Badge bg="danger" className="ms-auto bg-disconnected">ALPHA</Badge></small></SidebarNavItem>
 
-      <SidebarNavTitle>DeFi Services</SidebarNavTitle>
+      <SidebarNavTitle>Fundraising</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Payments" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
+        <SidebarNavItem href="/rounds/features">Create Round</SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Manage Round</SidebarNavItem>
+        <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
+        <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
+        <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
+				<SidebarNavItem href="/vesting/features">Vesting Programs</SidebarNavItem>
+				<SidebarNavItem href="/vesting/operations">Vesting Schedulers</SidebarNavItem>
+        <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
@@ -180,23 +176,27 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
-
-      <SidebarNavTitle>Fundraising</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
-        <SidebarNavItem href="/rounds/features">Create Round</SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Manage Round</SidebarNavItem>
-        <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
-        <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
-        <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
-				<SidebarNavItem href="/vesting/features">Vesting Programs</SidebarNavItem>
-				<SidebarNavItem href="/vesting/operations">Vesting Schedulers</SidebarNavItem>
-        <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
-      </SidebarNavGroup>
 			
+      <SidebarNavTitle>DeFi Services</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Payments" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
+      </SidebarNavGroup>
+
       <SidebarNavTitle>Project</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Airdrops" disabled={true}>
