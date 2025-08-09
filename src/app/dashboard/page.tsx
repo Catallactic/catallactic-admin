@@ -135,7 +135,7 @@ const Login: NextPage = () => {
 				<Row className="m-4"></Row>
 
 				<Row>
-					<Col><div><div className="color-frame fs-2 text-center fw-bold text-center w-100">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME } CryptoCommodity Dashboard</div></div></Col>
+					<Col><div><div className="color-frame fs-2 text-center fw-bold text-center w-100">{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME } Crommodity Dashboard</div></div></Col>
 				</Row>
 
 				<Row className="m-4"></Row>
