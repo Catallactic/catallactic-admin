@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faCoins, faNetworkWired, faUser } from '@fortawesome/free-solid-svg-icons'
-import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
+import { Button, ButtonGroup, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
 import { useContext, useEffect, useState } from 'react'
@@ -83,7 +83,7 @@ export default function Header(props: HeaderProps) {
 	}, [connectedWallets, selectedCrypto])
 
 
-	const [firstAccount, setFirstAccount] = useState('');
+	const [accounts, setAccounts] = useState<string[]>([]);
 
 	useEffect(() => {
 
@@ -109,7 +109,7 @@ export default function Header(props: HeaderProps) {
 				.then((accounts)=>{
 					console.log(accounts);
 					if(accounts.length>0) {
-						setFirstAccount(accounts[0])
+						setAccounts(accounts)
 					}
 
 				})
@@ -203,26 +203,43 @@ export default function Header(props: HeaderProps) {
 						</Dropdown>
 					
 					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ? 
-					<Button className='bg-header border-0'>
-						<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-							{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
-						</Link>
-					</Button>
+						<Button className='bg-header border-0'>
+							<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span> : <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
+							</Link>
+						</Button>
 
 					: '' }
 
 					{/* User account icon */}
 					{wallet ?
-						<Button className='bg-header border-0'>
-							<Link href="/admin/accounts" passHref legacyBehavior>
-								<div className='bg-connected rounded-3 p-2 fw-bolder'><FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> { firstAccount ? firstAccount.slice(-4) : '' } </div>
-							</Link>
-						</Button>
+						<Dropdown as={ButtonGroup} >
+							<Button className='p-0 bg-connected border-0'>
+								<Link href="/admin/accounts" passHref legacyBehavior>
+									<div className='bg-connected rounded-3 p-2 fw-bolder'><FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> { accounts[0] ? accounts[0].slice(-4) : '' } </div>
+								</Link>
+							</Button>
+
+							<Dropdown.Toggle split className='bg-connected border-0' />
+
+							<Dropdown.Menu>
+
+	 							<Dropdown.Item>Switch Account</Dropdown.Item>
+								<DropdownDivider/>
+
+								{accounts?.map((account: any, index: any) => {
+									return (
+										<Dropdown.Item href="#/action-1">{ account.split(-4) }</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+						</Dropdown>
+
 					: '' }
 
 					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => wallet ? setConfirmShow(true) : connect() } >
 						<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
-						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (firstAccount ? 'to ' + firstAccount.slice(-4) : '')}
+						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (accounts[0] ? 'to ' + accounts[0].slice(-4) : '')}
 					</button>
 					<ConfimDialog text="Do you want to logoff?" show={confirmShow} onClose={() => setConfirmShow(false) } onAccept={() => { setConfirmShow(false); wallet ? disconnect(wallet) : '' }} />
 
