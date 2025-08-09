@@ -215,7 +215,7 @@ export default function Header(props: HeaderProps) {
 					{wallet ?
 						<Button className='bg-header border-0'>
 							<Link href="/admin/accounts" passHref legacyBehavior>
-								<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> 
+								<div className='bg-connected rounded-3 p-2 fw-bolder'><FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> { firstAccount ? firstAccount.slice(-4) : '' } </div>
 							</Link>
 						</Button>
 					: '' }
