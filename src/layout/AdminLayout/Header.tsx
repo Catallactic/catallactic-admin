@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import ChevronList from './ChevronList'
 import ChevronChildrenList from './ChevronChildrenList'
 import ConfimDialog from 'app/common/ConfimDialog'
+import { ethers } from 'ethers'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -17,6 +18,8 @@ type HeaderProps = {
 	process: string;
 	setProcess: (process: string) => void;
 }
+
+declare let window:any
 
 export default function Header(props: HeaderProps) {
 
@@ -80,9 +83,11 @@ export default function Header(props: HeaderProps) {
 	}, [connectedWallets, selectedCrypto])
 
 
-	/*useEffect(() => {
+	const [firstAccount, setFirstAccount] = useState('');
 
-		const wallets = web3Onboard.state.select('wallets')
+	useEffect(() => {
+
+		/*const wallets = web3Onboard.state.select('wallets')
 		wallets.subscribe(wallet => {
 			console.log("Changed wallet" + wallet)
 			console.log(wallet)
@@ -94,9 +99,25 @@ export default function Header(props: HeaderProps) {
 				onClick: () => window.open(`https://www.blocknative.com`)
 			})
 
-		})
+		})*/
 
-	}, []);*/
+		if (window.ethereum) {
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			if (provider) {
+				provider
+				.send("eth_requestAccounts", [])
+				.then((accounts)=>{
+					console.log(accounts);
+					if(accounts.length>0) {
+						setFirstAccount(accounts[0])
+					}
+
+				})
+				.catch((e)=>console.log(e))
+			}
+		}
+
+	}, []);
 	
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
@@ -194,13 +215,13 @@ export default function Header(props: HeaderProps) {
 					{wallet ?
 						<Button className='bg-header border-0'>
 							<Link href="/admin/accounts" passHref legacyBehavior>
-								<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' />
+								<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> 
 							</Link>
 						</Button>
 					: '' }
 
 					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => wallet ? setConfirmShow(true) : connect() } >
-						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect'}
+						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (firstAccount ? 'to ' + firstAccount.slice(-4) : '')}
 					</button>
 					<ConfimDialog text="Do you want to logoff?" show={confirmShow} onClose={() => setConfirmShow(false) } onAccept={() => { setConfirmShow(false); wallet ? disconnect(wallet) : '' }} />
 

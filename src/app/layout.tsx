@@ -68,19 +68,21 @@ function RootLayout({
 	useEffect(() => {
 
 		console.log("Reload on changes configured")
-
-		window.ethereum.on('accountsChanged', (accounts: any) => {
-			window.location.reload();
-			console.log("App reloaded");
-		});
-		window.ethereum.on('disconnect', (accounts: any) => {
-			window.location.reload();
-			console.log("App reloaded");
-		});
-		window.ethereum.on('chainChanged', (chainId: any) => {
-			window.location.reload();
-			console.log("App reloaded");
-		});
+		
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', (accounts: any) => {
+				window.location.reload();
+				console.log("App reloaded");
+			});
+			window.ethereum.on('disconnect', (accounts: any) => {
+				window.location.reload();
+				console.log("App reloaded");
+			});
+			window.ethereum.on('chainChanged', (chainId: any) => {
+				window.location.reload();
+				console.log("App reloaded");
+			});
+		}
 
 	}, []);
 
