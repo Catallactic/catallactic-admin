@@ -141,6 +141,21 @@ export default function Header(props: HeaderProps) {
 
   const [confirmShow, setConfirmShow] = useState(false);
 
+	const switchAccount = async (address: any)=>{
+		console.log('address', address);
+		if (wallet) {
+			const provider = wallet.provider
+			await provider.request({
+				method: 'eth_requestAccounts',
+				params: [{ eth_accounts: { account: address } }]
+			})
+      .then((accounts) => {
+        console.debug(`connect:: accounts result`, accounts);
+      })
+      .catch((e) => console.log("request accounts ERR", e));
+		}
+	}
+
   return (
 
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom bg-header">
@@ -213,7 +228,7 @@ export default function Header(props: HeaderProps) {
 
 					{/* User account icon */}
 					{wallet ?
-						<Dropdown as={ButtonGroup} >
+						<Dropdown as={ButtonGroup} onSelect={switchAccount} >
 							<Button className='p-0 bg-connected border-0'>
 								<Link href="/admin/accounts" passHref legacyBehavior>
 									<div className='bg-connected rounded-3 p-2 fw-bolder'><FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> { accounts[0] ? accounts[0].slice(-4) : '' } </div>
@@ -223,13 +238,12 @@ export default function Header(props: HeaderProps) {
 							<Dropdown.Toggle split className='bg-connected border-0' />
 
 							<Dropdown.Menu>
-
 	 							<Dropdown.Item>Switch Account</Dropdown.Item>
 								<DropdownDivider/>
 
 								{accounts?.map((account: any, index: any) => {
 									return (
-										<Dropdown.Item href="#/action-1">{ account.split(-4) }</Dropdown.Item>
+										<Dropdown.Item as="button" key={ account.split(-4) } eventKey={ account.split(-4) }>{ account.split(-4) }</Dropdown.Item>
 									);
 								})}
 							</Dropdown.Menu>
