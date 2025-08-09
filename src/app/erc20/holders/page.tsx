@@ -99,7 +99,7 @@ const ERC20Holders: NextPage = () => {
 		console.log(`selectedCrypto: ` + selectedCrypto);
 		console.log(`ICO_CURRENT_STAGE: ` + ICO_CURRENT_STAGE);
 		setCanCreate(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE == undefined || ICO_CURRENT_STAGE == STAGE.NOT_CREATED));
-		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE != STAGE.NOT_CREATED));
+		setCanModify(connectedChain != undefined && selectedCrypto != undefined && (ICO_CURRENT_STAGE != undefined && ICO_CURRENT_STAGE == STAGE.FINISHED));
 		setCanType(connectedChain != undefined && selectedCrypto != undefined);
 		setColorCSS(connectedChain && selectedCrypto != undefined ? ' bg-edited' : '');
 	}, [connectedChain, selectedCrypto, ICO_CURRENT_STAGE])
@@ -127,13 +127,13 @@ const ERC20Holders: NextPage = () => {
 							<Col><div><Form.Text className="fs-6">Enter Holder Address</Form.Text></div></Col>
 						</Row>
 						<Row>
-							<Col><input id="balanceInvestor" className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain}></input></Col>
+							<Col><input id="balanceInvestor" className="form-control form-control-lg bg-edited text-left border-0" disabled={!CAN_MODIFY}></input></Col>
 						</Row>
 
 						<Row className="m-4"></Row>
 						<Row>
 							<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={INVESTOR_BALANCE ? Number(INVESTOR_BALANCE) / 10**18 : 0}></input></Col>
-							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
+							<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_MODIFY} onClick={() => getBalanceOf('balanceInvestor')}>Balance</Button></Col>
 						</Row>
 					</Form.Group>
 
@@ -149,7 +149,7 @@ const ERC20Holders: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Allowance From Holder Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!CAN_MODIFY} onChange={ (event) => setTokenSearchAllowanceFromAddress(event.target.value) }></input></Col>
 					</Row>
 
 					<Row className="m-2"></Row>
@@ -158,13 +158,13 @@ const ERC20Holders: NextPage = () => {
 						<Col><div><Form.Text className="fs-6">Allowance to Holder Address</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!connectedChain} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited text-left border-0" disabled={!CAN_MODIFY} onChange={ (event) => setTokenSearchAllowanceToAddress(event.target.value) }></input></Col>
 					</Row>
 
 					<Row className="m-4"></Row>
 					<Row>
 						<Col xs={9}><input className="form-control form-control-lg color-frame text-left border-0" disabled={true} value={TOKEN_SEARCH_ALLOWANCE} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain} onClick={getAllowance}>Allowance</Button></Col>
+						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_MODIFY} onClick={getAllowance}>Allowance</Button></Col>
 					</Row>
 				</Form.Group>
 
