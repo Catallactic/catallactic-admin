@@ -3,12 +3,13 @@ import { faBars, faCoins, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
 import { useRouter } from 'next/navigation'
 import ChevronList from './ChevronList'
 import ChevronChildrenList from './ChevronChildrenList'
+import ConfimDialog from 'app/common/ConfimDialog'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -116,6 +117,9 @@ export default function Header(props: HeaderProps) {
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
 	// *************************************************************************************************************************
+
+  const [confirmShow, setConfirmShow] = useState(false);
+
   return (
 
     <header className="header sticky-top mb-4 py-2 px-sm-2 border-bottom bg-header">
@@ -195,9 +199,10 @@ export default function Header(props: HeaderProps) {
 						</Button>
 					: '' }
 
-					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => (wallet ? disconnect(wallet) : connect())}>
+					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => wallet ? setConfirmShow(true) : connect() } >
 						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect'}
 					</button>
+					<ConfimDialog text="Do you want to logoff?" show={confirmShow} onClose={() => setConfirmShow(false) } onAccept={() => { setConfirmShow(false); wallet ? disconnect(wallet) : '' }} />
 
 				</div>
 
