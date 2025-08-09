@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faCoins, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCoins, faNetworkWired, faUser } from '@fortawesome/free-solid-svg-icons'
 import { Button, Container, Dropdown, DropdownDivider, Nav } from 'react-bootstrap'
 import Link from 'next/link'
 
@@ -221,6 +221,7 @@ export default function Header(props: HeaderProps) {
 					: '' }
 
 					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => wallet ? setConfirmShow(true) : connect() } >
+						<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
 						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (firstAccount ? 'to ' + firstAccount.slice(-4) : '')}
 					</button>
 					<ConfimDialog text="Do you want to logoff?" show={confirmShow} onClose={() => setConfirmShow(false) } onAccept={() => { setConfirmShow(false); wallet ? disconnect(wallet) : '' }} />
