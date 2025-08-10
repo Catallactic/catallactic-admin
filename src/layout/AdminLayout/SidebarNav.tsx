@@ -168,24 +168,24 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Exchanges" disabled={true}>
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Trading" disabled={false}>
+        <SidebarNavItem href="/trading/exchanges">Deploy To Exchanges</SidebarNavItem>
+        <SidebarNavItem href="/trading/reserve">Reserve</SidebarNavItem>
+        <SidebarNavItem href="/trading/rewards">Rewards</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Wallets" disabled={true}>
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Reserve" disabled={true}>
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Cards" disabled={true}>
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Rewards" disabled={true}>
-        <SidebarNavItem href="#">Buttons</SidebarNavItem>
-        <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
-        <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
-      </SidebarNavGroup>
-			
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faFileLines} toggleText="Payments" disabled={true}>
