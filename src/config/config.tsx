@@ -127,10 +127,9 @@ export const CHEVRON_LIST:any = {
 		{title: "Vesting", URL: "/vesting/operations"},
 	],
 	TRA: [
-		{title: "TGE", URL: "/vesting/features"},
-		{title: "Deploy", URL: "/vesting/features"},
-		{title: "Manage", URL: "/vesting/features"},
-		{title: "Withdraw", URL: "/vesting/features"},
+		{title: "Deploy", URL: "/trading/exchanges"},
+		{title: "Reserve", URL: "/trading/reserve"},
+		{title: "Withdraw", URL: "/trading/withdraw"},
 		{}, {}, {}, {},
 	],
 	PAY: [
