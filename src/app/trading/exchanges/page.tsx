@@ -13,6 +13,7 @@ import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
 import { useSetChain, useWallets } from '@web3-onboard/react';
 import { useWeb3Onboard } from '@web3-onboard/react/dist/context';
+import { exchanges } from 'config/config-exchanges';
 
 declare let window:any
 
@@ -78,6 +79,7 @@ const Exchanges: NextPage = () => {
 		//setConnectedAddress(connectedWallets[0].accounts[0].address)
 
 		console.log('loadICOFeatures');
+		console.log(exchanges);
 		loadICOFeatures();
 
 		console.log('loadICOPaymentMethod');
@@ -295,13 +297,36 @@ const Exchanges: NextPage = () => {
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Invest</div></div></Col>
+						<Col><div><Form.Text className="color-frame">Select Exchange</Form.Text></div></Col>
 					</Row>
+					<Row>
+						<Col>
+							<Dropdown onSelect={onSelectToInvestCurrency}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
+									Select Decentralized Exchange
+								</Dropdown.Toggle>
+
+								<Dropdown.Menu className="w-100">
+									{connectedChain?.id ?
+										exchanges[Number(connectedChain?.id)].exchanges.map((item: any, index: any) => {
+											return (
+												<Dropdown.Item as="button" key={Number(connectedChain?.id)} eventKey={item.name} active={TO_INVEST_CURRENCY == item}>
+													{item.name}
+												</Dropdown.Item>
+											);
+										})
+									: ''}
+								</Dropdown.Menu>
+							</Dropdown>
+						</Col>
+					</Row>
+
+					<Row className="m-3"></Row>
+
 					<Row>
 						<Col><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
 						<Col><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
 						<Col><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-						<Col><div><Form.Text className="color-frame"></Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col>
@@ -323,22 +348,15 @@ const Exchanges: NextPage = () => {
 						</Col>
 						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
 						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
-						<Col><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || !TO_INVEST_AMOUNT || TO_INVEST_AMOUNT=='0' || ICO_CURRENT_STAGE != STAGE.ONGOING} onClick={() => invest()}>Invest in {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}</Button></Col>
 					</Row>
 
-					<Row className="m-3"></Row>
-
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Refund</div></div></Col>
+						<Col><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
 					</Row>
 					<Row>
-						<Col xs={3}><div><Form.Text className="color-frame">Currency</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame">Amount USD</Form.Text></div></Col>
-						<Col xs={3}><div><Form.Text className="color-frame"></Form.Text></div></Col>
-					</Row>
-					<Row>
-						<Col xs={3}>
+						<Col>
 							<Dropdown onSelect={onSelectToRefundCurrency}>
 								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED}>
 									{TO_REFUND_CURRENCY}
@@ -355,9 +373,14 @@ const Exchanges: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
-						<Col xs={3}><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
-						<Col xs={3}><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => refund()}> {KEY_ICON()} Refund</Button></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
+					</Row>
+
+					<Row className="m-3"></Row>
+
+					<Row>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => refund()}> {KEY_ICON()} Create Pair</Button></Col>
 					</Row>
 
 				</Form.Group>
