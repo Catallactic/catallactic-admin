@@ -129,8 +129,8 @@ export const CHEVRON_LIST:any = {
 	TRA: [
 		{title: "Deploy", URL: "/trading/exchanges"},
 		{title: "Reserve", URL: "/trading/reserve"},
-		{title: "Withdraw", URL: "/trading/withdraw"},
-		{}, {}, {}, {},
+		{title: "Withdraw", URL: "/trading/rewards"},
+		{}, {}, {}, {}, {},
 	],
 	PAY: [
 		{title: "Payments", URL: "/vesting/features"},
