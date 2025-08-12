@@ -61,7 +61,7 @@ export const exchanges: any = {
 			{ "name": "uniswap", "factory": "0x8909Dc15e40173Ff4699343b6eB8132c65e18eC6", "router": "0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24" },
 			{ "name": "sushiswap", "factory": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4", "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506" },
 			{ "name": "pancakeswap", "factory": "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73", "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E" },
-			{ "name": "diamondswap", "factorys": "0x81A1417CBEc636e631fA62b81F970a5Ec23B39CA", "router": "0xdA627463977C8DA8E14A8afBafDdc8041DFC18B3" },
+			{ "name": "diamondswap", "factory": "0x81A1417CBEc636e631fA62b81F970a5Ec23B39CA", "router": "0xdA627463977C8DA8E14A8afBafDdc8041DFC18B3" },
 			{ "name": "fraxswap", "factory": "0xf89e6CA06121B6d4370f4B196Ae458e8b969A011", "router": "0x67F755137E0AE2a2aa0323c047715Bf6523116E5" },
 			{ "name": "apeswap", "factory": "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6", "router": "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7" },
 			{ "name": "swipeswap", "factory": "0x7810D4B7bC4F7faee9deec3242238a39c4f1197d", "router": "0x816278BbBCc529f8cdEE8CC72C226fb01def6E6C" },

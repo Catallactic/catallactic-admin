@@ -127,7 +127,8 @@ export const CHEVRON_LIST:any = {
 		{title: "Vesting", URL: "/vesting/operations"},
 	],
 	TRA: [
-		{title: "Deploy", URL: "/trading/exchanges"},
+		{title: "TGE", URL: "/trading/tge"},
+		{title: "Exchanges", URL: "/trading/exchanges"},
 		{title: "Reserve", URL: "/trading/reserve"},
 		{title: "Withdraw", URL: "/trading/rewards"},
 		{}, {}, {}, {}, {},
@@ -186,7 +187,7 @@ export const TUTORIAL:any = {
 		{ type: "H3", text: "INVESTOR: Release Vesting Slides", URL: "/vesting/operations", },		
 		{ type: "H3", text: "ISSUER: Configures Withdraw Wallet", URL: "/rounds/operations", },
 		{ type: "H3", text: "ISSUER: Withdraws Funds to Wallet", URL: "/rounds/operations", },		
-		{ type: "H3", text: "ISSUER: Runs TGE to Exchanges (Optionally)", URL: "/admin/contract", },
+		{ type: "H3", text: "ISSUER: Runs TGE to Exchanges (Optionally)", URL: "/trading/tge", },
 	],
 	TRA: [
 		{ type: "H1", text: "TRADING MANAGEMENT", },
