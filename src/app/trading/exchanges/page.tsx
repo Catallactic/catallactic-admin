@@ -135,135 +135,39 @@ const Exchanges: NextPage = () => {
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
 	// invest
-	const [TO_INVEST_CURRENCY, setToInvestCurrency] = useState<string>('USDT')
-  const [TO_INVEST_AMOUNT_USD, setToInvestAmountUSD] = useState<string>('0')
-  const [TO_INVEST_AMOUNT, setToInvestAmount] = useState<string>('0')
-
-	const onSelectToInvestCurrency = async (symbol: any)=>{
-		setToInvestCurrency(symbol);
-	}
+	const [TOKEN1_CURRENCY, setToken1Currency] = useState<string>()
+  const [TOKEN1_AMOUNT, setToken1Amount] = useState<string>('0')
+  const [TOKEN1_AMOUNT_USD, setToken1AmountUSD] = useState<string>('0')
 
 	useEffect(() => {
-		console.log('useEffect9');
-		if(!TO_INVEST_CURRENCY) return;
-		if(!ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY]) return;
-		console.log('TO_INVEST_AMOUNT', TO_INVEST_AMOUNT);
+		console.log('useEffect8');
+		if(!TOKEN1_CURRENCY) return;
+		if(!ICO_PAYMENT_METHODS[TOKEN1_CURRENCY]) return;
+		console.log('TOKEN1_AMOUNT', TOKEN1_AMOUNT);
 
-		let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
+		let amountToken: string = ICO_PAYMENT_METHODS[TOKEN1_CURRENCY];
 		let amountTokenPrice: number = Number(amountToken[2])
-		let amountToInvestUSD: number = Number(TO_INVEST_AMOUNT) * amountTokenPrice / 10**6;
-		setToInvestAmountUSD(amountToInvestUSD.toString());
+		let amountToTransferUSD: number = Number(TOKEN1_AMOUNT) * amountTokenPrice / 10**6;
+		setToken1AmountUSD(amountToTransferUSD.toString());
 
-	}, [TO_INVEST_AMOUNT, TO_INVEST_CURRENCY]);
+	}, [TOKEN1_AMOUNT, TOKEN1_CURRENCY]);
 
-	async function invest() {
+	const [TOKEN2_CURRENCY, setToken2Currency] = useState<string>()
+  const [TOKEN2_AMOUNT_USD, setToken2AmountUSD] = useState<string>('0')
+  const [TOKEN2_AMOUNT, setToken2Amount] = useState<string>('0')
 
-		let amountToInvest: number = Number(TO_INVEST_AMOUNT)
-		console.log('investing amountToInvest ', amountToInvest, TO_INVEST_CURRENCY);
+	useEffect(() => {
+		console.log('useEffect8');
+		if(!TOKEN2_CURRENCY) return;
+		if(!ICO_PAYMENT_METHODS[TOKEN2_CURRENCY]) return;
+		console.log('TOKEN2_AMOUNT', TOKEN2_AMOUNT);
 
-		if(TO_INVEST_CURRENCY == 'COIN') {
-			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
+		let amountToken: string = ICO_PAYMENT_METHODS[TOKEN2_CURRENCY];
+		let amountTokenPrice: number = Number(amountToken[2])
+		let amountToTransferUSD: number = Number(TOKEN2_AMOUNT) * amountTokenPrice / 10**6;
+		setToken2AmountUSD(amountToTransferUSD.toString());
 
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			window.ethereum.enable()
-			const signer = provider.getSigner()
-			await signer.sendTransaction({
-				from: connectedAddress,
-				to: contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address,
-				value: ethers.utils.parseEther(amountToInvest.toString()),
-				gasLimit: 1000000,
-			})
-				//.once('sending', function(payload: any){ console.log(payload); })
-				//.once('sent', function(payload){ ... })
-				//.once('transactionHash', function(hash){ ... })
-				//.once('receipt', function(receipt){ ... })
-				//.on('confirmation', function(confNumber, receipt, latestBlockHash){ ... })
-				//.on('error', function(error){ ... })
-				.then(await handleICOReceipt)
-				.then(await getBalancesRawICOMeWallet)
-				.then(await getBalancesUSDICOMeWallet)
-				.then(await getBalancesPaymentTokensMeWallet)
-				.then(await getBalancesCygasMeWallet)
-				.then(await resetInvest)
-				.catch(await handleError);
-
-		} else if(TO_INVEST_CURRENCY == 'ERC_20') {
-			// N/A
-
-		} else {
-			console.log('SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address ', contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address);
-
-			let amountToken: string = ICO_PAYMENT_METHODS[TO_INVEST_CURRENCY];
-			console.log('amountToken: ', amountToken);
-			let paymentTokenAddress: string = amountToken[0];
-			console.log('paymentTokenAddress: ', paymentTokenAddress);
-			const provider = new ethers.providers.Web3Provider(window.ethereum)
-			window.ethereum.enable()
-			const signer = provider.getSigner();
-			const paymentToken: Contract = new ethers.Contract(paymentTokenAddress, CFG_ERC_20_ABI, signer);
-			await paymentToken?.approve(contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.address, ethers.utils.parseEther(amountToInvest.toString())).then(await handleICOReceipt).catch(handleError);
-			await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.depositTokens(TO_INVEST_CURRENCY, ethers.utils.parseEther(amountToInvest.toString()))
-				.then(await handleICOReceipt)
-				.then(await getBalancesRawICOMeWallet)
-				.then(await getBalancesUSDICOMeWallet)
-				.then(await getBalancesPaymentTokensMeWallet)
-				.then(await getBalancesCygasMeWallet)
-				.then(await resetInvest)
-				.catch(await handleError);
-		}
-
-	}
-
-	async function resetInvest() {
-		setToInvestCurrency('USDT');
-		setToInvestAmount('0');
-		setToInvestAmountUSD('0');
-	}
-
-	// refund
-  const [TO_REFUND_AMOUNT, setToRefundAmount] = useState<string>()
-  const [TO_REFUND_AMOUNT_USD, setToRefundAmountUSD] = useState<string>()
-	const [TO_REFUND_CURRENCY, setToRefundCurrency] = useState<string>()
-
-	const onSelectToRefundCurrency = async (symbol: any)=>{
-		setToRefundCurrency(symbol);
-
-		let contribution = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getContribution(connectedAddress, symbol);
-	  console.log(`contribution: ` + contribution);
-		setToRefundAmount(contribution);
-
-		let contributionUSD = await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.getuUSDContribution(connectedAddress, symbol);
-	  console.log(`contributionUSD: ` + contributionUSD);
-		setToRefundAmountUSD(contributionUSD);
-	}
-
-	async function refund() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.refund(TO_REFUND_CURRENCY)
-			.then(await handleICOReceipt)
-			.then(await getBalancesRawICOMeWallet)
-			.then(await getBalancesUSDICOMeWallet)
-			.then(await getBalancesPaymentTokensMeWallet)
-			.then(await getBalancesCygasMeWallet)
-			.then(await resetRefund)
-			.catch(await handleError);
-	}
-
-	async function resetRefund() {
-		setToRefundCurrency('');
-		setToRefundAmount('0');
-		setToRefundAmountUSD('0');
-	}
-
-	// claim
-	async function claim() {
-		await contracts.SELECTED_CRYPTOCOMMODITY_CROWDSALE_CONTRACT?.claim()
-			.then(await handleICOReceipt)
-			.then(await getBalancesRawICOMeWallet)
-			.then(await getBalancesUSDICOMeWallet)
-			.then(await getBalancesPaymentTokensMeWallet)
-			.then(await getBalancesCygasMeWallet)
-			.catch(await handleError);
-	}
+	}, [TOKEN2_AMOUNT, TOKEN2_CURRENCY]);
 
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
@@ -301,7 +205,7 @@ const Exchanges: NextPage = () => {
 					</Row>
 					<Row>
 						<Col>
-							<Dropdown onSelect={onSelectToInvestCurrency}>
+							<Dropdown>
 								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
 									Select Decentralized Exchange
 								</Dropdown.Toggle>
@@ -310,7 +214,7 @@ const Exchanges: NextPage = () => {
 									{connectedChain?.id ?
 										exchanges[Number(connectedChain?.id)].exchanges.map((item: any, index: any) => {
 											return (
-												<Dropdown.Item as="button" key={Number(connectedChain?.id)} eventKey={item.name} active={TO_INVEST_CURRENCY == item}>
+												<Dropdown.Item as="button" key={Number(connectedChain?.id)} eventKey={item.name} >
 													{item.name}
 												</Dropdown.Item>
 											);
@@ -330,15 +234,15 @@ const Exchanges: NextPage = () => {
 					</Row>
 					<Row>
 						<Col>
-							<Dropdown onSelect={onSelectToInvestCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING}>
-									{TO_INVEST_CURRENCY}
+							<Dropdown onSelect={(symbol: any) => setToken1Currency(symbol)}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
+									{TOKEN1_CURRENCY || "Select Currency"}
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_INVEST_CURRENCY == item}>
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TOKEN1_CURRENCY == item}>
 												{item}
 											</Dropdown.Item>
 										);
@@ -346,8 +250,8 @@ const Exchanges: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.ONGOING} onChange={(event) => setToInvestAmount(event.target.value) } value={TO_INVEST_AMOUNT}></input></Col>
-						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_INVEST_AMOUNT_USD ? TO_INVEST_AMOUNT_USD : 0} ></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" value={TOKEN1_AMOUNT} onChange={(event) => setToken1Amount(event.target.value)} ></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TOKEN1_AMOUNT_USD ? TOKEN1_AMOUNT_USD : 0} ></input></Col>
 					</Row>
 
 					<Row>
@@ -357,15 +261,15 @@ const Exchanges: NextPage = () => {
 					</Row>
 					<Row>
 						<Col>
-							<Dropdown onSelect={onSelectToRefundCurrency}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED}>
-									{TO_REFUND_CURRENCY}
+							<Dropdown onSelect={(symbol: any) => setToken2Currency(symbol)}>
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
+									{TOKEN2_CURRENCY || "Select Currency"}
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu className="w-100">
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
-											<Dropdown.Item as="button" key={index} eventKey={item} active={TO_REFUND_CURRENCY == item}>
+											<Dropdown.Item as="button" key={index} eventKey={item} active={TOKEN2_CURRENCY == item}>
 												{item}
 											</Dropdown.Item>
 										);
@@ -373,14 +277,25 @@ const Exchanges: NextPage = () => {
 								</Dropdown.Menu>
 							</Dropdown>
 						</Col>
-						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT ? Number(TO_REFUND_AMOUNT) / 10**Number(ICO_PAYMENT_METHODS[TO_REFUND_CURRENCY!][3]) : 0} ></input></Col>
-						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TO_REFUND_AMOUNT_USD ? Number(TO_REFUND_AMOUNT_USD) / 10**6 : 0} ></input></Col>
+						<Col><input className="form-control form-control-lg bg-edited color-frame border-0" value={TOKEN2_AMOUNT} onChange={(event) => setToken2Amount(event.target.value)} ></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={TOKEN2_AMOUNT_USD ? TOKEN2_AMOUNT_USD : 0} ></input></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!connectedChain || !selectCrypto || ICO_CURRENT_STAGE != STAGE.FINISHED} onClick={() => refund()}> {KEY_ICON()} Create Pair</Button></Col>
+						<Col><div><Form.Text className="color-frame">Token1 Price</Form.Text></div></Col>
+						<Col><div><Form.Text className="color-frame">Token2 Price</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={Number(TOKEN1_AMOUNT) > 0 ? Number(TOKEN2_AMOUNT)/Number(TOKEN1_AMOUNT) : 0} ></input></Col>
+						<Col><input className="form-control form-control-lg color-frame border-0" disabled={true} value={Number(TOKEN2_AMOUNT) > 0 ? Number(TOKEN1_AMOUNT)/Number(TOKEN2_AMOUNT) : 0} ></input></Col>
+					</Row>
+
+					<Row className="m-3"></Row>
+
+					<Row>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" > {KEY_ICON()} Create Pair</Button></Col>
 					</Row>
 
 				</Form.Group>
