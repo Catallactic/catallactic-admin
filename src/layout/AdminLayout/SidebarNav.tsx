@@ -170,7 +170,7 @@ export default function SidebarNav() {
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Trading" disabled={false}>
 			<SidebarNavItem href="/trading/tge">TGE</SidebarNavItem>
-			<SidebarNavItem href="/trading/exchanges">Exchanges</SidebarNavItem>
+			<SidebarNavItem href="/trading/pairs">Pairs</SidebarNavItem>
         <SidebarNavItem href="/trading/reserve">Reserve</SidebarNavItem>
         <SidebarNavItem href="/trading/rewards">Rewards</SidebarNavItem>
       </SidebarNavGroup>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Contract, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useCrowdsaleHook } from 'hooks/useCrowdsaleHook';
 import { useERC20Hook } from 'hooks/useERC20Hook';
 import { useFactoryHook } from 'hooks/useFactoryHook';
@@ -195,7 +195,7 @@ const Exchanges: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Deploy {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} to Exchanges</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Create New {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} Pairs</div></div></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
