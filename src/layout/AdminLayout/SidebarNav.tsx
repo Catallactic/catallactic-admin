@@ -150,11 +150,11 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>Fundraising</SidebarNavTitle>
+      <SidebarNavTitle>Management</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Funding Rounds" disabled={false}>
-        <SidebarNavItem href="/rounds/features">Create Round</SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Manage Round</SidebarNavItem>
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Fundraising" disabled={false}>
+        <SidebarNavItem href="/rounds/features">Create Funding Round</SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Manage Funding Round</SidebarNavItem>
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
         <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
         <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
@@ -166,13 +166,19 @@ export default function SidebarNav() {
         <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>Negotiation</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Trading" disabled={false}>
+      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Trading" disabled={false}>
 			<SidebarNavItem href="/trading/tge">TGE</SidebarNavItem>
 			<SidebarNavItem href="/trading/pairs">Pairs</SidebarNavItem>
         <SidebarNavItem href="/trading/reserve">Reserve</SidebarNavItem>
         <SidebarNavItem href="/trading/rewards">Rewards</SidebarNavItem>
+      </SidebarNavGroup>
+
+      <SidebarNavTitle>DeFi Services</SidebarNavTitle>
+
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Payments" disabled={true}>
+        <SidebarNavItem href="#">Form Control</SidebarNavItem>
+        <SidebarNavItem href="#">Select</SidebarNavItem>
+        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
       <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Wallets" disabled={true}>
@@ -187,21 +193,13 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>DeFi Services</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Payments" disabled={true}>
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Transfers" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Transfers" disabled={true}>
-        <SidebarNavItem href="#">Form Control</SidebarNavItem>
-        <SidebarNavItem href="#">Select</SidebarNavItem>
-        <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Lending" disabled={true}>
+      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Lending" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
