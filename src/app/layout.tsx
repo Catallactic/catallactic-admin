@@ -88,8 +88,12 @@ function RootLayout({
 
 	const contractsContextDefaultValue = useContractContextHook();
 
+	function logErrorToService(error: any, info: any) {
+		console.error("Caught an error:", error, info);
+	}
+	
   return (
-		<ErrorBoundary fallback={<div>Something went wrong</div>}>
+		<ErrorBoundary fallback={<div>Something went wrong</div>} onError={logErrorToService}>
 			<Web3OnboardProvider web3Onboard={web3Onboard}>
 				<ContractsContext.Provider value={contractsContextDefaultValue} >
 
