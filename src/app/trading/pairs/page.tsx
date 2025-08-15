@@ -7,7 +7,7 @@ import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
-import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, DropdownDivider, Form, Row } from 'react-bootstrap';
 
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -195,7 +195,7 @@ const Exchanges: NextPage = () => {
 
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Create New {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} Pairs</div></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Update {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} Pairs</div></div></Col>
 					</Row>
 
 					<Row className="m-3"></Row>
@@ -228,14 +228,40 @@ const Exchanges: NextPage = () => {
 					<Row className="m-3"></Row>
 
 					<Row>
+						<table className="table">
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Pair</th>
+									<th scope="col">Token1</th>
+									<th scope="col">Amount1</th>
+									<th scope="col">Token2</th>
+									<th scope="col">Amount2</th>
+								</tr>
+							</thead>
+							<tbody>
+								{/*X_ICO_WHITELIST_USER_LIST?.map((item, index) => (
+									<tr key={index}>
+										<td><Button type="submit" className="w-100 btn-lg bg-button p-2 fw-bold border-0" disabled={!CAN_TYPE} onClick={() => isWhitelisted(item, index+1)}>{(index + 1) + "" }</Button></td>
+										<td>{item}</td>
+										<td id={"whitelistedValue" + (index+1) }></td>
+									</tr>
+								))*/}
+							</tbody>
+						</table>
+					</Row>
+
+					<Row className="m-3"></Row>
+
+					<Row>
 						<Col><div><Form.Text className="color-frame">Token1</Form.Text></div></Col>
 						<Col><div><Form.Text className="color-frame">Token1 Amount</Form.Text></div></Col>
 						<Col><div><Form.Text className="color-frame">Token1 Amount USD</Form.Text></div></Col>
 					</Row>
 					<Row>
 						<Col>
-							<Dropdown onSelect={(symbol: any) => setToken1Currency(symbol)}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
+							<Dropdown onSelect={(symbol: any) => setToken1Currency(symbol)} >
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={true}>
 									{TOKEN1_CURRENCY || "Select Currency"}
 								</Dropdown.Toggle>
 
@@ -244,6 +270,8 @@ const Exchanges: NextPage = () => {
 									<Dropdown.Item as="button" key={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} eventKey={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}>
 										{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}
 									</Dropdown.Item>
+
+									<DropdownDivider/>
 
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
@@ -267,7 +295,7 @@ const Exchanges: NextPage = () => {
 					<Row>
 						<Col>
 							<Dropdown onSelect={(symbol: any) => setToken2Currency(symbol)}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" >
+								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={true}>
 									{TOKEN2_CURRENCY || "Select Currency"}
 								</Dropdown.Toggle>
 
@@ -276,6 +304,8 @@ const Exchanges: NextPage = () => {
 									<Dropdown.Item as="button" key={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} eventKey={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}>
 										{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}
 									</Dropdown.Item>
+
+									<DropdownDivider/>
 
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
@@ -305,7 +335,7 @@ const Exchanges: NextPage = () => {
 					<Row className="m-3"></Row>
 
 					<Row>
-						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" > {KEY_ICON()} Create Pair</Button></Col>
+						<Col><Button type="submit" className="d-flex justify-content-center w-100 btn-lg bg-button p-2 fw-bold border-0" > {KEY_ICON()} Update Pair</Button></Col>
 					</Row>
 
 				</Form.Group>

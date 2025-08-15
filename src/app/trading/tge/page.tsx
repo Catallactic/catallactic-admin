@@ -7,7 +7,7 @@ import { useFactoryHook } from 'hooks/useFactoryHook';
 import { useResponseHook } from 'hooks/useResponseHook';
 import { NextPage } from 'next'
 import { useContext, useEffect, useState } from 'react';
-import { Button, Col, Container, Dropdown, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Dropdown, DropdownDivider, Form, Row } from 'react-bootstrap';
 
 import { KEY_ICON } from '../../../config/config'
 import { ContractsContext } from 'hooks/useContractContextHook';
@@ -245,6 +245,8 @@ const Exchanges: NextPage = () => {
 										{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}
 									</Dropdown.Item>
 
+									<DropdownDivider/>
+
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
 											<Dropdown.Item as="button" key={index} eventKey={item} active={TOKEN1_CURRENCY == item}>
@@ -276,6 +278,8 @@ const Exchanges: NextPage = () => {
 									<Dropdown.Item as="button" key={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"} eventKey={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}>
 										{selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME || "ERC-20"}
 									</Dropdown.Item>
+
+									<DropdownDivider/>
 
 									{ICO_PAYMENT_SYMBOLS?.map((item: any, index: any) => {
 										return (
