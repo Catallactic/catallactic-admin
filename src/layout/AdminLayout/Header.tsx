@@ -12,6 +12,7 @@ import ChevronChildrenList from './ChevronChildrenList'
 import ConfimDialog from 'app/common/ConfimDialog'
 import { ethers } from 'ethers'
 import { useWeb3Onboard } from '@web3-onboard/react/dist/context'
+import { truncateEthAddress } from 'config/config'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -217,16 +218,16 @@ export default function Header(props: HeaderProps) {
 					{wallet ?
 						<Dropdown as={ButtonGroup} onSelect={switchAccount} >
 
-							<Button className='p-0 bg-connected border-0'>
+							<Button className={ 'p-0 border-0 ' + (accounts ? 'bg-connected' : '') }>
 								<Link href="/admin/accounts" passHref legacyBehavior>
-									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+									<div className='rounded-3 p-2 fw-bolder'>
 										<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> 
-										{ accounts[0] ? accounts[0].slice(-4) : '' } 
+										{ accounts[0] ? truncateEthAddress(accounts[0]) : '' } 
 									</div>
 								</Link>
 							</Button>
 
-							<Dropdown.Toggle split className='bg-connected border-0' />
+							<Dropdown.Toggle split className={'border-0 ' + (accounts ? 'bg-connected' : 'bg-disconnected') } />
 
 							<Dropdown.Menu>
 	 							<Dropdown.Item>Switch Account</Dropdown.Item>
@@ -235,7 +236,7 @@ export default function Header(props: HeaderProps) {
 								{accounts?.map((account: any, index: any) => {
 									return (
 										<Dropdown.Item as="button" key={ account.split(-4) } eventKey={ account.split(-4) } active={account == accounts[0]}>
-											{ account.split(-4) }
+											{ truncateEthAddress(account) }
 										</Dropdown.Item>
 									);
 								})}
@@ -248,16 +249,16 @@ export default function Header(props: HeaderProps) {
 					{wallet ?
 						<Dropdown as={ButtonGroup} className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectNetworkId} >
 
-							<Button className='p-0 bg-connected border-0' disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+							<Button className={'p-0 border-0 ' + (wallet ? 'bg-connected' : '') } disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								<Link href="/admin/environment" passHref legacyBehavior>
-									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+									<div className='rounded-3 p-2 fw-bolder'>
 										<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
 										{ wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : '' }
 									</div>
 								</Link>
 							</Button>
 
-							<Dropdown.Toggle split className='bg-connected border-0' />
+							<Dropdown.Toggle split className={'border-0 ' + (wallet ? 'bg-connected' : 'bg-disconnected') } />
 
 							<Dropdown.Menu className="w-auto">
 								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
@@ -283,16 +284,16 @@ export default function Header(props: HeaderProps) {
 					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
 						<Dropdown as={ButtonGroup} className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
 
-							<Button className='p-0 bg-connected border-0' disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+							<Button className={'p-0 border-0 ' + (selectedCrypto ? 'bg-connected' : 'bg-disconnected') } disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
 								<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+									<div className='rounded-3 p-2 fw-bolder'>
 										<FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' />
 										{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: '' }
 									</div>
 								</Link>
 							</Button>
 
-							<Dropdown.Toggle split className='bg-connected border-0' />
+							<Dropdown.Toggle split className={'border-0 ' + (selectedCrypto ? 'bg-connected' : 'bg-disconnected') } />
 
 							<Dropdown.Menu className="w-auto">
 								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
