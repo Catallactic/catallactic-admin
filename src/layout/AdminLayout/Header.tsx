@@ -153,6 +153,11 @@ export default function Header(props: HeaderProps) {
 		})
 	}
 
+	const onSelectNetworkId = async (id: any)=>{
+		//seSelectedNetworkId(id);
+		setChain({ chainId: id })
+	}
+
 	// *************************************************************************************************************************
 	// ************************************************************ UI *********************************************************
 	// *************************************************************************************************************************
@@ -211,9 +216,13 @@ export default function Header(props: HeaderProps) {
 					{/* Connect Account */}
 					{wallet ?
 						<Dropdown as={ButtonGroup} onSelect={switchAccount} >
+
 							<Button className='p-0 bg-connected border-0'>
 								<Link href="/admin/accounts" passHref legacyBehavior>
-									<div className='bg-connected rounded-3 p-2 fw-bolder'><FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> { accounts[0] ? accounts[0].slice(-4) : '' } </div>
+									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+										<FontAwesomeIcon size="xl" icon={faUser} className='text-white cursor-pointer mx-2' /> 
+										{ accounts[0] ? accounts[0].slice(-4) : '' } 
+									</div>
 								</Link>
 							</Button>
 
@@ -225,21 +234,30 @@ export default function Header(props: HeaderProps) {
 
 								{accounts?.map((account: any, index: any) => {
 									return (
-										<Dropdown.Item as="button" key={ account.split(-4) } eventKey={ account.split(-4) }>{ account.split(-4) }</Dropdown.Item>
+										<Dropdown.Item as="button" key={ account.split(-4) } eventKey={ account.split(-4) } active={account == accounts[0]}>
+											{ account.split(-4) }
+										</Dropdown.Item>
 									);
 								})}
 							</Dropdown.Menu>
+
 						</Dropdown>
 					: '' }
 
 					{/* Connect Network */}
 					{wallet ?
-						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
+						<Dropdown as={ButtonGroup} className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectNetworkId} >
 
-							<Dropdown.Toggle className="w-100 p-2 bg-connected fw-bolder border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
-								{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (accounts[0] ? 'to ' + accounts[0].slice(-4) : '')}
-							</Dropdown.Toggle>
+							<Button className='p-0 bg-connected border-0' disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								<Link href="/admin/environment" passHref legacyBehavior>
+									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+										<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
+										{ wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : '' }
+									</div>
+								</Link>
+							</Button>
+
+							<Dropdown.Toggle split className='bg-connected border-0' />
 
 							<Dropdown.Menu className="w-auto">
 								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
@@ -250,7 +268,7 @@ export default function Header(props: HeaderProps) {
 								<DropdownDivider/>
 								{getMETAMASK_CHAINS().map((item: any, index: any) => {
 									return (
-										<Dropdown.Item as="button" key={item.id} eventKey={item.id} >
+										<Dropdown.Item as="button" key={item.id} eventKey={item.id} active={wallet ? parseInt(item.id) == parseInt(wallet.chains[0].id) : false}>
 											{item.name}
 										</Dropdown.Item>
 									);
@@ -263,12 +281,18 @@ export default function Header(props: HeaderProps) {
 					{/* Connect Crommodity */}
 					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
 					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
-						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
+						<Dropdown as={ButtonGroup} className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
 
-							<Dropdown.Toggle className="w-100 p-2 bg-connected fw-bolder border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								<FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' />
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: '' }
-							</Dropdown.Toggle>
+							<Button className='p-0 bg-connected border-0' disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+									<div className='bg-connected rounded-3 p-2 fw-bolder'>
+										<FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' />
+										{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: '' }
+									</div>
+								</Link>
+							</Button>
+
+							<Dropdown.Toggle split className='bg-connected border-0' />
 
 							<Dropdown.Menu className="w-auto">
 								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
