@@ -18,7 +18,7 @@ const Environment: NextPage = () => {
 	// *************************************************************************************************************************
 	// OnBoard hooks
 	const connectedWallets = useWallets()
-	const [{ connectedChain }] = useSetChain()
+  const [{ chains, connectedChain, settingChain }, setChain] = useSetChain()
 
 	// Blockchain hooks
 	const { 
@@ -72,6 +72,7 @@ const Environment: NextPage = () => {
 	const [X_SELECTED_NETWORK_ID, seSelectedNetworkId] = useState<number | undefined>()
 	const onSelectedNetworkId = async (id: any)=>{
 		seSelectedNetworkId(id);
+		setChain({ chainId: id })
 	}
 
 	const [X_FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()

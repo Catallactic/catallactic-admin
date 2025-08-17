@@ -150,11 +150,11 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavTitle>Management</SidebarNavTitle>
+      <SidebarNavTitle>Fundraising</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Fundraising" disabled={false}>
-        <SidebarNavItem href="/rounds/features">Create Funding Round</SidebarNavItem>
-        <SidebarNavItem href="/rounds/operations">Manage Funding Round</SidebarNavItem>
+        <SidebarNavItem href="/rounds/features">Create Round</SidebarNavItem>
+        <SidebarNavItem href="/rounds/operations">Manage Round</SidebarNavItem>
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
         <SidebarNavItem href="/rounds/payments">Payments</SidebarNavItem>
         <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
@@ -165,6 +165,8 @@ export default function SidebarNav() {
 				<SidebarNavItem href="/vesting/operations">Vesting Schedulers</SidebarNavItem>
         <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
       </SidebarNavGroup>
+
+      <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
       <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Trading" disabled={false}>
 			<SidebarNavItem href="/trading/tge">TGE</SidebarNavItem>
@@ -203,12 +205,6 @@ export default function SidebarNav() {
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
-      </SidebarNavGroup>
-
-      <SidebarNavTitle>ENVIRONMENT</SidebarNavTitle>
-
-      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Infrastructure" disabled={false}>
-        <SidebarNavItem href="/admin/environment">Environment</SidebarNavItem>
       </SidebarNavGroup>
 
     </ul>

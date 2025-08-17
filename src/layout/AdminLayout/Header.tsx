@@ -6,11 +6,12 @@ import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import ChevronList from './ChevronList'
 import ChevronChildrenList from './ChevronChildrenList'
 import ConfimDialog from 'app/common/ConfimDialog'
 import { ethers } from 'ethers'
+import { useWeb3Onboard } from '@web3-onboard/react/dist/context'
 
 type HeaderProps = {
   toggleSidebar: () => void;
@@ -28,8 +29,12 @@ export default function Header(props: HeaderProps) {
 	// *************************************************************************************************************************
 	const { toggleSidebar, toggleSidebarMd } = props
 
+	// https://docs.kaia.io/build/wallets/wallet-libraries/web3Onboard/
+	// https://stackoverflow.com/questions/71569214/error-error-must-initialize-before-using-hooks
+	const web3OnBoard = useWeb3Onboard()
+
 	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
-	const [{ connectedChain }] = useSetChain()
+  const [{ chains, connectedChain, settingChain }, setChain] = useSetChain()
 	const connectedWallets = useWallets()
 	const [notifications, customNotification, updateNotify] = useNotifications()
   const router = useRouter()
@@ -203,43 +208,7 @@ export default function Header(props: HeaderProps) {
 
         <div className="header-nav ms-auto">
 	
-					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
-					{/* CryptoCommodities icon */}
-					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
-						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
-
-							<Dropdown.Toggle className="w-100 p-2 bg-connected fw-bolder border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
-							</Dropdown.Toggle>
-
-							<Dropdown.Menu className="w-auto">
-								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
-									return (
-										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
-											{item}
-										</Dropdown.Item>
-									);
-								})}
-								<DropdownDivider/>
-								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
-									<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-										<span className='text-decoration-none'>CryptoCommodities Finder</span>
-									</Link>
-								</Dropdown.Item>
-							</Dropdown.Menu>
-
-						</Dropdown>
-					
-					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ? 
-						<Button className='bg-header border-0'>
-							<Link href="/admin/cryptocommodities" passHref legacyBehavior>
-								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span> : <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
-							</Link>
-						</Button>
-
-					: '' }
-
-					{/* User account icon */}
+					{/* Connect Account */}
 					{wallet ?
 						<Dropdown as={ButtonGroup} onSelect={switchAccount} >
 							<Button className='p-0 bg-connected border-0'>
@@ -261,12 +230,75 @@ export default function Header(props: HeaderProps) {
 								})}
 							</Dropdown.Menu>
 						</Dropdown>
-
 					: '' }
 
+					{/* Connect Network */}
+					{wallet ?
+						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
+
+							<Dropdown.Toggle className="w-100 p-2 bg-connected fw-bolder border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
+								{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (accounts[0] ? 'to ' + accounts[0].slice(-4) : '')}
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu className="w-auto">
+								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
+									<Link href="/admin/environment" passHref legacyBehavior>
+										<span className='text-decoration-none'>Edit Environmet</span>
+									</Link>
+								</Dropdown.Item>
+								<DropdownDivider/>
+								{getMETAMASK_CHAINS().map((item: any, index: any) => {
+									return (
+										<Dropdown.Item as="button" key={item.id} eventKey={item.id} >
+											{item.name}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+
+						</Dropdown>
+					: '' }
+
+					{/* Connect Crommodity */}
+					{/* https://github.com/Mohammed-Poolwla/structuring-next13/tree/main/src */}
+					{wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length > 0 ?
+						<Dropdown className="btn mx-2 my-0 dropdown p-0 border-0" onSelect={onSelectCryptocommodity} >
+
+							<Dropdown.Toggle className="w-100 p-2 bg-connected fw-bolder border-0" disabled={!CRYPTOCOMMODITIES || CRYPTOCOMMODITIES.length == 0}>
+								<FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' />
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span>: '' }
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu className="w-auto">
+								<Dropdown.Item as="button" key="ALL" eventKey="ALL">
+									<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+										<span className='text-decoration-none'>CryptoCommodities Finder</span>
+									</Link>
+								</Dropdown.Item>
+								<DropdownDivider/>
+								{CRYPTOCOMMODITIES?.map((item: any, index: any) => {
+									return (
+										<Dropdown.Item as="button" key={index} eventKey={item} active={selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME == item}>
+											{item}
+										</Dropdown.Item>
+									);
+								})}
+							</Dropdown.Menu>
+
+						</Dropdown>
+					
+					: wallet && CRYPTOCOMMODITIES && CRYPTOCOMMODITIES.length == 0 ? 
+						<Button className='bg-header border-0'>
+							<Link href="/admin/cryptocommodities" passHref legacyBehavior>
+								{ selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME ? <span className='text-white mx-2 text-decoration-none'> {selectedCrypto?.SELECTED_CRYPTOCOMMODITY_NAME} </span> : <FontAwesomeIcon size="xl" icon={faCoins} className='text-white mx-2' /> }
+							</Link>
+						</Button>
+					: '' }
+
+					{/* Connect Crommodity */}
 					<button type="button" className={"btn mx-2 text-white text-uppercase fw-bolder " + (connecting ? "bg-connecting" : wallet ? "bg-connected" : "bg-disconnected") } disabled={connecting} onClick={() => wallet ? setConfirmShow(true) : connect() } >
-						<FontAwesomeIcon size="xl" icon={faNetworkWired} className='text-white cursor-pointer mx-2' />
-						{connecting ? 'Connecting' : wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : 'Connect ' + (accounts[0] ? 'to ' + accounts[0].slice(-4) : '')}
+						{connecting ? 'Connecting' : wallet ? 'Disconnect' : 'Connect '}
 					</button>
 					<ConfimDialog text="Do you want to logoff?" show={confirmShow} onClose={() => setConfirmShow(false) } onAccept={() => { setConfirmShow(false); wallet ? disconnect(wallet) : '' }} />
 
