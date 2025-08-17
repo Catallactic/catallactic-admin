@@ -61,16 +61,28 @@ export const getMETAMASK_CHAINS = function() {
 
 export const supportedChains = [
 	{
-		id: 62_298,
-		token: 'cBTC',
-		label: 'Citrea Devnet',
-		rpcUrl: 'https://rpc.devnet.citrea.xyz'
+		id: 31_337,
+		token: 'ETH',
+		label: 'Hardhat Testnet',
+		rpcUrl: 'http://127.0.0.1:8545'
 	},
 	{
-		id: 5_115,
-		token: 'cBTC',
-		label: 'Citrea Testnet',
-		rpcUrl: 'https://rpc.testnet.citrea.xyz'
+		id: 11155111,
+		token: 'ETH',
+		label: 'Sepolia Testnet',
+		rpcUrl: 'https://rpc.sepolia.org'
+	},
+	{
+		id: 5,
+		token: 'ETH',
+		label: 'Goerli Testnet',
+		rpcUrl: 'https://goerli.drpc.org'
+	},
+	{
+		id: 80_001,
+		token: 'MATIC',
+		label: 'Mumbai Testnet',
+		rpcUrl: 'https://rpc.devnet.citrea.xyz'
 	},
 	{
 		id: 686_868,
@@ -79,10 +91,16 @@ export const supportedChains = [
 		rpcUrl: 'https://testnet-rpc.merlinchain.io'
 	},
 	{
-		id: 31_337,
-		token: 'ETH',
-		label: 'Hardhat',
-		rpcUrl: 'http://127.0.0.1:8545'
+		id: 5_115,
+		token: 'cBTC',
+		label: 'Citrea Testnet',
+		rpcUrl: 'https://rpc.testnet.citrea.xyz'
+	},
+	{
+		id: 62_298,
+		token: 'cBTC',
+		label: 'Citrea',
+		rpcUrl: 'https://rpc.devnet.citrea.xyz'
 	},
 ];
 
