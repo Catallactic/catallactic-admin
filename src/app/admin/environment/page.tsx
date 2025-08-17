@@ -7,7 +7,7 @@ import { Button, Col, Container, Dropdown, Form, Modal, Row } from 'react-bootst
 
 import { useResponseHook } from 'hooks/useResponseHook';
 import { ContractsContext } from 'hooks/useContractContextHook';
-import { useSetChain, useWallets } from '@web3-onboard/react';
+import { useConnectWallet, useSetChain, useWallets } from '@web3-onboard/react';
 
 import { truncateEthAddress, KEY_ICON, getMETAMASK_CHAINS } from '../../../config/config'
 
@@ -19,6 +19,7 @@ const Environment: NextPage = () => {
 	// OnBoard hooks
 	const connectedWallets = useWallets()
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain()
+	const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
 	// Blockchain hooks
 	const { 
@@ -69,12 +70,6 @@ const Environment: NextPage = () => {
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
 	// *************************************************************************************************************************
-	const [X_SELECTED_NETWORK_ID, seSelectedNetworkId] = useState<number | undefined>()
-	const onSelectedNetworkId = async (id: any)=>{
-		seSelectedNetworkId(id);
-		setChain({ chainId: id })
-	}
-
 	const [X_FACTORY_PAYMENT_SYMBOL_SYMBOL, setFactoryPaymentSymbolSymbol] = useState<any | undefined>()
 	const [X_FACTORY_PAYMENT_SYMBOL_DECIMALS, setFactoryPaymentSymbolDecimals] = useState<any | undefined>()
 	const [X_FACTORY_PAYMENT_SYMBOL_ADDRESS, setFactoryPaymentSymbolAddress] = useState<any | undefined>()
@@ -122,36 +117,22 @@ const Environment: NextPage = () => {
     <div className="bg-page d-flex flex-row align-items-center dark:bg-transparent">
       <Container className='mw-100'>
 
-				<Form.Group className="p-5 rounded-5 bg-group" >
-					<Row>
-						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Networks</div></div></Col>
-					</Row>
+				<Row className="m-4"></Row>
 
+				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
-						<Col><div><Form.Text className="color-frame">Available Networks</Form.Text></div></Col>
+						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Network</div></div></Col>
 					</Row>
 					<Row>
-						<Col>
-							<Dropdown onSelect={onSelectedNetworkId}>
-								<Dropdown.Toggle className="btn-lg bg-edited text-black-50 w-100 border-0" disabled={!connectedChain || !FACTORY_PAYMENT_SYMBOLS || FACTORY_PAYMENT_SYMBOLS.length == 0}>
-									{ X_SELECTED_NETWORK_ID ? getMETAMASK_CHAINS()!.find(function (el: any) { return parseInt(el.id) == X_SELECTED_NETWORK_ID; })?.name : '' }
-								</Dropdown.Toggle>
-
-								<Dropdown.Menu className="w-100">
-									{getMETAMASK_CHAINS().map((item: any, index: any) => {
-										return (
-											<Dropdown.Item as="button" key={item.id} eventKey={item.id} active={X_SELECTED_NETWORK_ID==item.id}>
-												{item.name}
-											</Dropdown.Item>
-										);
-									})}
-								</Dropdown.Menu>
-							</Dropdown>
-						</Col>
+						<Col><div><Form.Text className="">Connected to Network</Form.Text></div></Col>
+					</Row>
+					<Row>
+						<Col><input type="email" className="form-control form-control-lg text-center border-0" value={ wallet ? getMETAMASK_CHAINS().find(function (el: any) { return parseInt(el.id) == parseInt(wallet.chains[0].id); })?.name : '' } disabled={true}></input></Col>
 					</Row>
 				</Form.Group>
 
 				<Row className="m-4"></Row>
+				
 				<Form.Group className="p-5 rounded-5 bg-group">
 					<Row>
 						<Col><div><div className="color-frame fs-4 text-center text-center w-100">Payment Tokens</div></div></Col>
