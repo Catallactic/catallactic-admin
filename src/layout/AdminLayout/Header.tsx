@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { useConnectWallet, useNotifications, useSetChain, useWallets } from '@web3-onboard/react'
 import { ContractsContext } from 'hooks/useContractContextHook'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import ChevronList from './ChevronList'
 import ChevronChildrenList from './ChevronChildrenList'
 import ConfimDialog from 'app/common/ConfimDialog'
@@ -118,6 +118,19 @@ export default function Header(props: HeaderProps) {
 		}
 
 	}, []);
+
+	// require wallet connection
+  const pathname = usePathname()
+  useEffect(() => {
+    //console.log('Route changed to:', pathname)
+		if (!window.ethereum) {
+			console.log('Please install wallet.')
+			router.push('/');
+		} else if (!wallet) {
+			console.log('Please connect.')
+			router.push('/');
+		}
+  }, [pathname])
 	
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
