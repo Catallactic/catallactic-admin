@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFileLines, IconDefinition, } from '@fortawesome/free-regular-svg-icons'
-import { faChevronUp, faGauge, faLocationArrow, faPuzzlePiece, } from '@fortawesome/free-solid-svg-icons'
+import { faChevronUp, faExchange, faGauge, faLocationArrow, faMoneyBills, faMoneyBillTransfer, faPuzzlePiece, faRocket, } from '@fortawesome/free-solid-svg-icons'
 import React, { PropsWithChildren, useContext, useEffect, useState, } from 'react'
 import { Accordion, AccordionContext, Badge, Button, Nav, useAccordionButton, } from 'react-bootstrap'
 import classNames from 'classnames'
@@ -138,7 +138,7 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Crommodty</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Crommodity" disabled={false}>
+      <SidebarNavGroup toggleIcon={faFileLines} toggleText="Crommodity" disabled={false}>
 				<SidebarNavItem href="/erc20/features">Features</SidebarNavItem>
         <SidebarNavItem href="/erc20/holders">Holders</SidebarNavItem>
         <SidebarNavItem href="/admin/contract">Contract</SidebarNavItem>
@@ -152,7 +152,7 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Fundraising</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Fundraising" disabled={false}>
+      <SidebarNavGroup toggleIcon={faRocket} toggleText="Fundraising" disabled={false}>
         <SidebarNavItem href="/rounds/features">Create Round</SidebarNavItem>
         <SidebarNavItem href="/rounds/operations">Manage Round</SidebarNavItem>
         <SidebarNavItem href="/rounds/antiwhale">AntiWhale</SidebarNavItem>
@@ -160,7 +160,7 @@ export default function SidebarNav() {
         <SidebarNavItem href="/rounds/investors">Investors</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Vesting" disabled={false}>
+      <SidebarNavGroup toggleIcon={faRocket} toggleText="Vesting" disabled={false}>
 				<SidebarNavItem href="/vesting/features">Vesting Programs</SidebarNavItem>
 				<SidebarNavItem href="/vesting/operations">Vesting Schedulers</SidebarNavItem>
         <SidebarNavItem href="/vesting/holders">Holders</SidebarNavItem>
@@ -168,7 +168,7 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>Negotiation</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faPuzzlePiece} toggleText="Trading" disabled={false}>
+      <SidebarNavGroup toggleIcon={faExchange} toggleText="Trading" disabled={false}>
 			<SidebarNavItem href="/trading/tge">TGE</SidebarNavItem>
 			<SidebarNavItem href="/trading/pairs">Pairs</SidebarNavItem>
         <SidebarNavItem href="/trading/reserve">Reserve</SidebarNavItem>
@@ -177,31 +177,31 @@ export default function SidebarNav() {
 
       <SidebarNavTitle>DeFi Services</SidebarNavTitle>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Payments" disabled={true}>
+      <SidebarNavGroup toggleIcon={faMoneyBills} toggleText="Payments" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Wallets" disabled={true}>
+      <SidebarNavGroup toggleIcon={faMoneyBills} toggleText="Wallets" disabled={true}>
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Cards" disabled={true}>
+      <SidebarNavGroup toggleIcon={faMoneyBills} toggleText="Cards" disabled={true}>
         <SidebarNavItem href="#">Buttons</SidebarNavItem>
         <SidebarNavItem href="#">Buttons Group</SidebarNavItem>
         <SidebarNavItem href="#">Dropdowns</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Transfers" disabled={true}>
+      <SidebarNavGroup toggleIcon={faMoneyBills} toggleText="Transfers" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
       </SidebarNavGroup>
 
-      <SidebarNavGroup toggleIcon={faLocationArrow} toggleText="Lending" disabled={true}>
+      <SidebarNavGroup toggleIcon={faMoneyBills} toggleText="Lending" disabled={true}>
         <SidebarNavItem href="#">Form Control</SidebarNavItem>
         <SidebarNavItem href="#">Select</SidebarNavItem>
         <SidebarNavItem href="#">Checks and radios</SidebarNavItem>
