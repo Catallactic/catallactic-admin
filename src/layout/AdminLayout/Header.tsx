@@ -79,6 +79,21 @@ export default function Header(props: HeaderProps) {
 
 	}, [connectedWallets])
 
+	// require wallet connection
+	const pathname = usePathname()
+	useEffect(() => {
+		//console.log('Route changed to:', pathname)
+		if (pathname == '/')
+			return;
+		if (!window.ethereum) {
+			console.log('Please install wallet.')
+			router.push('/');
+		} else if (!wallet) {
+			console.log('Please connect.')
+			router.push('/');
+		}
+	}, [pathname])
+
 	useEffect(() => {
 		console.log('wallet: ', wallet)
 		console.log('connectedWallets: ', connectedWallets)
@@ -124,19 +139,6 @@ export default function Header(props: HeaderProps) {
 		}
 
 	}, []);
-
-	// require wallet connection
-  const pathname = usePathname()
-  useEffect(() => {
-    //console.log('Route changed to:', pathname)
-		if (!window.ethereum) {
-			console.log('Please install wallet.')
-			router.push('/');
-		} else if (!wallet) {
-			console.log('Please connect.')
-			router.push('/');
-		}
-  }, [pathname])
 	
 	// *************************************************************************************************************************
 	// ******************************************************** Update Data ****************************************************
